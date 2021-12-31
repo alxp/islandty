@@ -14,7 +14,9 @@ module.exports = config => {
       x => x.data.featured
     );
   });
-    
+
+
+
   return {
     markdownTemplateEngine: 'njk',
     dataTemplateEngine: 'njk',

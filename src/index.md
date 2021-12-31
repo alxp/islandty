@@ -17,6 +17,8 @@ primaryCTA:
     though. Take the course today!'
   buttonText: 'Buy a copy'
   buttonUrl: 'https://learneleventyfromscratch.com'
+studioFeed:
+  title: 'From inside the studio'
 
 ---
 

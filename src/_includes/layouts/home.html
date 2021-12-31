@@ -10,7 +10,7 @@
     <p class="intro__summary">{{ intro.summary }}</p>
     <a href="{{ intro.buttonUrl }}" class="button">{{ intro.buttonText }}</a>
   </div>
-  {% include "partials/featured-work.html" %}
+  
   <div class="[ intro__media ] [ radius dot-shadow ]">
     <img
       class="[ intro__image ] [ radius ]"
@@ -21,6 +21,10 @@
 </article>
 {% set ctaContent = primaryCTA %}
 {% include "partials/cta.html" %}
+
+{% include "partials/featured-work.html" %}
+
+{% include "partials/studio-feed.html" %}
 
 {% set ctaContent = cta %}
 {% include "partials/cta.html" %}
