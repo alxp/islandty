@@ -1,5 +1,5 @@
 ---
-title: 'Hello, world'
+title: 'Studio 33'
 layout: 'layouts/home.html'
 intro:
   eyebrow: 'Digital Marketing is our'
