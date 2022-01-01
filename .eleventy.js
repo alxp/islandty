@@ -14,6 +14,11 @@ module.exports = config => {
       x => x.data.featured
     );
   });
+  
+  // A collection of blog posts in reverse order.
+  config.addCollection('blog', collection => {
+    return [...collection.getFilteredByGlob('./src/posts/*.md')].reverse();
+ });
 
 
 
