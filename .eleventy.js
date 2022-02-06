@@ -29,6 +29,11 @@ module.exports = config => {
   config.addCollection('blog', collection => {
     return [...collection.getFilteredByGlob('./src/posts/*.md')].reverse();
  });
+ config.addCollection('people', collection => {
+   return collection.getFilteredByGlob('./src/people/*.md').sort((a, b) => {
+     return Number(a.fileSlug) > Number(b.fileslug) ? 1 : -1;
+   });
+ });
 
 
 
