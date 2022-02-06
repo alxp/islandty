@@ -1,5 +1,6 @@
 ---
 title: 'Studio 33'
+metaDesc: 'A made-up agency site that you get if you take the Learn Eleventy From Scratch course from Picalilly.'
 layout: 'layouts/home.html'
 intro:
   eyebrow: 'Digital Marketing is our'

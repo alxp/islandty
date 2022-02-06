@@ -1,4 +1,6 @@
 {
   "name": "Issue 33",
-  "url": "https://issue33.com"
+  "url": "https://issue33.com",
+  "authorName": "Issue 33",
+  "authorEmail": "hi@example.com"
 }
