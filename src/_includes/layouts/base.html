@@ -1,3 +1,4 @@
+{% set assetHash = global.random() %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,6 +7,22 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     {% include "partials/meta-info.html" %}
     <link rel="alternate" type="application/rss+xml" href="{{ site.url }}/feed.xml" />
+    <style>{% include "css/critical.css" %}</style>
+    
+    {# Add facility for pages to declare an array of critical styles #}
+    {% if pageCriticalStyles %}
+      {% for item in pageCriticalStyles %}
+        <style>{% include item %}</style>
+      {% endfor %}
+    {% endif %}
+    <link rel="stylesheet" media="print" href="/fonts/fonts.css?{{ assetHash }}" onload="this.media='all'" />
+    
+    {# Add facility for pages to declare an array of stylesheet paths #}
+    {% if pageStylesheets %}
+      {% for item in pageStyleSheets %}
+        <link rel="stylesheet" media="print" href="{{ item }}?{{ assetHash }}" onload="this.media='all'" />
+      {% endfor %}
+    {% endif %}
   </head>
   <body>
     {% include "partials/site-head.html" %}
