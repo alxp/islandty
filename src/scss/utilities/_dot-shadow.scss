@@ -1,0 +1,18 @@
+.dot-shadow {
+  --dot-shadow-size: 0.75rem;
+  position: relative;
+
+  &::before {
+    @extend .radius;
+
+    content: '';
+    display: block;
+    width: calc(100% + calc(var(--dot-shadow-size) * 2));
+    height: calc(100% + calc(var(--dot-shadow-size) * 2));
+    background-image: url("data:image/svg+xml,%3Csvg width='6px' height='6px' viewBox='0 0 6 6' version='1.1' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle fill='%23CAC6B8' cx='1' cy='5' r='1'%3E%3C/circle%3E%3Ccircle fill='%23CAC6B8' cx='4' cy='2' r='1'%3E%3C/circle%3E%3C/svg%3E%0A");
+    position: absolute;
+    top: calc(var(--dot-shadow-size) * -1);
+    left: calc(var(--dot-shadow-size) * -1);
+    z-index: -1;
+  }
+}
