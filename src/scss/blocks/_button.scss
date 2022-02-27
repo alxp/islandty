@@ -1,0 +1,27 @@
+.button {
+  @extend .radius;
+
+  display: inline-block;
+  padding: 0.5rem 2rem;
+  background: get-color('quaternary-glare');
+  color: get-color('dark-shade');
+  border: 2px solid;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+
+  @include apply-utility('font', 'sans');
+  @include apply-utility('weight', 'bold');
+
+  // Make sure hover state trumps all variants with a good ol’ important
+  &:hover {
+    background: get-color('quaternary') !important;
+    color: get-color('dark-shade') !important;
+  }
+
+  // Add a ghost modifier
+  &[data-variant='ghost'] {
+    background: transparent;
+    color: get-color('quaternary-glare');
+  }
+}
