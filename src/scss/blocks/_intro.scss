@@ -1,0 +1,87 @@
+.intro {
+  // Default is a single column layout where the header overlaps the media
+  display: grid;
+  grid-template-rows: get-size('700') minmax(0, 1fr) get-size('700') auto;
+  grid-gap: get-size('500');
+
+  // Force items to span 1 column
+  > * {
+    grid-column: 1;
+  }
+
+  &__header {
+    padding: get-size('300') get-size('500');
+    background: rgba(get-color('tertiary'), 0.95);
+    z-index: 1;
+    grid-row: 2;
+    margin: 0 get-size('500'); // Adds a horizontal gutter
+  
+    // Prevents it from stretching to fill the space
+    align-self: center;
+  }
+  
+  &__heading {
+    em {
+      font-style: normal;
+      display: block;
+  
+      // The weight change creates a weird indent, so this
+      // optical adjustment fixes it
+      transform: translateX(-3px);
+    }
+  }
+  
+  &__media {
+    grid-row: 1/4;
+    position: relative;
+  
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  
+  &__content {
+    grid-row: 4;
+  
+    p {
+      max-width: 30ch;
+    }
+  }
+  
+  // Switch to an inline layout with some vert space
+  // above the header and content
+  @include media-query('md') {
+    grid-template-rows: get-size('500') auto auto auto;
+    grid-template-columns: minmax(15rem, 1fr) 2fr;
+  
+    &__header {
+      padding: get-size('500');
+      margin: 0;
+      grid-column: 1/3;
+      justify-self: start;
+      align-self: end;
+    }
+  
+    &__media {
+      grid-column: 3/2;
+      grid-row: 1/5;
+    }
+  
+    &__content {
+      grid-row: 3/4;
+      grid-column: 1;
+    }
+  }
+  
+  // Flip the ratio for larger breakpoints
+  @include media-query('lg') {
+    grid-template-columns: 1fr minmax(44rem, 1fr);
+  
+    // Because it's so large, it make sense to limit the image height too
+    &__media {
+      height: 28rem;
+    }
+  }
+}
