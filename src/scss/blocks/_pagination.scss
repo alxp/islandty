@@ -1,0 +1,12 @@
+.pagination {
+  &__inner {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  // Pushes a sole "next" link out to the right
+  &__inner > [data-direction='forwards'] {
+    margin-inline-start: auto;
+  }
+}

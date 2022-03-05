@@ -1,0 +1,20 @@
+// First up: config and functions
+@import 'config';
+
+// Set Gorko to output no CSS for this file
+$outputTokenCSS: false;
+
+// Next: pull in Gorko for design tokens
+@import '../../node_modules/gorko/gorko.scss';
+
+// Generic styles
+time[datetime] {
+  display: block;
+  color: get-color('primary-shade');
+  font-size: get-size('700');
+  font-style: italic;
+}
+
+@import 'blocks/post-list';
+@import 'blocks/pagination';
+@import 'blocks/page-content';

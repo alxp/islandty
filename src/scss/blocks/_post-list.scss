@@ -1,0 +1,15 @@
+.post-list {
+  &__link {
+    font-size: get-size('700');
+    color: get-color('dark-shade');
+    text-decoration-color: get-color('primary-shade');
+
+    @include apply-utility('font', 'sans');
+    @include apply-utility('weight', 'bold');
+
+    &:hover {
+      color: get-color('primary-shade');
+      text-decoration-color: get-color('dark-shade');
+    }
+  }
+}
