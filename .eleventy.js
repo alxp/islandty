@@ -1,8 +1,13 @@
-const rssPlugin = require('@11ty/eleventy-plugin-rss')
-;
+const rssPlugin = require('@11ty/eleventy-plugin-rss');
 // Filters
 const dateFilter = require('./src/filters/date-filter.js');
 const w3DateFilter = require('./src/filters/w3-date-filter.js');
+
+// Transforms
+const htmlMinTransform = require('./src/transforms/html-min-transform.js');
+
+// Create a helpful production flag
+const isProduction = process.env.NODE_ENV == 'production';
 
 module.exports = config => {
 
@@ -10,8 +15,10 @@ module.exports = config => {
   config.addFilter('dateFilter', dateFilter);
   config.addFilter('w3DateFilter', w3DateFilter);
   
-  // Set directories to pass through to the dist folder
-  config.addPassthroughCopy('./src/images/');
+  // only minify HTML if we are in productionbecause it slows builds _right_ down
+  if (isProduction) {
+    config.addTransform('htmlmin', htmlMinTransform);
+  }
 
 // Plugins
 config.addPlugin(rssPlugin);
