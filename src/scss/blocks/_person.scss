@@ -1,0 +1,25 @@
+.person {
+  position: relative;
+  height: 100%;
+
+  &__details {
+    position: absolute;
+    bottom: 0.5rem;
+    left: -0.25rem;
+    width: calc(100% - 0.5rem);
+    padding: 0.8rem;
+    background: get-color('quaternary');
+  }
+
+  &__image {
+    filter: grayscale(1);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__name {
+    display: block;
+    font-size: get-size('600');
+  }
+}

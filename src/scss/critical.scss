@@ -80,6 +80,8 @@ h4 {
 @import 'blocks/skip-link';
 @import 'blocks/cta';
 @import 'blocks/page-header';
+@import 'blocks/people';
+@import 'blocks/person';
 
 // Import utilities
 @import 'utilities/dot-shadow';
@@ -91,3 +93,5 @@ h4 {
 @import 'utilities/visually-hidden';
 @import 'utilities/wrapper';
 @import 'utilities/headline';
+@import 'utilities/auto-grid';
+
