@@ -6,6 +6,9 @@ const w3DateFilter = require('./src/filters/w3-date-filter.js');
 // Transforms
 const htmlMinTransform = require('./src/transforms/html-min-transform.js');
 
+const footnotes = require('eleventy-plugin-footnotes')
+
+
 // Create a helpful production flag
 const isProduction = process.env.NODE_ENV == 'production';
 
@@ -22,6 +25,8 @@ module.exports = config => {
 
 // Plugins
 config.addPlugin(rssPlugin);
+
+config.addPlugin(footnotes);
   
   const sortByDisplayOrder = require('./src/utils/sort-by-display-order.js');
   // Returns work items, sorted by display order

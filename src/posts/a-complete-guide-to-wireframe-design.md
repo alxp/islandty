@@ -4,6 +4,35 @@ date: '2020-04-13'
 tags: ['Tutorial', 'Learning']
 ---
 
+Your text here
+
+## Footnotes
+Footnotes are the bread and butter of scholarship. Kramdown makes  footnotes a fairly simple affair:
+
+Something about {% footnoteref "css-counters", "CSS counters are, in essence, variables maintained by CSS whose values may be incremented by CSS rules to track how many times they’re used." %}CSS counters{% endfootnoteref %} that deserves a footnote explaining
+what they are.
+
+
+### Old footnotes
+
+```
+O Captain! my Captain! rise up and hear the bells;
+Rise up—for you the flag is flung—for you the bugle[^fn2] trills,
+```
+
+...
+
+[^fn2]: The bugle is a small trumpet implicated in the military industrial complex.
+These footnotes can be placed anywhere, but they will always be generated at the bottom of the document. To have a multi-paragraph footnote you need to start the footnote text on the next line after the footnote anchor and indent it:
+
+[^fn3]:
+  Ugh pinterest fixie cronut pitchfork beard. Literally deep
+  cold-pressed distillery pabst austin.
+
+  Typewriter 90's roof party poutine, kickstarter raw
+  denim pabst readymade biodiesel umami chicharrones XOXO.
+The footnotes system provided by kramdown does have one limitation: It generates the numerati
+
 Placidis tamen. Amnem unda fores et nocent tellus. Ictu undis offensi nostra nempe dextra quod, illa causa expositum, dat. Cura rapta dum praepositam inhaesit, laeto sceleratus vicina utque. Annos nunc sumitur ignes ac nequit minanti.
 
 ## Latus formam supplex dea ante cupies sanguisque

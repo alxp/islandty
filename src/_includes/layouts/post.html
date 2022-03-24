@@ -29,6 +29,7 @@
     {% include "partials/page-header.html" %}
     <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 gap-top-700 ] ">
       {{ content | safe }}
+      {% footnotes %}
     </div>
     {% if recommendedPosts %}
       <footer class="recommended-posts">

@@ -15,6 +15,7 @@
     "@11ty/eleventy-cache-assets": "^2.3.0",
     "@11ty/eleventy-plugin-rss": "^1.1.2",
     "concurrently": "^7.0.0",
+    "eleventy-plugin-footnotes": "^0.10.0",
     "get-google-fonts": "^1.2.2",
     "gorko": "^0.9.1",
     "gulp": "^4.0.2",
