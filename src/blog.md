@@ -1,5 +1,5 @@
 ---
-title: 'The Issue 33 Blog'
+title: 'alxp.ca Blog'
 layout: 'layouts/feed.html'
 pagination:
   data: collections.blog
@@ -10,5 +10,4 @@ paginationNextText: 'Older posts'
 paginationAnchor: '#post-list'
 ---
 
-The latest articles from around the studio, demonstrating our design
-thinking, strategy and expertise.
+Some writing I've done, mostly long e-mails that end up being something I feel like other people might find useful.

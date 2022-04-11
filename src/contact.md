@@ -2,7 +2,7 @@
 title: 'Contact me'
 layout: 'layouts/page.html'
 ---
-Reach me at these places:
+You can send me an email to "al" at this web site's domain, or reach me at these places:
 
 * Twitter: [@alxp](https://twitter.com/alxp)
 * [GitHub](https://github.com/alxp)

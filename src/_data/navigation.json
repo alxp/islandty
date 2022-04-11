@@ -5,7 +5,7 @@
       "url": "/"
     },
     {
-      "text": "About",
+      "text": "About me",
       "url": "/about/"
     },
     {
@@ -15,6 +15,10 @@
     {
       "text": "Blog",
       "url": "/blog/"
+    },
+    {
+      "text": "Trivia",
+      "url": "/trivia/"
     },
     {
       "text": "Contact",
