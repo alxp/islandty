@@ -2,7 +2,9 @@
 @import 'config';
 
 // Set Gorko to output no CSS for this file
-$outputTokenCSS: false;
+//$outputTokenCSS: false;
+//$generate-utility-classes: false;
+$generate-utility-classes: false;
 
 // Next: pull in gorko for design tokens
 @import '../../node_modules/gorko/gorko.scss';

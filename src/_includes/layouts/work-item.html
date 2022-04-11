@@ -1,8 +1,6 @@
 {% extends "layouts/base.html" %}
 {% set pageCriticalStyles = ['css/work-item.css'] %}
 
-{% set peopleItems = helpers.filterCollectionByKeys(collections.people, team) %}
-
 {% block content %}
 
   <section class="work-item">
@@ -30,6 +28,11 @@
             {% endfor %}
           </ol>
         </div>
+      </div>
+    </article>
+    <article>
+      <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 gap-top-700 ] ">
+        {{ content | safe }}
       </div>
     </article>
     <div class="wrapper">

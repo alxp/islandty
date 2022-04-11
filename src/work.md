@@ -1,7 +1,6 @@
 ---
-title: 'Our finest work'
+title: 'Work and projects'
 layout: 'layouts/work-landing.html'
 ---
 
-Some of our finest work from websites right through to printed
-branding that shows our range and diversity of talent in the agency.
+Some links to projects I've created or contributed to that I'm especially proud of.

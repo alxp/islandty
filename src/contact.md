@@ -1,8 +1,9 @@
 ---
-title: 'Contact us'
+title: 'Contact me'
 layout: 'layouts/page.html'
 ---
+Reach me at these places:
 
-This is a made up agency that is being used as a context for the project that you build when you [learn Eleventy from scratch](https://learneleventyfromscratch.com), so ideally, you shouldn’t try to contact us.
-
-You can go ahead and purchase the course to build this page—amongst [the rest of the site](/)—by visiting [Piccalilli](https://learneleventyfromscratch.com).
+* Twitter: [@alxp](https://twitter.com/alxp)
+* [GitHub](https://github.com/alxp)
+* My [Drupal](https://drupal.org/u/alxp) user page with links to my contrib modules.

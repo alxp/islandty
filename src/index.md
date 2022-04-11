@@ -1,15 +1,15 @@
 ---
-title: 'Studio 33'
-metaDesc: 'A made-up agency site that you get if you take the Learn Eleventy From Scratch course from Picalilly.'
+title: "Alexander O'Neill - Home"
+metaDesc: 'AAlexander ONeill personal web site.'
 layout: 'layouts/home.html'
 intro:
-  eyebrow: 'Digital Marketing is our'
-  main: 'Bread & Butter'
-  summary: 'Let us help you create your campaign with our multi-talented team of talented creatives.'
+  eyebrow: 'Alexander'
+  main: 'alxp.ca'
+  summary: 'Links to my various work and writing.'
   buttonText: 'See our work'
   buttonUrl: '/work'
-  image: 'images/bg/toast.jpg'
-  imageAlt: 'Buttered, toasted white bread'
+  image: 'images/al_profile_picture.jpg'
+  imageAlt: 'Photo of Alexander sitting and wearing headphones'
 primaryCTA:
   title: 'This is an agency that doesn’t actually exist'
   summary: 'This is the project site you build when you take the “Learn
@@ -23,4 +23,3 @@ studioFeed:
 
 ---
 
-This is pretty _rad_, right?

@@ -1,9 +1,11 @@
 ---
-title: 'About Issue 33'
+title: 'About me'
 layout: 'layouts/about.html'
-permalink: '/about-us/index.html'
+permalink: '/about/index.html'
 ---
 
-Wanna see our foosball table? Nah, only kidding. We’re a made-up
-agency being used as an example for the Piccalilli course,
-[Learn Eleventy From Scratch](https://learneleventyfromscratch.com).
+I'm a software developer who's happily been in the Drupal and Academic publishing and digitital preservation fields for more than ten years.
+
+## Trivia
+
+My main hobby is writing and hosting pub quiz-style trivia events. I managed to turn my endless apatite for suprising knowledge about our world into a way to share it with others and entertain people.

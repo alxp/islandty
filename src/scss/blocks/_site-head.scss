@@ -3,6 +3,7 @@
   
   &__inner {
     display: flex;
+    
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
@@ -12,12 +13,15 @@
     flex-shrink: 0;
     margin-inline-end: get-size( '600'); // Prevents nav bunching up to the logo
     
-    // Optical adjustment to account for the offset the sunken 3s create
-    transform: translateY(0.25rem);
+    font-size: get-size('700');
     
-    svg {
-      width: 100px;
+    &:link {
+      text-decoration: none;  
+      color: darkgray;
     }
+    
+    // Optical adjustment to account for the offset the sunken 3s create
+    transform: translateY(0.25rem);    
   }
   
   &__nav {
@@ -26,9 +30,7 @@
   
   @include media-query('md') {
     &__brand {
-      svg {
-        width: 160px;
-      }
+      font-size: get-size('800');
     }
   }
 }
