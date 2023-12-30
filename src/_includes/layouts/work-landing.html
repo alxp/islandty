@@ -1,11 +1,12 @@
-{% extends "layouts/base.html" %} 
+{% extends "layouts/base.html" %}
 
-{% set pageHeaderTitle = title %} 
-{% set pageHeaderSummary = content %} 
+{% set pageHeaderTitle = title %}
+{% set pageHeaderSummary = content %}
 
 {% block content %}
   <article>
     {% include "partials/page-header.html" %}
+
   </article>
   <div class="[ panel dot-shadow ] [ bg-tertiary-glare ]">
     <div class="wrapper">
@@ -34,6 +35,6 @@
     </div>
   </div>
 
-  {% include "partials/cta.html" %} 
+  {% include "partials/cta.html" %}
 
 {% endblock %}
