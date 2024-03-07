@@ -11,8 +11,16 @@ pageCriticalStyles = ['css/page.css'] %} {% block content %}
 
       {% for item in book.items %}
           <h3>{{item.title }}</h3>
-      {% endfor %}
+          <table>
+          <tr>
+          <td> {{ fieldNames.title }} </td> <td> {{ item.title }} </td>
+          </tr>
+          <tr>
+          <td> {{fieldNames.items.field_campus }}</td> <td> {{item.field_campus }} </td>
+          </tr>
+          </table>
 
+      {% endfor %}
     </div>
   </div>
 </article>
