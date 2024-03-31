@@ -3,7 +3,6 @@ field_pid,PID
 field_resource_type,Resource Type
 field_model,Model
 field_member_of,Member Of
-parent_id,Parent ID
 field_weight,Weight
 title,Title
 field_local_identifier,Local Identifier
