@@ -1,16 +1,13 @@
 {% set contributors = item[name].split('|') %}
-
-<tr>
-    <td> {{ label }}</td>
-    <td>
-        <dl>
-            {% for contributor in contributors %}
-            {% set foo, key, vocab, name = contributor.split(':') %}
-            <dt>{{ relators.items[key] }}</dt>
-            <dd>{{ name }}</dd>
-            {% endfor %}
-        </dl>
-        
-        
-    </td>
-</tr>
+{% set count = contributors.length %}
+{% for contributor in contributors %}
+    {% set parts = contributor.split(':') %}
+    <tr>
+        {% if loop.first %}
+        <td rowspan="{{ count }}"> {{ label }}</td>
+        {% endif %}
+        <td>
+            {{ relators.items[parts[1]] }}: {{ parts[3] }}
+        </td>
+    </tr>
+{% endfor %}
