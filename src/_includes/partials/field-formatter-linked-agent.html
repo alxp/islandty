@@ -4,7 +4,7 @@
     {% set parts = contributor.split(':') %}
     <tr>
         {% if loop.first %}
-        <td rowspan="{{ count }}"> {{ label }}</td>
+        <th rowspan="{{ count }}"> {{ label }}</th>
         {% endif %}
         <td>
             {{ relators.items[parts[1]] }}: {{ parts[3] }}

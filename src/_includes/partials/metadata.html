@@ -1,0 +1,16 @@
+<table>
+    {% for name, label in fieldNames.items %}
+    {% if item[name] %}
+    {% if name == 'file' %}
+    {% include "partials/field-formatter-file.html" %}
+    {% elif name == 'field_linked_agent' %}
+    {% include "partials/field-formatter-linked-agent.html" %}
+    {% else %}
+    <tr>
+        <th> {{ label }}</th>
+        <td> {{ item[name] | safe }} </td>
+    </tr>
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+</table>
