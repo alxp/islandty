@@ -55,7 +55,7 @@ module.exports = config => {
 
   config.addFilter('getGlobalData', (data) => {
     // if your global data lives elsewhere, this file path will need to change a bit
-    return require(`./src/_data/${data}.json`);
+    return require(`./src/_data/${data}.csv`);
   });
 
   // only minify HTML if we are in productionbecause it slows builds _right_ down
