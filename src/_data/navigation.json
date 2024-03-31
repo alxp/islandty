@@ -5,20 +5,8 @@
       "url": "/"
     },
     {
-      "text": "About me",
-      "url": "/about/"
-    },
-    {
-      "text": "Work",
-      "url": "/work/"
-    },
-    {
-      "text": "Blog",
-      "url": "/blog/"
-    },
-    {
-      "text": "Trivia",
-      "url": "/trivia/"
+      "text": "Books",
+      "url": "/books/"
     },
     {
       "text": "Contact",

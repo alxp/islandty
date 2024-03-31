@@ -4,16 +4,14 @@ const parse = require('csv-parse/sync');
 const fs = require("fs");
 
 function readCSV() {
+  let csv = fs.readFileSync('./src/_data/largebook.csv', { encoding: 'utf8', });
 
-  //const input = fs.readFileSync("./src/_data/values.csv");
-  let csv = fs.readFileSync('./src/_data/largebook.csv', {encoding:'utf8',});
+  let data = parse.parse(csv, { columns: true, skip_empty_lines: true });
 
-let data = parse.parse(csv, { columns:true, skip_empty_lines:true });
-
-return data;
+  return data;
 }
 
 module.exports = function () {
   const data = readCSV();
-  return {items: data};
+  return { items: data };
 };

@@ -1,18 +1,18 @@
 ---
-title: "Alexander O’Neill - Home"
-metaDesc: "AAlexander O'Neill personal web site."
+title: "Islandty - home"
+metaDesc: "Using Eleventy to act as a digital asset management system"
 layout: 'layouts/home.html'
 intro:
-  eyebrow: "Alexander O’Neill"
-  main: 'alxp.ca'
-  summary: 'Software developer and trivia host from Prince Edward Island, Canada.'
-  buttonText: 'Work and Projects'
-  buttonUrl: '/work'
-  image: 'images/al_profile_picture.jpg'
-  imageAlt: 'Photo of Alexander sitting and wearing headphones'
+  eyebrow: "An Alexander and Rosie project"
+  main: 'Islandty'
+  summary: 'The tiniest DAMS powered by a CSV.'
+  buttonText: 'Example'
+  buttonUrl: '/books'
+  image: 'images/spreadsheet.png'
+  imageAlt: 'Screenshot of data in Google Sheets.'
 primaryCTA:
   title: "Islandora"
-  summary: "I've been a software developer for more than 15 years, many of which have been working on the Islandora project which I helped start at the University of Prince Edward Island."
+  summary: "This project is a spin-off of our work with Islandora. If you want a full Drupal stack, check them out."
   buttonText: 'Islandora.ca'
   buttonUrl: 'https://islandora.ca/'
 
