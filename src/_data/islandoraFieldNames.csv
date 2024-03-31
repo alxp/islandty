@@ -9,12 +9,14 @@ title,Title
 field_local_identifier,Local Identifier
 field_genre,Genre
 field_edtf_date_created,Date Created
+field_edtf_date_issued,Date Issued
 field_linked_agent,Linked Agent
-field_description_long,Description
+field_description,Description
 field_extent,Extent
 field_rights,Rights
+field_subject_general,Subject
 field_subject,Subject
-
+field_geographic_subject,Geographic Subject
 field_preferred_citation,Preferred Citation
 field_use_and_reproduction,Use and Reproduction
 field_physical_storage_info,Physical Storage Info

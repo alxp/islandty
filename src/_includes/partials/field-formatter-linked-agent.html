@@ -1,0 +1,16 @@
+{% set contributors = item[name].split('|') %}
+
+<tr>
+    <td> {{ label }}</td>
+    <td>
+        <dl>
+            {% for contributor in contributors %}
+            {% set foo, key, vocab, name = contributor.split(':') %}
+            <dt>{{ relators.items[key] }}</dt>
+            <dd>{{ name }}</dd>
+            {% endfor %}
+        </dl>
+        
+        
+    </td>
+</tr>

@@ -7,7 +7,7 @@ intro:
   main: 'Islandty'
   summary: 'The tiniest DAMS powered by a CSV.'
   buttonText: 'Example'
-  buttonUrl: '/books'
+  buttonUrl: '/content'
   image: 'images/spreadsheet.png'
   imageAlt: 'Screenshot of data in Google Sheets.'
 primaryCTA:
