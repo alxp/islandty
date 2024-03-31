@@ -28,8 +28,8 @@ pageCriticalStyles = ['css/page.css'] %} {% block content %}
                     {% include "partials/field-formatter-linked-agent.html" %}
                 {% else %}
                 <tr>
-                    <td> {{label }}</td>
-                    <td> {{item[name] }} </td>
+                    <td> {{ label }}</td>
+                    <td> {{ item[name] | safe }} </td>
                 </tr>
                 {% endif %}
             {% endif %}
