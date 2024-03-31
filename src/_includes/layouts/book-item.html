@@ -1,0 +1,27 @@
+{% extends "layouts/base.html" %} {% set pageHeaderTitle = title %} {% set
+    pageCriticalStyles = ['css/page.css'] %} {% block content %}
+    <article>
+      {% include "partials/page-header.html" %}
+    
+    
+        <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
+          {{ content | safe }}
+    
+            {% if item.field_model == 'Paged Content' %}
+              <h3>{{item.title }}</h3>
+              <table>
+    
+                  {% for name, label in fieldNames.items %}
+                    {% if item[name] %}
+                      <tr>
+                        <td> {{label }}</td> <td> {{item[name] }} </td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+              </table>
+            {% endif %}
+        </div>
+      </div>
+    </article>
+    {% endblock %}
+    

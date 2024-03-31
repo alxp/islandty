@@ -7,9 +7,8 @@ pageCriticalStyles = ['css/page.css'] %} {% block content %}
     <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
       {{ content | safe }}
 
-
-
       {% for item in book.items %}
+        {% if item.field_model == 'Paged Content' %}
           <h3>{{item.title }}</h3>
           <table>
 
@@ -21,7 +20,7 @@ pageCriticalStyles = ['css/page.css'] %} {% block content %}
                 {% endif %}
               {% endfor %}
           </table>
-
+        {% endif %}
       {% endfor %}
     </div>
   </div>
