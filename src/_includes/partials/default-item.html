@@ -1,0 +1,45 @@
+<h3>{{item.title }}</h3>
+{% if item.media_use_tid == 'http://pcdm.org/use#ThumbnailImage' %}
+<div class="[ content__thumbnail ] [ radius dot-shadow ]">
+    <img class="[ content__image ] [ radius ]" src="{{ fileurl }}" />
+</div>
+{% endif %}
+<table>
+    {% for name, label in fieldNames.items %}
+    {% if item[name] %}
+    {% if name == 'file' %}
+    {% include "partials/field-formatter-file.html" %}
+    {% elif name == 'field_linked_agent' %}
+    {% include "partials/field-formatter-linked-agent.html" %}
+    {% else %}
+    <tr>
+        <td> {{ label }}</td>
+        <td> {{ item[name] | safe }} </td>
+    </tr>
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+</table>
+{% if item.field_model == 'Collection' %}
+<h2>Children</h2>
+<ul>
+    {% for child in children %}
+    <li><a href="/content/{{ child.id | slugify }}">{{ child.title }}</a></li>
+    {% endfor %}
+</ul>
+
+{% elif item.field_model == 'Page' %}
+<h2>Part of</h2>
+<h3><a href="/content/{{ parent.id | slugify }}">{{ parent.title }}</a></h3>
+<table>
+
+    {% for name, label in fieldNames.items %}
+    {% if parent[name] %}
+    <tr>
+        <td> {{label }}</td>
+        <td> {{parent[name] }} </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+</table>
+{% endif %}
