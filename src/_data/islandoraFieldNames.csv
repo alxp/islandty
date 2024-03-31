@@ -1,31 +1,30 @@
-,,,,,,,,,,,,,,,,,,,,,
-id,ID,,,,,,,,,,,,,,,,,,,,
-field_pid,PID,,,,,,,,,,,,,,,,,,,,
-field_resource_type,Resource Type,,,,,,,,,,,,,,,,,,,,
-field_model,Model,,,,,,,,,,,,,,,,,,,,
-field_member_of,Member Of,,,,,,,,,,,,,,,,,,,,
-parent_id,Parent ID,,,,,,,,,,,,,,,,,,,,
-field_weight,Weight,,,,,,,,,,,,,,,,,,,,
-title,Title,,,,,,,,,,,,,,,,,,,,
-field_local_identifier,Local Identifier,,,,,,,,,,,,,,,,,,,,
-field_genre,Genre,,,,,,,,,,,,,,,,,,,,
-field_edtf_date_created,Date Created,,,,,,,,,,,,,,,,,,,,
-field_linked_agent,Linked Agent,,,,,,,,,,,,,,,,,,,,
-field_description_long,Description,,,,,,,,,,,,,,,,,,,,
-field_extent,Extent,,,,,,,,,,,,,,,,,,,,
-field_rights,,,,,,,,,,,,,,,,,,,,,
-field_subject,Subject,,,,,,,,,,,,,,,,,,,,
-field_geographic_subject,,,,,,,,,,,,,,,,,,,,,
-field_preferred_citation,Preferred Citation,,,,,,,,,,,,,,,,,,,,
-field_use_and_reproduction,Use and Reproduction,,,,,,,,,,,,,,,,,,,,
-field_physical_storage_info,Physical Storage Info,,,,,,,,,,,,,,,,,,,,
-field_digital_obj_uri,,,,,,,,,,,,,,,,,,,,,
-field_archival_obj_refid,Archival Object Ref ID,,,,,,,,,,,,,,,,,,,,
-field_archival_obj_uri,Archival Object URL,,,,,,,,,,,,,,,,,,,,
-field_campus,Campus,,,,,,,,,,,,,,,,,,,,
-field_repository,Repository,,,,,,,,,,,,,,,,,,,,
-field_unit,Unit,,,,,,,,,,,,,,,,,,,,
-field_campus_unit_repository,Campus Unit Repository,,,,,,,,,,,,,,,,,,,,
-field_display_hints,,,,,,,,,,,,,,,,,,,,,
-hocr,hOCR,,,,,,,,,,,,,,,,,,,,
-file,File,,,,,,,,,,,,,,,,,,,,
+id,ID
+field_pid,PID
+field_resource_type,Resource Type
+field_model,Model
+field_member_of,Member Of
+parent_id,Parent ID
+field_weight,Weight
+title,Title
+field_local_identifier,Local Identifier
+field_genre,Genre
+field_edtf_date_created,Date Created
+field_linked_agent,Linked Agent
+field_description_long,Description
+field_extent,Extent
+field_rights
+field_subject,Subject
+field_geographic_subject
+field_preferred_citation,Preferred Citation
+field_use_and_reproduction,Use and Reproduction
+field_physical_storage_info,Physical Storage Info
+field_digital_obj_uri
+field_archival_obj_refid,Archival Object Ref ID
+field_archival_obj_uri,Archival Object URL
+field_campus,Campus
+field_repository,Repository
+field_unit,Unit
+field_campus_unit_repository,Campus Unit Repository
+field_display_hints
+hocr,hOCR
+file,File
