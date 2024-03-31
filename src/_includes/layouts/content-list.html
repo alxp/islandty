@@ -1,0 +1,19 @@
+{% extends "layouts/base.html" %} {% set pageHeaderTitle = title %} {% set
+pageCriticalStyles = ['css/page.css'] %} {% block content %}
+<article>
+  {% include "partials/page-header.html" %}
+
+
+    <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
+      {{ content | safe }}
+
+      {% for item in readCSV.items %}
+        {% if item.field_model != 'Page' %}
+          <h3><a href="/books/{{ item.id | slugify }}">{{ item.title }}</a></h3>
+
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</article>
+{% endblock %}

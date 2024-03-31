@@ -2,12 +2,13 @@
 pageCriticalStyles = ['css/page.css'] %} {% block content %}
 <article>
     {% include "partials/page-header.html" %}
-    {% set parent = islandoraHelpers.getParentContent(book.items, item) %}
+    {% set parent = islandoraHelpers.getParentContent(readCSV.items, item) %}
+    {% set children = islandoraHelpers.getChildContent(readCSV.items, item) %}
 
     <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
         {{ content | safe }}
 
-        {% if item.field_model == 'Paged Content' %}
+        
         <h3>{{item.title }}</h3>
         <table>
 
@@ -20,7 +21,15 @@ pageCriticalStyles = ['css/page.css'] %} {% block content %}
             {% endif %}
             {% endfor %}
         </table>
-        {% elseif item.field_model == 'Page' %}
+        {% if item.field_model == 'Collection' %}
+           <h2>Children</h2>
+           <ul>
+              {% for child in children %}
+                 <li><a href="/books/{{ child.id | slugify }}">{{ child.title }}</a></li>  
+              {% endfor %}
+           </ul>
+          
+        {% elif item.field_model == 'Page' %}
         <h2>Part of</h2>
         <h3><a href="/books/{{ parent.id | slugify }}">{{ parent.title }}</a></h3>
         <table>
