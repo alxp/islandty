@@ -1,27 +1,41 @@
 {% extends "layouts/base.html" %} {% set pageHeaderTitle = item.title %} {% set
-    pageCriticalStyles = ['css/page.css'] %} {% block content %}
-    <article>
-      {% include "partials/page-header.html" %}
-    
-    
-        <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
-          {{ content | safe }}
-    
-            {% if item.field_model == 'Paged Content' %}
-              <h3>{{item.title }}</h3>
-              <table>
-    
-                  {% for name, label in fieldNames.items %}
-                    {% if item[name] %}
-                      <tr>
-                        <td> {{label }}</td> <td> {{item[name] }} </td>
-                      </tr>
-                    {% endif %}
-                  {% endfor %}
-              </table>
+pageCriticalStyles = ['css/page.css'] %} {% block content %}
+<article>
+    {% include "partials/page-header.html" %}
+    {% set parent = islandoraHelpers.getParentContent(book.items, item) %}
+
+    <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
+        {{ content | safe }}
+
+        {% if item.field_model == 'Paged Content' %}
+        <h3>{{item.title }}</h3>
+        <table>
+
+            {% for name, label in fieldNames.items %}
+            {% if item[name] %}
+            <tr>
+                <td> {{label }}</td>
+                <td> {{item[name] }} </td>
+            </tr>
             {% endif %}
-        </div>
-      </div>
-    </article>
-    {% endblock %}
-    
+            {% endfor %}
+        </table>
+        {% elseif item.field_model == 'Page' %}
+        <h2>Part of</h2>
+        <h3><a href="/books/{{ parent.id | slugify }}">{{ parent.title }}</a></h3>
+        <table>
+
+            {% for name, label in fieldNames.items %}
+            {% if parent[name] %}
+            <tr>
+                <td> {{label }}</td>
+                <td> {{parent[name] }} </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+        {% endif %}
+    </div>
+    </div>
+</article>
+{% endblock %}
