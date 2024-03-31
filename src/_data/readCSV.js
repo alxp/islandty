@@ -1,10 +1,10 @@
 
 const parse = require('csv-parse/sync');
-
+require('dotenv').config();
 const fs = require("fs");
 
 function readCSV() {
-  let csv = fs.readFileSync('./src/_data/demo_objects.csv', { encoding: 'utf8', });
+  let csv = fs.readFileSync(process.env.dataFileName, { encoding: 'utf8', });
 
   let data = parse.parse(csv, { columns: true, skip_empty_lines: true });
 
