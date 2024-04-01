@@ -1,0 +1,8 @@
+{% set audioUrl = item.service %}
+
+{% set trackData = item['media:audio:field_track'].split(':') %}
+
+<audio controls>
+    <source src="{{ ['/images/', audioUrl] | join }}" />
+    <track default kind="{{ trackData[1] }}" srclang="{{ trackData[2] }}" src="{{ ['/images/', trackData[3]] | join }}"/>
+</audio>
