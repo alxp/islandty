@@ -1,16 +1,29 @@
-<table>
-    {% for name, label in fieldNames.items %}
-    {% if item[name] %}
-    {% if name == 'file' %}
-    {% include "partials/field-formatter-file.html" %}
-    {% elif name == 'field_linked_agent' %}
-    {% include "partials/field-formatter-linked-agent.html" %}
-    {% else %}
-    <tr>
-        <th> {{ label }}</th>
-        <td> {{ item[name] | safe }} </td>
-    </tr>
-    {% endif %}
-    {% endif %}
-    {% endfor %}
-</table>
+<div class="content-metadata">
+    <table>
+        {% for name, label in fieldNames.items %}
+        {% if item[name] %}
+        {% if name == 'file' %}
+        {% include "partials/field-formatter-file.html" %}
+        {% elif name == 'field_linked_agent' %}
+        {% include "partials/field-formatter-linked-agent.html" %}
+        {% elif name == 'field_subject_general' %}
+        {% include "partials/field-formatter-subject.html" %}
+        {% else %}
+
+        {% set values = item[name].split('|') %}
+        {% set count = values.length %}
+        {% for value in values %}
+        <tr>
+            {% if loop.first %}
+            <th rowspan="{{ count }}"> {{ label }}</th>
+            {% endif %}
+            <td>
+                {{ value }}
+            </td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+    </table>
+</div>

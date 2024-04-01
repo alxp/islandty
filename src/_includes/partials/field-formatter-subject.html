@@ -1,0 +1,13 @@
+{% set subjects = item[name].split('|') %}
+{% set count = subjects.length %}
+{% for subject in subjects %}
+    {% set parts = subject.split(':') %}
+    <tr>
+        {% if loop.first %}
+        <th rowspan="{{ count }}"> {{ label }}</th>
+        {% endif %}
+        <td>
+            {{ parts[1] }}
+        </td>
+    </tr>
+{% endfor %}
