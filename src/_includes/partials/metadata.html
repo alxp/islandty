@@ -18,7 +18,7 @@
             <th rowspan="{{ count }}"> {{ label }}</th>
             {% endif %}
             <td>
-                {{ value }}
+                {{ value | safe }}
             </td>
         </tr>
         {% endfor %}
