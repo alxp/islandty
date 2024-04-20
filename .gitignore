@@ -13,3 +13,6 @@ Thumbs.db
 node_modules
 dist
 src/_includes/css
+
+# Source files
+src/images/Transcribed\ Video
