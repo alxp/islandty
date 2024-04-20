@@ -1,0 +1,17 @@
+{% extends "layouts/base.html" %} {% set pageHeaderTitle = title %} {% set
+pageCriticalStyles = ['css/page.css'] %} {% block content %}
+<article>
+    {% include "partials/page-header.html" %}
+
+    <div class="panel dot-shadow bg-tertiary-glare">
+        <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
+            {{ content | safe }}
+            <h2>MODS</h2>
+            <div class="[ mods ]">
+                {{ readMODS(ModsFile).modsTable.principalResult | safe }}
+            </div>
+        </div>
+
+    </div>
+</article>
+{% endblock %}

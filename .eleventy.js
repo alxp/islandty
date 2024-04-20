@@ -8,7 +8,6 @@ const htmlMinTransform = require('./src/transforms/html-min-transform.js');
 
 const footnotes = require('eleventy-plugin-footnotes')
 
-
 // Create a helpful production flag
 const isProduction = process.env.NODE_ENV == 'production';
 
@@ -63,10 +62,10 @@ module.exports = config => {
     config.addTransform('htmlmin', htmlMinTransform);
   }
 
-// Plugins
-config.addPlugin(rssPlugin);
+  // Plugins
+  config.addPlugin(rssPlugin);
 
-config.addPlugin(footnotes);
+  config.addPlugin(footnotes);
 
   const sortByDisplayOrder = require('./src/utils/sort-by-display-order.js');
   // Returns work items, sorted by display order
@@ -84,24 +83,29 @@ config.addPlugin(footnotes);
   // A collection of blog posts in reverse order.
   config.addCollection('blog', collection => {
     return [...collection.getFilteredByGlob('./src/posts/*.md')].reverse();
- });
- config.addCollection('people', collection => {
-   return collection.getFilteredByGlob('./src/people/*.md').sort((a, b) => {
-     return Number(a.fileSlug) > Number(b.fileslug) ? 1 : -1;
-   });
- });
+  });
+  config.addCollection('people', collection => {
+    return collection.getFilteredByGlob('./src/people/*.md').sort((a, b) => {
+      return Number(a.fileSlug) > Number(b.fileslug) ? 1 : -1;
+    });
+  });
 
-// Tell 11ty to use the .eleventyignore and ignore our .gitignore file
-config.setUseGitIgnore(false);
+  // ROSIE: A collection of digital objects.
+  config.addCollection('islandora', collection => {
+    return collection.getFilteredByGlob('./islandora/**/*.md');
+  });
 
-config.amendLibrary("md", mdLib => mdLib.enable("code"));
+  // Tell 11ty to use the .eleventyignore and ignore our .gitignore file
+  config.setUseGitIgnore(false);
 
-// https://nodejs.org/api/util.html#util_util_inspect_object_options
-const inspect = require("util").inspect;
+  config.amendLibrary("md", mdLib => mdLib.enable("code"));
 
-module.exports = (eleventyConfig) => {
+  // https://nodejs.org/api/util.html#util_util_inspect_object_options
+  const inspect = require("util").inspect;
 
-};
+  module.exports = (eleventyConfig) => {
+
+  };
 
   return {
     markdownTemplateEngine: 'njk',

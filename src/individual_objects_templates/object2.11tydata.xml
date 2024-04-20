@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-3.xsd">
+    <identifier type="paro">0743</identifier>	
+    <abstract>Office copy from the original survey of Prince Edward Island showing the front of Lots 36 and 37. (No.3) The map shows the northern-most portions of Lots 36 and 37 on the north shore, east of Tracadie Bay. It identifies the northern commencements of three boundaries: the boundary between Lots 35 and 36; the boundary between Lots 36 and 37; and the boundary between Lots 37 and 38. Shading is used to indicate a sand dune area. North arrow.
+    </abstract>
+    <genre authority="aat">boundary maps</genre>
+    <titleInfo>
+        <title>Plan Shewing the front of Lots No.s 36 &amp; 37</title>
+    </titleInfo>
+    <name type="personal">
+        <namePart>Ball, J. </namePart>
+        <role>
+            <roleTerm authority="marcrelator" type="text">Surveyor</roleTerm>
+        </role>
+    </name>    
+    <typeOfResource>cartographic</typeOfResource>    
+    <originInfo>
+        <dateCreated>18400911</dateCreated>
+    </originInfo>
+    <language>
+        <languageTerm authority="iso639-2b" type="code">eng</languageTerm>
+    </language>   
+    <physicalDescription>
+        <form authority="marcform">manuscript</form>        
+        <extent>1 ms. map: 34 x 26 cm. The map is now broken in two pieces; these measurements reflect the assembled size.</extent>        
+        <note type="physical">The map is broken in two pieces. It has some damage around the edges.</note>
+    </physicalDescription>    
+    <note type="details">The map shows the northern-most portions of Lots 36 and 37 on the north shore, east of Tracadie Bay. It identifies the northern commencements of three boundaries: the boundary between Lots 35 and 36; the boundary between Lots 36 and 37; and the boundary between Lots 37 and 38. Shading is used to indicate a sand dune area. North arrow.</note>
+    <note>Back of map: Office Copy from the Original Survey Shewing the fronts of Lots No.s 36 &amp;37. Lot 36 - No. 3</note>    
+    <subject>
+        <cartographics>
+            <scale>60 chains/inch</scale>
+            <coordinates></coordinates>
+        </cartographics>
+        <hierarchicalGeographic>
+            <country>Canada</country>
+            <province>Prince Edward Island</province>
+            <county>Queens/Kings</county>
+            <region>Lots 36 and 37</region>            
+        </hierarchicalGeographic>
+    </subject>    
+    <subject authority="paro">
+       <topic>Boundaries</topic>
+       <topic>Lots</topic>
+       <topic>Coastal Areas</topic>
+       <topic>Harbours and Bays</topic>
+    </subject>    
+    <accessCondition type="useAndReproduction">This material is provided for research, education, and private use only.  For all other uses, please contact the Public Archives and Records Office of Prince Edward Island.  All responsibilities for copyright are the responsibility of the user.</accessCondition>    
+    <accessCondition type="restrictionOnAccess">There are no access restrictions on this content.</accessCondition>
+    <location>
+      <physicalLocation>Public Archives and Records Office</physicalLocation>
+    </location>
+</mods>
