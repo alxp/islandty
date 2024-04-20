@@ -4,20 +4,20 @@
 <!-- Container element of Mirador whose id should be passed to the instantiating call as "id" -->
 <div id="box" style="position: relative;">
     <div id="bounding-box" style="height:800px;"></div>
-    <div id="my-mirador"></div> 
+    <div id="my-mirador"></div>
 </div>
 
 <script type="text/javascript">
     var mirador = Mirador.viewer({
       "id": "my-mirador",
       "manifests": {
-        "https://iiif.io/api/cookbook/recipe/0001-mvm-image/manifest.json": {
+        "http://localhost:8080/images/Books/Wildflowers_of_Western_Canada/iiif/index.json": {
           "provider": "Islandora"
         }
       },
       "windows": [
         {
-          "loadedManifest": "https://iiif.io/api/cookbook/recipe/0001-mvm-image/manifest.json",
+          "loadedManifest": "http://localhost:8080/images/Books/Wildflowers_of_Western_Canada/iiif/index.json",
           "canvasIndex": 2,
           "thumbnailNavigationPosition": 'far-bottom'
         }
