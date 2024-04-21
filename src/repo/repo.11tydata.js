@@ -15,7 +15,6 @@ function readMODS(ModsFile) {
 }
 
 module.exports.readMODS = function (ModsFile) {
-  console.log('hi rosie');
   const data = readMODS(ModsFile);
   return { modsTable: data };
 };
