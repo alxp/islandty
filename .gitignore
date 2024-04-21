@@ -14,5 +14,5 @@ node_modules
 dist
 src/_includes/css
 
-# Source files
-src/images/Transcribed\ Video
+# Source filessrc/images/Transcribed\ Video
+src/images/*

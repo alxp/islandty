@@ -1,8 +1,7 @@
 const {dest, src} = require('gulp');
 const imagemin = require('gulp-imagemin');
 var rename = require('gulp-rename');
-var path = require('path');
-
+var path = require('path');const { build } = require('biiif');
 
 // Grabs all images, runs them through imagemin
 // and plops them in the dist folder
@@ -15,6 +14,7 @@ const pageimages = () => {
 
     }))
     .pipe(dest('./dist/images/Books'));
+
 };
 
 module.exports = pageimages;
