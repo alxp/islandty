@@ -1,5 +1,5 @@
 ---
-title: 'Content'
+title: 'CSV Content'
 layout: 'layouts/content-list.html'
 ---
 

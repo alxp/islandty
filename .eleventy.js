@@ -91,8 +91,8 @@ module.exports = config => {
   });
 
   // ROSIE: A collection of digital objects.
-  config.addCollection('islandora', collection => {
-    return collection.getFilteredByGlob('./islandora/**/*.md');
+  config.addCollection('repo', collection => {
+    return collection.getFilteredByGlob('./src/repo/**/*.njk');
   });
 
   // Tell 11ty to use the .eleventyignore and ignore our .gitignore file

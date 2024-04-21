@@ -5,8 +5,12 @@
       "url": "/"
     },
     {
-      "text": "Content",
+      "text": "CSV Content",
       "url": "/content/"
+    },
+    {
+      "text": "MODS Objects",
+      "url": "/repo/"
     },
     {
       "text": "Contact",
