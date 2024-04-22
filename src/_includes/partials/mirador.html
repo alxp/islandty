@@ -1,3 +1,4 @@
+{% set manifest = islandoraHelpers.getIiifManifestForItem(item) %}
 <script src="https://unpkg.com/mirador@latest/dist/mirador.min.js"></script>
 <!-- By default uses Roboto font. Be sure to load this or change the font -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
@@ -11,13 +12,13 @@
     var mirador = Mirador.viewer({
       "id": "my-mirador",
       "manifests": {
-        "http://localhost:8080/images/Books/Wildflowers_of_Western_Canada/iiif/index.json": {
+        "{{ manifest }}": {
           "provider": "Islandora"
         }
       },
       "windows": [
         {
-          "loadedManifest": "http://localhost:8080/images/Books/Wildflowers_of_Western_Canada/iiif/index.json",
+          "loadedManifest": "{{ manifest }}",
           "canvasIndex": 2,
           "thumbnailNavigationPosition": 'far-bottom'
         }

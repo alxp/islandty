@@ -2,11 +2,12 @@ const rssPlugin = require('@11ty/eleventy-plugin-rss');
 // Filters
 const dateFilter = require('./src/filters/date-filter.js');
 const w3DateFilter = require('./src/filters/w3-date-filter.js');
-
+require('dotenv').config();
 // Transforms
 const htmlMinTransform = require('./src/transforms/html-min-transform.js');
 
-const footnotes = require('eleventy-plugin-footnotes')
+const footnotes = require('eleventy-plugin-footnotes');
+const { itemsWithContentModel } = require('./src/_data/islandoraHelpers.js');
 
 // Create a helpful production flag
 const isProduction = process.env.NODE_ENV == 'production';
@@ -95,16 +96,40 @@ module.exports = config => {
     return collection.getFilteredByGlob('./src/repo/**/*.njk');
   });
 
+  config.on(
+		"eleventy.after",
+		async ({ dir, results, runMode, outputMode }) => {
+      const islandoraHelpers = require('./src/_data/islandoraHelpers.js');
+      const readCSV = require('./src/_data/readCSV.js');
+
+      var path = require('path');
+const { build:buildIiif } = require('biiif');
+			// Run me after the build ends
+      console.log("eleventy after plugin run;.");
+      items = readCSV().items;
+      books =islandoraHelpers.itemsWithContentModel(items, 'Paged Content' );
+      for (const [key, book] of Object.entries(books)) {
+      let base_dir = path.dirname(book.file);
+      let full_path = path.join('./dist/images', base_dir, 'iiif');
+      buildIiif(full_path, process.env.serverHost + '/images/' +
+       base_dir + '/iiif');
+
+      }
+    });
+
+
+
   // Tell 11ty to use the .eleventyignore and ignore our .gitignore file
   config.setUseGitIgnore(false);
 
   config.amendLibrary("md", mdLib => mdLib.enable("code"));
 
+
+
   // https://nodejs.org/api/util.html#util_util_inspect_object_options
   const inspect = require("util").inspect;
 
   module.exports = (eleventyConfig) => {
-
   };
 
   return {
