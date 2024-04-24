@@ -9,6 +9,10 @@ const htmlMinTransform = require('./src/transforms/html-min-transform.js');
 const footnotes = require('eleventy-plugin-footnotes');
 const { itemsWithContentModel } = require('./src/_data/islandoraHelpers.js');
 
+const { exec } = require('node:child_process');
+const { relativeTimeRounding } = require('moment');
+const { glob } = require('glob')
+
 // Create a helpful production flag
 const isProduction = process.env.NODE_ENV == 'production';
 
@@ -96,6 +100,21 @@ module.exports = config => {
     return collection.getFilteredByGlob('./src/repo/**/*.njk');
   });
 
+  // ROSIE: Compile XSLT
+  config.on("eleventy.before", async ({ dir, runMode, outputMode }) => {
+    const xsltfiles =  glob.sync('**/*.xsl');
+    for (const myfile of xsltfiles) {
+      outputFile = myfile.replace('.xsl','.sef.json')
+      exec(`xslt3 -t -xsl:${myfile} -export:${outputFile} -nogo -relocate:on -ns:##html5`, (err, output) => {
+        if (err) {
+          console.log("could not execute xslt3 command: ", err)
+          return
+        }
+      });
+    }
+  });
+
+
   config.on(
 		"eleventy.after",
 		async ({ dir, results, runMode, outputMode }) => {
@@ -103,7 +122,7 @@ module.exports = config => {
       const readCSV = require('./src/_data/readCSV.js');
 
       var path = require('path');
-const { build:buildIiif } = require('biiif');
+      const { build:buildIiif } = require('biiif');
 			// Run me after the build ends
       console.log("eleventy after plugin run;.");
       items = readCSV().items;
