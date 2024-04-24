@@ -9,7 +9,7 @@ const htmlMinTransform = require('./src/transforms/html-min-transform.js');
 const footnotes = require('eleventy-plugin-footnotes');
 const { itemsWithContentModel } = require('./src/_data/islandoraHelpers.js');
 
-const { exec } = require('node:child_process');
+const { execSync } = require('node:child_process');
 const { relativeTimeRounding } = require('moment');
 const { glob } = require('glob')
 
@@ -101,15 +101,16 @@ module.exports = config => {
   });
 
   // ROSIE: Compile XSLT
-  config.on("eleventy.before", async ({ dir, runMode, outputMode }) => {
+  config.on("eleventy.before", ({ dir, runMode, outputMode }) => {
     const xsltfiles =  glob.sync('**/*.xsl');
     for (const myfile of xsltfiles) {
       outputFile = myfile.replace('.xsl','.sef.json')
-      exec(`xslt3 -t -xsl:${myfile} -export:${outputFile} -nogo -relocate:on -ns:##html5`, (err, output) => {
+      execSync(`xslt3 -t -xsl:${myfile} -export:${outputFile} -nogo -relocate:on -ns:##html5`, (err, output) => {
         if (err) {
           console.log("could not execute xslt3 command: ", err)
           return
         }
+        console.log(`Compiled ${myfile} to ${outputFile}`);
       });
     }
   });

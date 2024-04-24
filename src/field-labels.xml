@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<labels>
+    <label code="genre">Genre</label>
+    <label code="typeOfResource">Resource Type</label>
+    <label code="publisher">Publisher</label>
+    <label code="dateIssued">Date Issued</label>
+    <label code="dateOther">Date (Other)</label>
+    <label code="dateCreated">Date Created</label>
+    <label code="dateCaptured">Date Captured</label>
+    <label code="dateValid">Date Valid</label>
+    <label code="dateModified">Date Modified</label>
+    <label code="copyrightDate">Copyright Date</label>
+    <label code="displayDate">Date (Display)</label>
+    <label code="edition">Edition</label>
+    <label code="issuance">Issuance</label>
+    <label code="frequency">Frequency</label>
+    <label code="language">Language</label>
+    <label code="name">Name</label>
+    <label code="form">Form</label>
+    <label code="reformattingQuality">Reformatting Quality</label>
+    <label code="internetMediaType">Internet Media Type</label>
+    <label code="extent">Extent</label>
+    <label code="digitalOrigin">Digital Origin</label>
+    <label code="note">Note</label>
+    <label code="abstract">Abstract</label>
+    <label code="tableOfContents">Table of Contents</label>
+    <label code="targetAudience">Target Audience</label>
+    
+</labels>
