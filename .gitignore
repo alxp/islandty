@@ -18,4 +18,4 @@ src/_includes/css
 src/images/*
 
 # Compiled XSLT transforms
-src/**/*.sef.json
+*.sef.json
