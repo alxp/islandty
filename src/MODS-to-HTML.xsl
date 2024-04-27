@@ -6,11 +6,9 @@
 
     <!-- MODS -->
     <xsl:template match="mods:mods">
-        
-                <table class="mods">
-                    <xsl:apply-templates select="*"/>
-                </table>
-        
+        <table class="mods">
+            <xsl:apply-templates select="*"/>
+        </table>
     </xsl:template>
 
     <!-- ignore non-selected elements -->
