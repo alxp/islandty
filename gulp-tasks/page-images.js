@@ -1,5 +1,4 @@
 const {dest, src} = require('gulp');
-const imagemin = require('gulp-imagemin');
 var rename = require('gulp-rename');
 var path = require('path');
 
