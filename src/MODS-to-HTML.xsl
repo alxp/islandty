@@ -2,25 +2,14 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mods="http://www.loc.gov/mods/v3"
     exclude-result-prefixes="xs mods" version="2.0">
-    <xsl:output method="xml" indent="yes"/>
+    <xsl:output method="html" indent="yes"/>
 
     <!-- MODS -->
     <xsl:template match="mods:mods">
-        <html>
-            <head>
-                <style>
-                    table {border-collapse: collapse; border: 1px black solid;}
-                    th, td  {border-collapse: collapse; padding: 0.5em;}
-                    th {text-align: right; vertical-align: top;}
-                </style>
-            </head>
-            <body>
-                <h2>Metadata</h2>
+        
                 <table class="mods">
                     <xsl:apply-templates select="*"/>
                 </table>
-            </body>
-        </html>
         
     </xsl:template>
 
