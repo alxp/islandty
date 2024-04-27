@@ -100,18 +100,21 @@ module.exports = config => {
     return collection.getFilteredByGlob('./src/repo/**/*.njk');
   });
 
+  // ROSIE: Ignore sef files
+  config.watchIgnores.add('**/*.sef.json');
+
   // ROSIE: Compile XSLT
   config.on("eleventy.before", ({ dir, runMode, outputMode }) => {
     const xsltfiles =  glob.sync('**/*.xsl');
     for (const myfile of xsltfiles) {
       outputFile = myfile.replace('.xsl','.sef.json')
-      execSync(`xslt3 -t -xsl:${myfile} -export:${outputFile} -nogo -relocate:on -ns:##html5`, (err, output) => {
-        if (err) {
-          console.log("could not execute xslt3 command: ", err)
-          return
-        }
-        console.log(`Compiled ${myfile} to ${outputFile}`);
-      });
+      try {
+        execSync(`xslt3 -t -xsl:${myfile} -export:${outputFile} -nogo -relocate:on -ns:##html5`);
+      }
+      catch (err) {
+        console.log(`Compilation failed with error [${err}].`)
+      }
+      
     }
   });
 

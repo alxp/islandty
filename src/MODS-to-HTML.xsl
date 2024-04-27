@@ -11,7 +11,7 @@
                 <style>
                     table {border-collapse: collapse; border: 1px black solid;}
                     th, td  {border-collapse: collapse; padding: 0.5em;}
-                    th {background-color: #EEE; text-align: right; vertical-align: top;}
+                    th {text-align: right; vertical-align: top;}
                 </style>
             </head>
             <body>
