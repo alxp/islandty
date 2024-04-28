@@ -114,7 +114,7 @@ module.exports = config => {
       catch (err) {
         console.log(`Compilation failed with error [${err}].`)
       }
-      
+
     }
   });
 
@@ -134,6 +134,7 @@ module.exports = config => {
       for (const [key, book] of Object.entries(books)) {
       let base_dir = path.dirname(book.file);
       let full_path = path.join('./dist/images', base_dir, 'iiif');
+      islandoraHelpers.generateIiifMetadata(book, full_path);
       buildIiif(full_path, process.env.serverHost + '/images/' +
        base_dir + '/iiif');
 

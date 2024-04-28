@@ -5,6 +5,19 @@ const path = require('path');
 module.exports = {
 
 
+    generateIiifMetadata(book, bookPath) {
+        const writeYamlFile = require('write-yaml-file');
+        info = {
+            label: book.title,
+            behavior: 'paged',
+            description: book.field_description,
+            metadata: {
+                license: book.field_rights
+            }
+        };
+        writeYamlFile.sync(path.join(bookPath, 'info.yml'), info);
+    },
+
     /**
        * Finds the parent item from the current item
        *
