@@ -1,7 +1,7 @@
 {
-  "name": "eleventy-from-scratch",
+  "name": "islandty",
   "version": "1.0.0",
-  "description": "",
+  "description": "A static site generator for Islandora Workbench data.",
   "main": ".eleventy.js",
   "scripts": {
     "start": "npx gulp && concurrently \"npx gulp watch\" \"npx eleventy --serve\"",
