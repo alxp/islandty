@@ -7,7 +7,7 @@ require('dotenv').config();
 const htmlMinTransform = require('./src/transforms/html-min-transform.js');
 
 const footnotes = require('eleventy-plugin-footnotes');
-const { itemsWithContentModel } = require('./src/_data/islandoraHelpers.js');
+const { itemsWithContentModel, searchIndex } = require('./src/_data/islandoraHelpers.js');
 
 const { execSync } = require('node:child_process');
 const { relativeTimeRounding } = require('moment');
@@ -117,6 +117,11 @@ module.exports = config => {
 
     }
   });
+
+  // Rosie: Add Search index
+  config.addShortcode('searchIndex', article => searchIndex(article));
+
+
 
 
   config.on(

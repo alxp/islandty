@@ -1,9 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
+const SaxonJS = require('saxon-js');
+
+
 
 module.exports = {
-
 
     generateIiifMetadata(book, bookPath) {
         const writeYamlFile = require('write-yaml-file');
@@ -59,27 +61,25 @@ module.exports = {
         var slugify = require('slugify');
         let fileSlug = slugify(value);
         var layoutFile = `partials/${fileSlug}.html`;
-        if(fs.existsSync(`src/_includes/${layoutFile}`)) {
+        if (fs.existsSync(`src/_includes/${layoutFile}`)) {
             return layoutFile;
-        }else{
+        } else {
             return "partials/default-item.html";
         }
 
     },
 
     /**
-     *
      * Return the location of a IIIF Manifest for the given item.
      *
      * @param {*} item
      * @returns
      *    The path of the manifest.
      */
-getIiifManifestForItem(item) {
-    let manifest_url = '/' + path.join('images', path.dirname(item.file), 'iiif/index.json');
-    return manifest_url;
-
-},
+    getIiifManifestForItem(item) {
+        let manifest_url = '/' + path.join('images', path.dirname(item.file), 'iiif/index.json');
+        return manifest_url;
+    },
 
     /**
      * Get all content items with the given content model (human readable name).
@@ -92,7 +92,35 @@ getIiifManifestForItem(item) {
         let filteredItems = items.filter(x => x.field_model == model);
 
         return filteredItems;
+    },
+
+    /**
+     * Transform the data XML file of each object by the Index XSLT.
+     */
+    searchIndex(article) {
+        const ModsFile = article.data.ModsFile;
+        if (!ModsFile) {
+            console.warn('Failed to extract excerpt: Document has no property "ModsFile".');
+            return null;
+        }
+
+	const IndexXSLTFile = article.data.IndexXSLT;
+        if (!IndexXSLTFile) {
+            console.error('Failed to extract excerpt: Document has no property "IndexXSLT".');
+            return null;
+        }
+
+        try {
+	    const output = SaxonJS.transform({
+		stylesheetFileName: IndexXSLTFile,
+		sourceFileName: ModsFile,
+		destination: "serialized"
+	}, "sync");
+
+	    return JSON.stringify(output.principalResult);
+          } catch (err) {
+            console.error(err);
+            return null;
+        }
     }
-
-
 }

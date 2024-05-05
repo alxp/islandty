@@ -1,0 +1,103 @@
+---
+title: "Islandty - home"
+metaDesc: "Using Eleventy to act as a digital asset management system"
+layout: 'layouts/home.html'
+intro:
+  eyebrow: "An Alexander and Rosie project"
+  main: 'Islandty'
+  summary: 'The tiniest DAMS powered by a CSV.'
+  buttonText: 'Example'
+  buttonUrl: '/content'
+  image: 'images/spreadsheet.png'
+  imageAlt: 'Screenshot of data in Google Sheets.'
+primaryCTA:
+  title: "Islandora"
+  summary: "This project is a spin-off of our work with Islandora. If you want a full Drupal stack, check them out."
+  buttonText: 'Islandora.ca'
+  buttonUrl: 'https://islandora.ca/'
+
+
+---
+
+
+<h1>Repo Objects</h1>
+
+<ul>
+{% for object in collections.repo%} 
+  <li><a href="{{ object.url }}">{{ object.data.title }}</a></li>
+{% endfor %}
+</ul>
+
+<div id="app">
+	<input type="search" v-model="term" id="search"> <button @click="search" id="search-submit">Search</button>
+	<div v-if="results">
+		<h3>Search Results</h3>
+		<ul>
+			<li v-for="result in results">
+				<a :href="result.url"> {% raw %}{{ result.title }}{% endraw %}</a>
+			</li>
+		</ul>
+		<p v-if="noResults">
+		Sorry, no results were found.
+		</p>
+	</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+const app = new Vue({
+	el:'#app',
+	data:{
+		docs:null,
+		idx:null,
+		term:'',
+		results:null
+	},
+	async created() {
+		let result = await fetch('/index.json');
+		docs = await result.json();
+		// assign an ID so it's easier to look up later, it will be the same as index
+		this.idx = lunr(function () {
+			this.ref('id');
+			this.field('title');
+			this.field('content');
+
+			docs.forEach(function (doc, idx) {
+				doc.id = idx;
+				this.add(doc); 
+			}, this);
+		});
+		this.docs = docs;
+	},
+	computed: {
+		noResults() {
+			return this.results.length === 0;
+		}
+	},
+	methods:{
+		search() {
+			console.log('search', this.term);
+			let results = this.idx.search(this.term);
+
+			// we need to add title, url from ref
+			results.forEach(r => {
+				r.title = this.docs[r.ref].title;
+				r.url = this.docs[r.ref].url;
+			});
+
+			this.results = results;
+		}
+	}
+});
+</script>
+<script>
+	var input = document.getElementById("search");
+	input.addEventListener("keypress", function(event) {
+		if (event.key === "Enter") {
+			event.preventDefault();
+			document.getElementById("search-submit").click();
+		}
+	});
+
+</script>
+
