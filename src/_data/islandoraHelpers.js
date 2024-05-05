@@ -1,8 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-
 const SaxonJS = require('saxon-js');
-
+require('dotenv').config();
 
 
 module.exports = {
@@ -104,21 +103,28 @@ module.exports = {
             return null;
         }
 
-	const IndexXSLTFile = article.data.IndexXSLT;
+	    const IndexXSLTFile = article.data.IndexXSLT;
         if (!IndexXSLTFile) {
             console.error('Failed to extract excerpt: Document has no property "IndexXSLT".');
             return null;
         }
 
-        try {
-	    const output = SaxonJS.transform({
-		stylesheetFileName: IndexXSLTFile,
-		sourceFileName: ModsFile,
-		destination: "serialized"
-	}, "sync");
+       return module.exports.processXSLT(ModsFile, IndexXSLTFile);
+    },
 
-	    return JSON.stringify(output.principalResult);
-          } catch (err) {
+    /**
+     * Transform the XSLT file into HTML by a given XSLT.
+     */
+    processXSLT(xml, stylesheet ) {
+
+        try {
+            const output = SaxonJS.transform({
+                stylesheetFileName: stylesheet,
+                sourceFileName: xml,
+                destination: "serialized"
+            }, "sync");
+            return output.principalResult ;
+        } catch (err) {
             console.error(err);
             return null;
         }

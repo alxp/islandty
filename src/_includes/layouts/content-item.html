@@ -1,7 +1,10 @@
-{% extends "layouts/base.html" %} {% set pageHeaderTitle = item.title %} {% set
-pageCriticalStyles = ['css/page.css'] %} {% block content %}
+{% extends "layouts/base.html" %}
+{% set pageHeaderTitle = item.title %}
+{% set pageCriticalStyles = ['css/page.css'] %}
+{% block content %}
 <article>
     {% include "partials/page-header.html" %}
+
     {% set parent = islandoraHelpers.getParentContent(readCSV.items, item) %}
     {% set children = islandoraHelpers.getChildContent(readCSV.items, item) %}
     {% set fileurl = ["/images/", item.file] | join %}

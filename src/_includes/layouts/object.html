@@ -7,7 +7,7 @@
     <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
         {{ content | safe }}
         <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
-            {{ readMODS(ModsFile).modsTable.principalResult | safe }}
+            {{ islandoraHelpers.processXSLT(ModsFile, DisplayXSLT) | safe }}
         </div>
     </div>
 
