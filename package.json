@@ -20,7 +20,6 @@
     "csv": "^6.3.8",
     "dotenv": "^16.4.5",
     "eleventy-plugin-footnotes": "^0.11.0",
-    "get-google-fonts": "^1.2.2",
     "gorko": "^0.9.1",
     "gulp": "^4.0.2",
     "gulp-clean-css": "^4.3.0",
