@@ -26,4 +26,7 @@
         {% endif %}
         {% endfor %}
     </table>
+    {% if item.mods %}
+    {% include "partials/mods-record.html" %}
+    {% endif%}
 </div>
