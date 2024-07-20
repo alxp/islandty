@@ -89,6 +89,6 @@ that Islandty has built on and become a part of.
 
 ## Copyright and License
 
-Copyright (c) 2014 by Alexander O'Neill and Rosemary  Le Faive.
+Copyright (c) 2024 by Alexander O'Neill and Rosemary  Le Faive.
 
 All rights reserved except those permitted by the license and applicable laws.
