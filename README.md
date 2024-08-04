@@ -1,6 +1,6 @@
 # Islandty
 
-Islandty builds a static web site built from CSV input files formatted for Islandora Workbench, built on the 
+Islandty builds a static web site built from CSV input files formatted for Islandora Workbench, built on the
 [Eleventy](https://www.11ty.dev)platform.
 
 So if you use Islandora Workbench to populate an Islandora site
@@ -17,7 +17,7 @@ you can use the same input files to generate a static website.
 
 ## Installation
 
-Running 
+Running
 
 
 ```shell
@@ -25,6 +25,18 @@ $ npm install
 ```
 
 will get all the dependencies.
+
+### JP2 support on macOS
+
+To support generating tiles and thumbnails for JP2 images
+you will need to install VIPS via homebrew:
+
+``shell
+brew install vips
+```
+
+Then delete your node_modules folder and run npm install again.
+See the Sharp [installation instructions](https://sharp.pixelplumbing.com/install) for more info.
 
 ## Setup
 
@@ -49,8 +61,8 @@ The site will be served at htttp://localhost:8080/.
 
 ## MODS Support
 
-Add a 'mods' column to the CSV input data file 
-to have Islandty include it in the 
+Add a 'mods' column to the CSV input data file
+to have Islandty include it in the
 object's metadata section directly. This lets you avoid
 having to extract all of those fields
 to CSV columns if your source metadata is in MODS format.
@@ -81,13 +93,13 @@ done
 ## Acknowledgements
 
 The codebase, especially the styling, is originally based on the course
-[Learn Eleventy from Scratch](https://learneleventyfromscratch.com) by [Andy Bell](https://piccalil.li). 
+[Learn Eleventy from Scratch](https://learneleventyfromscratch.com) by [Andy Bell](https://piccalil.li).
 
 Extensive credit and gratitude to the Islandora and Islandora Workbench developers for their hard work maintaining the ecosystem
 that Islandty has built on and become a part of.
 
 ## Copyright and License
 
-Copyright (c) 2024 by Alexander O'Neill and Rosemary  Le Faive.
+Copyright (c) 2024 by Alexander O'Neill and Rosemary Le Faive.
 
 All rights reserved except those permitted by the license and applicable laws.
