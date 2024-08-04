@@ -4,8 +4,7 @@ Islandty builds a static web site built from CSV input files formatted for Islan
 [Eleventy](https://www.11ty.dev)platform.
 
 So if you use Islandora Workbench to populate an Islandora site
-you can use the same input files to
-generate a static website.
+you can use the same input files to generate a static website.
 
 ## Features
 
