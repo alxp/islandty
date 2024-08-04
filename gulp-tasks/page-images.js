@@ -8,7 +8,7 @@ var path = require('path');
 const pageimages = () => {
   // We have specific configs for jpeg and png files to try
   // to really pull down asset sizes
-  return src('./src/images/Books/**/*[!service].{hocr,jp2,jpg,jpeg,tif,tiff}')
+  return src('./src/images/Books/**/*.{hocr,jp2,tif,tiff}', {encoding: false})
     .pipe(rename(function(file) {
       file.dirname = path.join(file.dirname, 'iiif', '_' + file.basename);
 

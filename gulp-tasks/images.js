@@ -5,7 +5,7 @@ const {dest, src} = require('gulp');
 const images = () => {
 
 
-  return src('./src/images/**/*')
+  return src('./src/images/**/*', {encoding: false})
 
     .pipe(dest('./dist/images'));
 };
