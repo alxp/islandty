@@ -152,8 +152,7 @@ module.exports = config => {
   config.setUseGitIgnore(false);
 
   config.amendLibrary("md", mdLib => mdLib.enable("code"));
-
-
+config.addGlobalData('contentPath', 'islandora/object');
 
   // https://nodejs.org/api/util.html#util_util_inspect_object_options
   const inspect = require("util").inspect;

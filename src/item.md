@@ -3,6 +3,6 @@ pagination:
   data: readCSV.items
   size: 1
   alias: item
-permalink: "content/{{ item.id | slugify }}.html"
+permalink: "{{ contentPath }}/{{ item.id | slugify }}.html"
 layout: layouts/content-item.html
 ---
