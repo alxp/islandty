@@ -6,11 +6,9 @@ require('dotenv').config();
 // Transforms
 const htmlMinTransform = require('./src/transforms/html-min-transform.js');
 
-const footnotes = require('eleventy-plugin-footnotes');
 const { itemsWithContentModel, searchIndex } = require('./src/_data/islandoraHelpers.js');
 
 const { execSync } = require('node:child_process');
-const { relativeTimeRounding } = require('moment');
 const { glob } = require('glob')
 
 // Create a helpful production flag
@@ -50,12 +48,9 @@ module.exports = config => {
     encoding: "utf-8",
   });
 
-
-
   // Add filters
   config.addFilter('dateFilter', dateFilter);
   config.addFilter('w3DateFilter', w3DateFilter);
-
 
   config.addFilter('getGlobalData', (data) => {
     // if your global data lives elsewhere, this file path will need to change a bit
@@ -69,31 +64,6 @@ module.exports = config => {
 
   // Plugins
   config.addPlugin(rssPlugin);
-
-  config.addPlugin(footnotes);
-
-  const sortByDisplayOrder = require('./src/utils/sort-by-display-order.js');
-  // Returns work items, sorted by display order
-  config.addCollection('work', collection => {
-    return sortByDisplayOrder(collection.getFilteredByGlob('./src/work/*.md'));
-  });
-
-  // Returns work items, sorted by display order then filtered by featured
-  config.addCollection('featuredWork', collection => {
-    return sortByDisplayOrder(collection.getFilteredByGlob('./src/work/*.md')).filter(
-      x => x.data.featured
-    );
-  });
-
-  // A collection of blog posts in reverse order.
-  config.addCollection('blog', collection => {
-    return [...collection.getFilteredByGlob('./src/posts/*.md')].reverse();
-  });
-  config.addCollection('people', collection => {
-    return collection.getFilteredByGlob('./src/people/*.md').sort((a, b) => {
-      return Number(a.fileSlug) > Number(b.fileslug) ? 1 : -1;
-    });
-  });
 
   // ROSIE: A collection of digital objects.
   config.addCollection('repo', collection => {
@@ -120,9 +90,6 @@ module.exports = config => {
 
   // Rosie: Add Search index
   config.addShortcode('searchIndex', article => searchIndex(article));
-
-
-
 
   config.on(
 		"eleventy.after",

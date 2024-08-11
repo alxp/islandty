@@ -16,14 +16,14 @@ body {
   color: get-color('dark-shade');
   line-height: 1.5;
   font-size: get-size('500');
-  
+
   @include apply-utility('font', 'base');
 }
 
 a:not([class]) {
   color: currentColor;
   font-decoration-color: get-color('quinary');
-  
+
 }
 
 :focus {
@@ -40,7 +40,7 @@ h2,
 h3,
 h4 {
   font-weight: 900;
-  
+
   @include apply-utility('font', 'sans');
   @include apply-utility('leading', 'flat');
 }
@@ -49,7 +49,7 @@ h4 {
 //folks read the text easier
 ::selection {
   color: get-color('light');
-  
+
   // We set this as an RGBA because that's how you get a solid color, by using 0.99
   // alpha value. Browsers are wild.
   background: rgba(get-color('dark-shade'), 0.99);
@@ -80,10 +80,6 @@ h4 {
 @import 'blocks/skip-link';
 @import 'blocks/cta';
 @import 'blocks/page-header';
-@import 'blocks/people';
-@import 'blocks/person';
-@import 'blocks/gallery';
-
 
 // Import utilities
 @import 'utilities/dot-shadow';
@@ -96,4 +92,3 @@ h4 {
 @import 'utilities/wrapper';
 @import 'utilities/headline';
 @import 'utilities/auto-grid';
-
