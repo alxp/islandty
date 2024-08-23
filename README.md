@@ -79,10 +79,12 @@ If you have Tesseract installed locally, you can generate hOCR
 for all image files in a folder with the followingbash script:
 
 ```bash
-for f in *.tiff
-do
-  tesseract -c tessedit_create_hocr=1 -c hocr_font_info=0 "$f"
-done
+# Create a set of hOCR files from a directory of JP2s.
+for filename in *.jp2 ; do
+  extension="${filename##*.}"
+  basename="${filename%.$extension}"
+  tesseract -c tessedit_create_hocr=1 -c hocr_font_info=0 $filename $basename
+	done
 ```
 
 ## Maintainers
