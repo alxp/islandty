@@ -14,6 +14,9 @@ const { glob } = require('glob')
 // Create a helpful production flag
 const isProduction = process.env.NODE_ENV == 'production';
 
+// JSON-LD Metadata
+const schema = require("@quasibit/eleventy-plugin-schema");
+
 module.exports = config => {
 
   config.setServerOptions({
@@ -64,6 +67,8 @@ module.exports = config => {
 
   // Plugins
   config.addPlugin(rssPlugin);
+
+  config.addPlugin(schema);
 
   // ROSIE: A collection of digital objects.
   config.addCollection('repo', collection => {
@@ -136,4 +141,5 @@ config.addGlobalData('contentPath', 'islandora/object');
       output: 'dist'
     }
   };
+
 };

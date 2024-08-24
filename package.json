@@ -5,7 +5,8 @@
   "main": ".eleventy.js",
   "scripts": {
     "start": "npx gulp && concurrently \"npx gulp watch\" \"npx eleventy --serve\"",
-    "production": "NODE_ENV=production npx gulp && NODE_ENV=production npx eleventy"
+    "production": "NODE_ENV=production npx gulp && NODE_ENV=production npx eleventy",
+    "debug": "cross-env DEBUG=Eleventy* npx @11ty/eleventy"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +15,7 @@
     "@11ty/eleventy-cache-assets": "^2.3.0",
     "@11ty/eleventy-plugin-rss": "^1.2.0",
     "@11ty/eleventy-upgrade-help": "^2.0.5",
+    "@quasibit/eleventy-plugin-schema": "^1.11.1",
     "biiif": "github:alxp/biiif#master-dist",
     "concurrently": "^8.2.2",
     "csv": "^6.3.8",
@@ -33,6 +35,6 @@
     "xslt3": "^2.6.0"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^2.0.1"
+    "@11ty/eleventy": "3.0.0-alpha.18"
   }
 }

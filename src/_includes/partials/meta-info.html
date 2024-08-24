@@ -12,7 +12,7 @@
   {% set socialImage = site.url + '/images/meta/social-share.png' %}
 {% endif %}
 
-{# If the page's Front Matter has specific metaTitle and/or MetaDesc items, switch 
+{# If the page's Front Matter has specific metaTitle and/or MetaDesc items, switch
    them into the mix. #}
 {% if metaTitle %}
   {% set pageTitle = metaTitle %}
@@ -44,3 +44,5 @@
 {% endif %}
 
 <link rel="icon" href="/images/meta/favicon.svg" type="image/svg+xml" />
+
+{% jsonLdScript schemaMetadata, type, tags %}
