@@ -94,6 +94,7 @@ module.exports = config => {
   config.on(
 		"eleventy.after",
 		async ({ dir, results, runMode, outputMode }) => {
+
       const islandoraHelpers = require('./src/_data/islandoraHelpers.js');
       const readCSV = require('./src/_data/readCSV.js');
 
@@ -113,13 +114,43 @@ module.exports = config => {
       }
     });
 
+    config.on(
+      "eleventy.before",
+      async ({ dir, results, runMode, outputMode }) => {
+        require('dotenv').config();
+        const fs = require("fs");
+        const islandoraHelpers = require('./src/_data/islandoraHelpers.js');
+      const readCSV = require('./src/_data/readCSV.js');
+      const yaml = require('js-yaml');
 
+      var path = require('path');
+        // Run me before the build start
+        console.log("eleventy before plugin run;.");
+        items = readCSV().items;
+        for (const [key, item] of Object.entries(items)) {
+          var transformedItem = islandoraHelpers.transformKeys(item)
+          transformedItem.layout = 'layouts/content-item.html';
+          const yamlString = yaml.dump(transformedItem); // Convert object to YAML string
+
+const content = `---\n${yamlString}---\n`; // Add dashes at the end
+
+fs.writeFile('src/' + process.env.contentPath + '/' + item.id + '.md' , content, (err) => {
+  if (err) {
+	console.error(err);
+  } else {
+	console.log('Data written to output.yaml successfully!');
+  }
+});
+        }
+
+
+      });
 
   // Tell 11ty to use the .eleventyignore and ignore our .gitignore file
   config.setUseGitIgnore(false);
 
   config.amendLibrary("md", mdLib => mdLib.enable("code"));
-config.addGlobalData('contentPath', 'islandora/object');
+config.addGlobalData('contentPath', process.env.contentPath);
 
   // https://nodejs.org/api/util.html#util_util_inspect_object_options
   const inspect = require("util").inspect;

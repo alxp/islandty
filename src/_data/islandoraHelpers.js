@@ -26,8 +26,8 @@ module.exports = {
        * @param {Object} item The current item we want the parent of
        * @returns {Array} The resulting parent item.
        */
-    getParentContent(items, item) {
-        let filteredItems = items.filter(x => x.id == item.parent_id);
+    getParentContent(items, item_id) {
+        let filteredItems = items.filter(x => x.id == item_id);
 
         // Lastly, get just the first
         filteredItems = filteredItems[0];
@@ -42,8 +42,8 @@ module.exports = {
        * @param {Object} item The current item we want the children of
        * @returns {Array} The resulting children items.
        */
-    getChildContent(items, item) {
-        let filteredItems = items.filter(x => x.parent_id == item.id);
+    getChildContent(items, item_id) {
+        let filteredItems = items.filter(x => x.parent_id == item_id);
 
         return filteredItems;
     },
@@ -75,8 +75,8 @@ module.exports = {
      * @returns
      *    The path of the manifest.
      */
-    getIiifManifestForItem(item) {
-        let manifest_url = '/' + path.join('images', path.dirname(item.file), 'iiif/index.json');
+    getIiifManifestForItem(file) {
+        let manifest_url = '/' + path.join('images', path.dirname(file), 'iiif/index.json');
         return manifest_url;
     },
 
@@ -128,5 +128,14 @@ module.exports = {
             console.error(err);
             return null;
         }
-    }
+    },
+
+    transformKeys(obj) {
+        const newObj = {};
+        for (const key in obj) {
+          const newKey = key.replace(/:/g, '_');
+          newObj[newKey] = obj[key];
+        }
+        return newObj;
+      }
 }

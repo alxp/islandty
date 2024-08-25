@@ -16,6 +16,7 @@ src/_includes/css
 
 # Source filessrc/images/Transcribed\ Video
 src/images/*
+src/islandora/object/*
 
 # Compiled XSLT transforms
 *.sef.json

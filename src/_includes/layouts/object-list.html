@@ -2,15 +2,15 @@
     pageCriticalStyles = ['css/page.css'] %} {% block content %}
     <article>
       {% include "partials/page-header.html" %}
-      
-    
-    
+
+
+
         <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
           {{ content | safe }}
-    
+
           {% for item in collections.repo %}
-              <h3><a href="/{{ item.data.permalink }}">{{ item.data.title }}</a></h3>
-    
+              <h3><a href="/{{ data.permalink }}">{{ data.title }}</a></h3>
+
           {% endfor %}
         </div>
       </div>

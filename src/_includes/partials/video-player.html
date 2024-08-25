@@ -1,11 +1,11 @@
-{% set videourl = ["/images/", item.file] | join %}
+{% set videourl = ["/images/", file] | join %}
 
-{% set trackData = item['media:video:field_track'].split(':') %}
+{% set trackData = media_video_field_track.split(':') %}
 
 <div class="video">
     <video height="500" width="800" controls>
         <source src="{{ videourl }}" type="video/mp4">
-        
+
         <track default kind="{{ trackData[1] }}" srclang="{{ trackData[2] }}" src="{{ ['/images/', trackData[3]] | join }}">
     </video>
 </div>

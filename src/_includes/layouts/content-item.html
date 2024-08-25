@@ -1,20 +1,20 @@
 {% extends "layouts/base.html" %}
-{% set pageHeaderTitle = item.title %}
+{% set pageHeaderTitle = title %}
 {% set pageCriticalStyles = ['css/page.css'] %}
 {% block content %}
 <article>
     {% include "partials/page-header.html" %}
 
-    {% set parent = islandoraHelpers.getParentContent(readCSV.items, item) %}
+    {% set parent = islandoraHelpers.getParentContent(readCSV.items, parent_id) %}
     {% set children = islandoraHelpers.getChildContent(readCSV.items, item) %}
-    {% set fileurl = ["/images/", item.file] | join %}
-    {% set display = islandoraHelpers.getLayoutForContentModel(item.field_model) %}
+    {% set fileurl = ["/images/", file] | join %}
+    {% set display = islandoraHelpers.getLayoutForContentModel(field_model) %}
 
     <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
         {{ content }}
 
         {% include display %}
-        
+
     </div>
 </article>
 {% endblock %}

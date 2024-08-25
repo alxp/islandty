@@ -13,5 +13,9 @@ function readCSV() {
 
 module.exports = function () {
   const data = readCSV();
+
+// Add in the Schema metadata.
+
+
   return { items: data };
 };
