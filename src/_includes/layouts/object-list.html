@@ -9,7 +9,7 @@
           {{ content | safe }}
 
           {% for item in collections.repo %}
-              <h3><a href="/{{ data.permalink }}">{{ data.title }}</a></h3>
+              <h3><a href="/{{ item.permalink }}">{{ item.title }}</a></h3>
 
           {% endfor %}
         </div>

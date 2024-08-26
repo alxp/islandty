@@ -6,7 +6,7 @@
     {% include "partials/page-header.html" %}
 
     {% set parent = islandoraHelpers.getParentContent(readCSV.items, parent_id) %}
-    {% set children = islandoraHelpers.getChildContent(readCSV.items, item) %}
+    {% set children = islandoraHelpers.getChildContent(readCSV.items, id) %}
     {% set fileurl = ["/images/", file] | join %}
     {% set display = islandoraHelpers.getLayoutForContentModel(field_model) %}
 

@@ -8,8 +8,8 @@ pageCriticalStyles = ['css/page.css'] %} {% block content %}
       {{ content | safe }}
 
       {% for item in readCSV.items %}
-        {% if field_model != 'Page' %}
-          <h3><a href="/{{ contentPath }}/{{ id | slugify }}">{{ title }}</a></h3>
+        {% if item.field_model != 'Page' %}
+          <h3><a href="/{{ contentPath }}/{{ item.id | slugify }}">{{ item.title }}</a></h3>
 
         {% endif %}
       {% endfor %}
