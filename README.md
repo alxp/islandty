@@ -1,17 +1,16 @@
 # Islandty
 
 Islandty builds a static web site built from CSV input files formatted for Islandora Workbench, built on the
-[Eleventy](https://www.11ty.dev)platform.
+[Eleventy](https://www.11ty.dev) platform.
 
 So if you use Islandora Workbench to populate an Islandora site
 you can use the same input files to generate a static website.
 
 ## Features
 
-- MODS supportt
+- MODS support
 - Mirador viewer with embedded hOCR
-- Uses biiif to generate image tiles.
-- Uses a [fork of biiif](https://github.com/alxp/biiif) to embed hOCR and support JP2 files.
+- Uses a [fork of biiif](https://github.com/alxp/biiif) to generate image files, embed hOCR, and support JP2 files.
 - Lunr-based search (Work in progress)
 
 
@@ -48,7 +47,7 @@ Edit the .env file in the project root and set
 the CSV source:
 
 ````ini
-dataFileNamecreat_islandorra_objects.csv
+dataFileName=create_islandora_objects.csv
 ```
 
 Then run the site generator with npm
