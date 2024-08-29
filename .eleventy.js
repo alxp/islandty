@@ -133,7 +133,10 @@ module.exports = config => {
           const yamlString = yaml.dump(transformedItem); // Convert object to YAML string
 
 const content = `---\n${yamlString}---\n`; // Add dashes at the end
-
+// If contentPath does not exist, make it.
+if (!fs.existsSync("src/" + process.env.contentPath)) {
+  fs.mkdirSync("src/" + process.env.contentPath);
+}
 fs.writeFile('src/' + process.env.contentPath + '/' + item.id + '.md' , content, (err) => {
   if (err) {
 	console.error(err);
