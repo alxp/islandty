@@ -131,10 +131,19 @@ module.exports = {
     },
 
     transformKeys(obj) {
-        const newObj = {};
+
+
+
+        const newObj = {item: {}};
         for (const key in obj) {
           const newKey = key.replace(/:/g, '_');
-          newObj[newKey] = obj[key];
+          const splitValue = obj[key].split('}');
+          var newValue = obj[key];
+          if (splitValue.length > 1) {
+            newValue = splitValue;
+          }
+          newObj[newKey] = newValue;
+          newObj['item'][newKey] = newValue;
         }
         return newObj;
       }

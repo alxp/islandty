@@ -1,7 +1,10 @@
 <div class="content-metadata">
     <table>
         {% for name, label in fieldNames.items %}
-        {% if page['data'][name] %}
+
+
+
+        {% if item[name] %}
         {% if name == 'file' %}
         {% include "partials/field-formatter-file.html" %}
         {% elif name == 'field_linked_agent' %}
@@ -10,7 +13,13 @@
         {% include "partials/field-formatter-subject.html" %}
         {% else %}
 
-        {% set values = page['data'][name].split('|') %}
+
+        {% if item[name] is string %}
+            <tr><td>{{ label }}</td><td>{{ item[name] }}</td></tr>
+        {% else %}
+        <tr><td>{{ label }}</td><td>{{ item[name] | join(',') }}</td></tr>
+    {% endif %}
+
         {% set count = values.length %}
         {% for value in values %}
         <tr>

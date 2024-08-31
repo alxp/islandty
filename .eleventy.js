@@ -126,6 +126,7 @@ module.exports = config => {
       var path = require('path');
         // Run me before the build start
         console.log("eleventy before plugin run;.");
+        return;
         items = readCSV().items;
         for (const [key, item] of Object.entries(items)) {
           var transformedItem = islandoraHelpers.transformKeys(item)
