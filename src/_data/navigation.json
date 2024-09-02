@@ -5,12 +5,12 @@
       "url": "/"
     },
     {
-      "text": "CSV Content",
+      "text": "Repository Content",
       "url": "/islandora/object/"
     },
     {
-      "text": "MODS Objects",
-      "url": "/repo/"
+      "text": "Collections",
+      "url": "/collections/"
     },
     {
       "text": "Contact",
