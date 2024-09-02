@@ -17,7 +17,11 @@
     
     &:link {
       text-decoration: none;  
-      color: darkgray;
+      color: get-color('dark');
+    }
+    &:visited{
+      text-decoration: none;
+      color: get-color('dark');
     }
     
     // Optical adjustment to account for the offset the sunken 3s create
