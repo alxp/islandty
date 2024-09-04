@@ -1,6 +1,6 @@
 # Islandty
 
-Islandty builds a static web site built from CSV input files formatted for Islandora Workbench, built on the
+Islandty builds a static web site built from a CSV input file formatted for Islandora Workbench, built on the
 [Eleventy](https://www.11ty.dev) platform.
 
 So if you use Islandora Workbench to populate an Islandora site
@@ -16,8 +16,9 @@ you can use the same input files to generate a static website.
 
 ## Installation
 
-Running
+Clone the islandty repository and change directory into it.
 
+Then, running 
 
 ```shell
 $ npm install
@@ -28,6 +29,7 @@ will get all the dependencies.
 ### JP2 support on macOS
 
 To support generating tiles and thumbnails for JP2 images
+(required for the Mirador viewer),
 you will need to install VIPS via homebrew:
 
 ``shell
@@ -41,14 +43,28 @@ See the Sharp [installation instructions](https://sharp.pixelplumbing.com/instal
 
 These instructions use the [Islandora Demo Objects](https://github.com/Islandora-Devops/islandora_demo_objects) content as a working example.
 
-Clone the demo objects repository into the src/images folder.
+### Point to the metadata CSV file in .env
+
+Put a copy of your metadata CSV somewhere in the `src` folder such as `src/_data`.
 
 Edit the .env file in the project root and set
 the CSV source:
 
 ````ini
-dataFileName=create_islandora_objects.csv
+dataFileName=./src/_data/create_islandora_objects.csv
 ```
+
+### Put binaries into the `src/images` folder.
+
+Copy your binaries into the `src/images` folder so that the paths in the metadata CSV's `file` column
+are accurate relative to the `src/images`.
+
+For Islandora Demo Objects, `git clone` the repository outside of the islandty tree then
+copy or move the folders into `src/images`.
+
+
+### Generate and run the site locally.
+
 
 Then run the site generator with npm
 
