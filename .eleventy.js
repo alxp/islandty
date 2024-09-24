@@ -94,7 +94,7 @@ module.exports = config => {
   config.on(
 		"eleventy.after",
 		async ({ dir, results, runMode, outputMode }) => {
-
+      require('dotenv').config();
       const islandoraHelpers = require('./src/_data/islandoraHelpers.js');
       const readCSV = require('./src/_data/readCSV.js');
 
@@ -103,6 +103,20 @@ module.exports = config => {
 			// Run me after the build ends
       console.log("eleventy after plugin run;.");
       items = readCSV().items;
+      for (const [key, item] of Object.entries(items)) {
+        var contentModelName = item.field_model;
+        var contentModel;
+        try {
+          contentModel = require('./src/islandty/ContentModels/' + contentModelName);
+        }
+        catch (e) {
+          contentModelName = 'default';
+          contentModel = require('./src/islandty/ContentModels/' + contentModelName)
+        }
+        const outputDir = path.join(dir.output, process.env.contentPath, item.id);
+        const result = contentModel.ingest(item, process.env.inputMediaPath, outputDir);
+      }
+        /*
       books =islandoraHelpers.itemsWithContentModel(items, 'Paged Content' );
       for (const [key, book] of Object.entries(books)) {
       let base_dir = path.dirname(book.file);
@@ -112,6 +126,7 @@ module.exports = config => {
        base_dir + '/iiif');
 
       }
+       */
     });
 
 
