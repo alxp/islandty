@@ -45,7 +45,7 @@ module.exports = {
       if (Object.hasOwn(item, fileField) && item['fileField'] !== "") {
         const outputDir = path.join(process.env.contentPath, item.id);
         const fileName = item[fileField].replace(/^.*[\\/]/, '');
-        item[fileField] = path.join (outputDir, fileName);
+        item[fileField] = "/" + path.join (outputDir, fileName);
       }
     });
   }
