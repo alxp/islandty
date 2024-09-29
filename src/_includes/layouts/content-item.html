@@ -7,7 +7,6 @@
 
     {% set parent = islandoraHelpers.getParentContent(readCSV.items, parent_id) %}
     {% set children = islandoraHelpers.getChildContent(readCSV.items, id) %}
-    {% set fileurl = ["/images/", file] | join %}
     {% set display = islandoraHelpers.getLayoutForContentModel(field_model) %}
 
     <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
