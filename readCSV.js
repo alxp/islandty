@@ -17,7 +17,19 @@ console.log('Using output path: ' + outputDir);
 
 
 for (const [key, item] of Object.entries(items)) {
-  var transformedItem = islandoraHelpers.transformKeys(item)
+
+  var contentModelName = item.field_model;
+        var contentModel;
+        try {
+          contentModel = require('./src/islandty/ContentModels/' + contentModelName);
+        }
+        catch (e) {
+          contentModelName = 'default';
+          contentModel = require('./src/islandty/ContentModels/' + contentModelName)
+        }
+contentModel.updateFilePaths(item);
+
+var transformedItem = islandoraHelpers.transformKeys(item)
   transformedItem.layout = 'layouts/content-item.html';
 
   const yamlString = yaml.dump(transformedItem); // Convert object to YAML string
