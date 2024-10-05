@@ -3,6 +3,7 @@ const path = require('path');
 
 require('dotenv').config();
 
+const fileFields = ['file', 'service', 'thumbnail'];
 
 module.exports = {
 
@@ -13,7 +14,7 @@ module.exports = {
    */
   ingest(item, inputMediaPath, outputDir) {
 
-    ['file', 'thumbnail'].forEach((fileField) => {
+    fileFields.forEach((fileField) => {
       if (Object.hasOwn(item, fileField) && item[fileField] !== "") {
         const inputFile = path.join(inputMediaPath, item[fileField]);
         const fileName = inputFile.replace(/^.*[\\/]/, '');
@@ -41,7 +42,7 @@ module.exports = {
    *    The item array.
    */
   updateFilePaths(item) {
-    ['file', 'thumbnail'].forEach((fileField) => {
+    fileFields.forEach((fileField) => {
       if (Object.hasOwn(item, fileField) && item['fileField'] !== "") {
         const outputDir = path.join(process.env.contentPath, item.id);
         const fileName = item[fileField].replace(/^.*[\\/]/, '');
