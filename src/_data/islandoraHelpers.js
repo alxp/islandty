@@ -76,7 +76,7 @@ module.exports = {
      *    The path of the manifest.
      */
     getIiifManifestForItem(file) {
-        let manifest_url = '/' + path.join('images', path.dirname(file), 'iiif/index.json');
+        let manifest_url =  path.join(path.dirname(file), 'iiif/index.json');
         return manifest_url;
     },
 

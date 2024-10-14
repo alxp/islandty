@@ -97,6 +97,7 @@ module.exports = config => {
       require('dotenv').config();
       const islandoraHelpers = require('./src/_data/islandoraHelpers.js');
       const readCSV = require('./src/_data/readCSV.js');
+      const slugify = require('slugify');
 
       var path = require('path');
       const { build:buildIiif } = require('biiif');
@@ -104,7 +105,8 @@ module.exports = config => {
       console.log("eleventy after plugin run;.");
       items = readCSV().items;
       for (const [key, item] of Object.entries(items)) {
-        var contentModelName = item.field_model;
+        var contentModelName = item.field_model.replace(/\s+/g, '');
+        console.log("Found content model" + contentModelName);
         var contentModel;
         try {
           contentModel = require('./src/islandty/ContentModels/' + contentModelName);
