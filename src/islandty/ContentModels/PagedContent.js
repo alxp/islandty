@@ -28,7 +28,7 @@ module.exports = {
           fs.mkdirSync(outputPath, { recursive: true });
         }
 
-        fs.copyFile(inputFile, outputPath, (err) => {
+        fs.copyFile(inputFile, path.join(outputPath, fileName), (err) => {
           if (err) {
             console.log(`Error copying ${outputPath}:`, err);
           }
@@ -42,7 +42,7 @@ module.exports = {
       // Generate the tiles with Biiif.
       let iiifPath = path.join(outputDir, 'iiif');
       generateIiifMetadata(item, iiifPath);
-      buildIiif(iiifPath, process.env.serverHost + '/' + process.env.ContentPath + '/' + item.id + '/iiif');
+      buildIiif(iiifPath, process.env.serverHost + '/' + process.env.contentPath + '/' + item.id + '/iiif');
     }
     defaultContentModel.ingest(item, inputMediaPath, outputDir);
   },
