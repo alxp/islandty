@@ -3,7 +3,7 @@ const path = require('path');
 
 require('dotenv').config();
 
-const fileFields = ['file', 'service', 'thumbnail'];
+const fileFields = ['file', 'service', 'thumbnail', 'mods'];
 
 module.exports = {
 
