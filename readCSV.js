@@ -26,7 +26,7 @@ for (const [key, item] of Object.entries(items)) {
           contentModel = require('./src/islandty/ContentModels/' + contentModelName);
         }
         catch (e) {
-          console.log("No content model found for " + contentModelName);
+          console.log("No content model found for " + contentModelName)
           console.log(e);
           contentModelName = 'default';
           contentModel = require('./src/islandty/ContentModels/' + contentModelName)
