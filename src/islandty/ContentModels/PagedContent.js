@@ -23,7 +23,8 @@ module.exports = {
       pages.forEach(page => {
         const inputFile = path.join(inputMediaPath, page['file']);
         const fileName = path.basename(inputFile);
-        const outputPath =  path.join(outputDir, 'iiif', '_' + fileName.replace(/\.[^/.]+$/, ""));
+        const baseName = fileName.replace(/\.[^/.]+$/, "");
+        const outputPath =  path.join(outputDir, 'iiif', '_' + baseName);
         if (!fs.existsSync(outputPath)){
           fs.mkdirSync(outputPath, { recursive: true });
         }
@@ -34,12 +35,38 @@ module.exports = {
           }
           else     {
             console.log(`Wrote ${outputPath}.`);
-          }
 
+            var hocrFile = '';
+            if (page.hocr) {
+              hocrFile = path.join(inputMediaPath, page.hocr);
+            }
+            else {
+              // Check if an hOCR file exists with the same name
+              // as the image file even if it's not in the CSV.
+              const potentialHocrFile = path.join(path.dirname(inputFile), baseName + ".hocr");
+              if (fs.existsSync(potentialHocrFile)) {
+                console.log(`Found hOCR file ${potentialHocrFile} not in CSV.`);
+                hocrFile = potentialHocrFile;
+                page.hocr = hocrFile;
+              }
+              if (hocrFile.length > 0) {
+                const hocrFileName = path.basename(hocrFile);
+
+                fs.copyFile(hocrFile, path.join(outputPath, hocrFileName), (err) => {
+                  if (err) {
+                    console.log(`Error copying ${hocrFile}:`, err);
+                  }
+                  else     {
+                    console.log('Wrote ' + path.join(outputPath, hocrFileName));
+                  }
+                });
+              }
+            }
+          }
         });
       });
 
-      // Generate the tiles with Biiif.
+      // Generate the IIIF manifest and tiles with Biiif.
       let iiifPath = path.join(outputDir, 'iiif');
       generateIiifMetadata(item, iiifPath);
       buildIiif(iiifPath, process.env.serverHost + '/' + process.env.contentPath + '/' + item.id + '/iiif');
