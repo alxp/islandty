@@ -1,0 +1,16 @@
+<div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
+    {{ content | safe }}
+
+    <h3>{{title }}</h3>
+
+    {% include "partials/thumbnail.html" %}
+
+    {% include "partials/metadata.html" %}
+
+    <h2>Children</h2>
+    <ul>
+        {% for child in children %}
+        <li><a href="/{{ contentPath }}/{{ child.id | slugify }}">{{ child.title }}</a></li>
+        {% endfor %}
+    </ul>
+</div>

@@ -26,8 +26,13 @@ for (const [key, item] of Object.entries(items)) {
           contentModel = require('./src/islandty/ContentModels/' + contentModelName);
         }
         catch (e) {
-          console.log("No content model found for " + contentModelName)
-          console.log(e);
+
+          if (e.code != 'MODULE_NOT_FOUND') {
+            console.log(e);
+          }
+          else {
+            console.log(`No content model found for $(contentModelName). Using default.`)
+          }
           contentModelName = 'default';
           contentModel = require('./src/islandty/ContentModels/' + contentModelName)
         }

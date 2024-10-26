@@ -106,7 +106,7 @@ module.exports = config => {
       items = readCSV().items;
       for (const [key, item] of Object.entries(items)) {
         var contentModelName = item.field_model.replace(/\s+/g, '');
-        console.log("Found content model" + contentModelName);
+
         var contentModel;
         try {
           contentModel = require('./src/islandty/ContentModels/' + contentModelName);
