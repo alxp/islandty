@@ -1,4 +1,0 @@
-{
-	"IndexXSLT": "src/MODS-to-index.sef.json",
-	"DisplayXSLT": "src/MODS-to-HTML.sef.json"
-}
