@@ -46,7 +46,7 @@ var transformedItem = islandoraHelpers.transformKeys(item)
   const content = `---\n${yamlString}---\n`; // Add dashes at the end
   // If contentPath does not exist, make it.
   if (!fs.existsSync("src/" + process.env.contentPath)) {
-    fs.mkdirSync(outputDirh);
+    fs.mkdirSync(outputDir);
   }
   const outputFile = outputDir + '/' + item.id + '.md';
   fs.writeFile(outputFile, content, (err) => {
