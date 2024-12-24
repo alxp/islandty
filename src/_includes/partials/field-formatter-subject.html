@@ -1,4 +1,4 @@
-{% set subjects = item[name].split('|') %}
+{% set subjects = item[name] %}
 {% set count = subjects.length %}
 {% for subject in subjects %}
     {% set parts = subject.split(':') %}
