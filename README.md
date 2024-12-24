@@ -1,6 +1,6 @@
 # Islandty
 
-Islandty builds a static web site built from a CSV input file formatted for Islandora Workbench, built on the
+Islandty builds a static web site built from a CSV input file formatted for [Islandora Workbench](https://islandora.github.io/documentation/technical-documentation/migration-islandora-workbench/), built on the
 [Eleventy](https://www.11ty.dev) platform.
 
 So if you use Islandora Workbench to populate an Islandora site
@@ -18,13 +18,13 @@ you can use the same input files to generate a static website.
 
 Clone the islandty repository and change directory into it.
 
-Then, running 
+Then, run
 
 ```shell
 $ npm install
 ```
 
-will get all the dependencies.
+to get all the dependencies (except VIPS; see below if using macOS).
 
 ### JP2 support on macOS
 
@@ -41,26 +41,38 @@ See the Sharp [installation instructions](https://sharp.pixelplumbing.com/instal
 
 ## Setup
 
-These instructions use the [Islandora Demo Objects](https://github.com/Islandora-Devops/islandora_demo_objects) content as a working example.
 
-### Point to the metadata CSV file in .env
+### Preparing a metadata CSV
 
-Put a copy of your metadata CSV somewhere in the `src` folder such as `src/_data`.
+These instructions use the [Islandora Demo Objects](https://github.com/Islandora-Devops/islandora_demo_objects) content as a working example. If you're using your own data, you can set up a CSV file in a similar fashion, with the following caveats
 
-Edit the .env file in the project root and set
-the CSV source:
+* `field_model` is mandatory. It does not need to contain any particular values, however if there exists a layout (.html) file in 
+`src/_includes/partials` with a name that equals the value in `field_model`, spaces replaced with dashes, then that layout file will be used in place of `src/_includes/partials/default-item.html`. See as examples `src/_includes/partials/Audio.html` and `src/_includes/partials/Paged-Content.html`.
+* `title` is a necessary column so that links to the items can be displayed. We are unaware of a max lenth on titles.
+* `file`, `service`, and `thumbnail` are reserved column names. They may hold paths to files (relative to a root binaries folder configured below). They hold original files, service files, and thumbnails respectively. Islandty does not create derivatives; these must be done prior to using Islandty. See the Islandora Demo Objects for an example shell script for generating derivatives.
+** HOCR files are discovered specially?
+** Transcript files...?
+* `id` column
+* other columns
 
-````ini
-dataFileName=./src/_data/create_islandora_objects.csv
+### Configure your metadata CSV file location
+
+Edit the  `.env` file in the project root and set
+the `dataFileName` variable to the path to your CSV. 
+
+```ini
+dataFileName=../islandora_demo_objects/create_islandora_objects.csv
 ```
 
-### Put binaries into the `src/images` folder.
+### Configure your root binaries folder.
 
-Copy your binaries into the `src/images` folder so that the paths in the metadata CSV's `file` column
-are accurate relative to the `src/images`.
+The paths in the `file` column of the metadata CSV must be relative to a single
+directory. Configure that directory in the `inputMediaPath` variable of the `.env` file.
 
-For Islandora Demo Objects, `git clone` the repository outside of the islandty tree then
-copy or move the folders into `src/images`.
+
+```ini
+inputMediaPath=../islandora_demo_objects
+```
 
 
 ### Generate and run the site locally.
@@ -85,7 +97,6 @@ to CSV columns if your source metadata is in MODS format.
 ## hOCR support
 
 If Islandty finds a file with extension .hocr
-
 in the same folder as a source image for an
 object with content model ''Page' it will
 add it to the IIIF manifest generated via biiif.
