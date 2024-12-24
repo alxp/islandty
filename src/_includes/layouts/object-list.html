@@ -8,8 +8,8 @@
         <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
           {{ content | safe }}
 
-          {% for item in collections.repo %}
-              <h3><a href="/{{ item.permalink }}">{{ item.title }}</a></h3>
+          {% for item in collections['linked-agent'] %}
+              <h3><a href="/{{ item.data.contentPath }}/{{ item.data.id }}">{{ item.data.field_linked_agent }}</a></h3>
 
           {% endfor %}
         </div>

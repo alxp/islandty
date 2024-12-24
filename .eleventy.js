@@ -66,9 +66,10 @@ module.exports = config => {
   config.addPlugin(rssPlugin);
 
   // ROSIE: A collection of digital objects.
-  config.addCollection('repo', collection => {
-    return collection.getFilteredByGlob('./src/repo/**/*.njk');
+  config.addCollection('linked-agent', collection => {
+    return collection.getAll().filter((item) => item.data.field_linked_agent);
   });
+
 
   // ROSIE: Ignore sef files
   config.watchIgnores.add('**/*.sef.json');
@@ -118,18 +119,7 @@ module.exports = config => {
         const outputDir = path.join(dir.output, process.env.contentPath, item.id);
         const result = contentModel.ingest(item, process.env.inputMediaPath, outputDir);
       }
-        /*
-      books =islandoraHelpers.itemsWithContentModel(items, 'Paged Content' );
-      for (const [key, book] of Object.entries(books)) {
-      let base_dir = path.dirname(book.file);
-      let full_path = path.join('./dist/images', base_dir, 'iiif');
-      islandoraHelpers.generateIiifMetadata(book, full_path);
-      buildIiif(full_path, process.env.serverHost + '/images/' +
-       base_dir + '/iiif');
-
-      }
-       */
-    });
+            });
 
 
 

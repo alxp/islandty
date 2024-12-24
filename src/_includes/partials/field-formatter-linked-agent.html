@@ -1,13 +1,14 @@
-{% set contributors = item[name].split('|') %}
+{% set contributors = item[name] %}
 {% set count = contributors.length %}
+hi.
 {% for contributor in contributors %}
-    {% set parts = contributor.split(':') %}
+
     <tr>
         {% if loop.first %}
         <th rowspan="{{ count }}"> {{ label }}</th>
         {% endif %}
         <td>
-            {{ relators.items[parts[1]] }}: {{ parts[3] }}
+            {{ contributor[0] }}
         </td>
     </tr>
 {% endfor %}
