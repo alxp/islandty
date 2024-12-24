@@ -15,9 +15,9 @@
 
 
         {% if item[name] is string %}
-            <tr><td>{{ label }}</td><td>{{ item[name] }}</td></tr>
+            <tr><th>{{ label }}</th><td>{{ item[name] }}</td></tr>
         {% else %}
-        <tr><td>{{ label }}</td><td>{{ item[name] | join(',') }}</td></tr>
+        <tr><th>{{ label }}</th><td>{{ item[name] | join(',') }}</td></tr>
     {% endif %}
 
         {% set count = values.length %}

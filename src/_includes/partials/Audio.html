@@ -12,8 +12,8 @@
     {% for name, label in fieldNames.items %}
     {% if parent[name] %}
     <tr>
-        <td> {{label }}</td>
-        <td> {{parent[name] }} </td>
+        <th> {{ label }}</th>
+        <td> {{ parent[name] }} </td>
     </tr>
     {% endif %}
     {% endfor %}

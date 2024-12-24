@@ -1,14 +1,19 @@
-{% set contributors = item[name] %}
-{% set count = contributors.length %}
-hi.
-{% for contributor in contributors %}
+{% set linked_agents = item[name] %}
+{% for rel, contributors in linked_agents %}
 
-    <tr>
-        {% if loop.first %}
-        <th rowspan="{{ count }}"> {{ label }}</th>
-        {% endif %}
-        <td>
-            {{ contributor[0] }}
-        </td>
-    </tr>
+{% set count = contributors.length %}
+{% for contributor in contributors %}
+<tr>
+    {% if loop.first %}
+    <th rowspan="{{ count }}"> {{ rel }}</th>
+    {% endif %}
+    
+    <td>
+        {{ contributor }}
+    </td>
+</tr>
+
 {% endfor %}
+{% endfor %}
+
+
