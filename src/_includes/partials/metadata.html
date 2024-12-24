@@ -10,9 +10,9 @@
                 {% include "partials/field-formatter-subject.html" %}
                 {% else %}
                     {% if item[name] is string %}
-                        <tr><th>{{ label }}</th><td>{{ item[name] | safe }}</td></tr>
+                        <tr><th scope="row">{{ label }}</th><td>{{ item[name] | safe }}</td></tr>
                     {% else %}
-                        <tr><th>{{ label }}</th><td>{{ item[name] | join(', ') | safe }}</td></tr>
+                        <tr><th scope="row">{{ label }}</th><td>{{ item[name] | join(', ') | safe }}</td></tr>
                     {% endif %}
                 {% endif %}
             {% endif %}
