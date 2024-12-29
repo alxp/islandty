@@ -1,0 +1,129 @@
+{
+    "id": {
+        "label": "ID",
+        "cardinality": "1"
+    },
+    "field_pid": {
+        "label": "PID",
+        "cardinality": "1"
+    },
+    "field_resource_type": {
+        "label": "Resource Type",
+        "cardinality": "1"
+    },
+    "field_model": {
+        "label": "Model",
+        "cardinality": "1"
+    },
+    "field_member_of": {
+        "label": "Member Of",
+        "cardinality": "-1"
+    },
+    "field_weight": {
+        "label": "Weight",
+        "cardinality": "1"
+    },
+    "title": {
+        "label": "Title",
+        "cardinality": "1"
+    },
+    "field_local_identifier": {
+        "label": "Local Identifier",
+        "cardinality": "-1"
+    },
+    "field_genre": {
+        "label": "Genre",
+        "cardinality": "-1"
+    },
+    "field_edtf_date_created": {
+        "label": "Date Created",
+        "cardinality": "1"
+    },
+    "field_edtf_date_issued": {
+        "label": "Date Issued",
+        "cardinality": "1"
+    },
+    "field_linked_agent": {
+        "label": "Linked Agent",
+        "cardinality": "-1"
+    },
+    "field_description": {
+        "label": "Description",
+        "cardinality": "1"
+    },
+    "field_extent": {
+        "label": "Extent",
+        "cardinality": "1"
+    },
+    "field_rights": {
+        "label": "Rights",
+        "cardinality": "1"
+    },
+    "field_subject_general": {
+        "label": "Subject",
+        "cardinality": "-1"
+    },
+    "field_subject": {
+        "label": "Subject",
+        "cardinality": "-1"
+    },
+    "field_geographic_subject": {
+        "label": "Geographic Subject",
+        "cardinality": "-1"
+    },
+    "field_preferred_citation": {
+        "label": "Preferred Citation",
+        "cardinality": "1"
+    },
+    "field_use_and_reproduction": {
+        "label": "Use and Reproduction",
+        "cardinality": "-1"
+    },
+    "field_physical_storage_info": {
+        "label": "Physical Storage Info",
+        "cardinality": "-1"
+    },
+    "field_digital_obj_uri": {
+        "label": "",
+        "cardinality": "URI",
+        "null": [
+            "-1"
+        ]
+    },
+    "field_archival_obj_refid": {
+        "label": "Archival Object Ref ID",
+        "cardinality": "-1"
+    },
+    "field_archival_obj_uri": {
+        "label": "Archival Object URL",
+        "cardinality": "-1"
+    },
+    "field_campus": {
+        "label": "Campus",
+        "cardinality": "1"
+    },
+    "field_repository": {
+        "label": "Repository",
+        "cardinality": "1"
+    },
+    "field_unit": {
+        "label": "Unit",
+        "cardinality": "1"
+    },
+    "field_campus_unit_repository": {
+        "label": "Campus Unit Repository",
+        "cardinality": "1"
+    },
+    "field_display_hints": {
+        "label": "Display Hints",
+        "cardinality": "-1"
+    },
+    "hocr": {
+        "label": "hOCR",
+        "cardinality": "1"
+    },
+    "file": {
+        "label": "File",
+        "cardinality": "1"
+    }
+}

@@ -1,10 +1,12 @@
 {% set subjects = item[name] %}
 {% set count = subjects.length %}
+
 {% for subject in subjects %}
+
     {% set parts = subject.split(':') %}
     <tr>
         {% if loop.first %}
-        <th rowspan="{{ count }}"> {{ label }}</th>
+        <th rowspan="{{ count }}"> {{ islandoraFieldInfo[name]['label'] }}</th>
         {% endif %}
         <td>
             {{ parts[1] }}

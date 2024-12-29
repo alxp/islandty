@@ -1,6 +1,6 @@
 <div class="content-metadata">
     <table>
-        {% for name, label in fieldNames.items %}
+        {% for name, field in islandoraFieldInfo %}
             {% if item[name] %}
                 {% if name == 'file' %}
                 {% include "partials/field-formatter-file.html" %}
@@ -10,9 +10,9 @@
                 {% include "partials/field-formatter-subject.html" %}
                 {% else %}
                     {% if item[name] is string %}
-                        <tr><th scope="row">{{ label }}</th><td>{{ item[name] | safe }}</td></tr>
+                        <tr><th scope="row">{{ field.label }}</th><td>{{ item[name] | safe }}</td></tr>
                     {% else %}
-                        <tr><th scope="row">{{ label }}</th><td>{{ item[name] | join(', ') | safe }}</td></tr>
+                        <tr><th scope="row">{{ field.label }}</th><td>{{ item[name] | join(', ') | safe }}</td></tr>
                     {% endif %}
                 {% endif %}
             {% endif %}
