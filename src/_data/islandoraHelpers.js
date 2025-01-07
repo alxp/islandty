@@ -174,13 +174,16 @@ module.exports = {
       if (chunks.length == 4) {
         const relatorType = chunks[0];
         try {
-          const relatorNames = require('./TypedRelators/' + relatorType + '.js');
-          const relatorName = relatorNames().items[chunks[1]];
-          if (relatorName in parsedRelations) {
-            parsedRelations[relatorName].push(chunks[3]);
+          const relatorNames = require('./TypedRelators/' + relatorType + '.json');
+          const relatorName = relatorNames[chunks[1]]['label'];
+          if (!(relatorType in parsedRelations)) {
+            parsedRelations[relatorType] = {};
+          }
+          if (relatorName in parsedRelations[relatorType]) {
+            parsedRelations[relatorType][relatorName].push(chunks[3]);
           }
           else {
-            parsedRelations[relatorName] = [chunks[3]];
+            parsedRelations[relatorType][relatorName] = [chunks[3]];
           }
 
         }
@@ -192,4 +195,5 @@ module.exports = {
     }
     return parsedRelations;
   }
+
 }

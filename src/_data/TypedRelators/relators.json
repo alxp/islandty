@@ -1,0 +1,896 @@
+{
+  "abr": {
+    "label": "Abridger"
+  },
+  "acp": {
+    "label": "Art copyist"
+  },
+  "act": {
+    "label": "Actor"
+  },
+  "adi": {
+    "label": "Art director"
+  },
+  "adp": {
+    "label": "Adapter"
+  },
+  "aft": {
+    "label": "Author of afterword"
+  },
+  "anc": {
+    "label": "Announcer"
+  },
+  "anl": {
+    "label": "Analyst"
+  },
+  "anm": {
+    "label": "Animator"
+  },
+  "ann": {
+    "label": "Annotator"
+  },
+  "ant": {
+    "label": "Bibliographic antecedent"
+  },
+  "ape": {
+    "label": "Appellee"
+  },
+  "apl": {
+    "label": "Appellant"
+  },
+  "app": {
+    "label": "Applicant"
+  },
+  "aqt": {
+    "label": "Author in quotations or text abstracts"
+  },
+  "arc": {
+    "label": "Architect"
+  },
+  "ard": {
+    "label": "Artistic director"
+  },
+  "arr": {
+    "label": "Arranger"
+  },
+  "art": {
+    "label": "Artist"
+  },
+  "asg": {
+    "label": "Assignee"
+  },
+  "asn": {
+    "label": "Associated name"
+  },
+  "ato": {
+    "label": "Autographer"
+  },
+  "att": {
+    "label": "Attributed name"
+  },
+  "auc": {
+    "label": "Auctioneer"
+  },
+  "aud": {
+    "label": "Author of dialog"
+  },
+  "aue": {
+    "label": "Audio engineer"
+  },
+  "aui": {
+    "label": "Author of introduction"
+  },
+  "aup": {
+    "label": "Audio producer"
+  },
+  "aus": {
+    "label": "Screenwriter"
+  },
+  "aut": {
+    "label": "Author"
+  },
+  "bdd": {
+    "label": "Binding designer"
+  },
+  "bjd": {
+    "label": "Bookjacket designer"
+  },
+  "bka": {
+    "label": "Book artist"
+  },
+  "bkd": {
+    "label": "Book designer"
+  },
+  "bkp": {
+    "label": "Book producer"
+  },
+  "blw": {
+    "label": "Blurb writer"
+  },
+  "bnd": {
+    "label": "Binder"
+  },
+  "bpd": {
+    "label": "Bookplate designer"
+  },
+  "brd": {
+    "label": "Broadcaster"
+  },
+  "brl": {
+    "label": "Braille embosser"
+  },
+  "bsl": {
+    "label": "Bookseller"
+  },
+  "cad": {
+    "label": "Casting director"
+  },
+  "cas": {
+    "label": "Caster"
+  },
+  "ccp": {
+    "label": "Conceptor"
+  },
+  "chr": {
+    "label": "Choreographer"
+  },
+  "-clb": {
+    "label": "Collaborator"
+  },
+  "cli": {
+    "label": "Client"
+  },
+  "cll": {
+    "label": "Calligrapher"
+  },
+  "clr": {
+    "label": "Colorist"
+  },
+  "clt": {
+    "label": "Collotyper"
+  },
+  "cmm": {
+    "label": "Commentator"
+  },
+  "cmp": {
+    "label": "Composer"
+  },
+  "cmt": {
+    "label": "Compositor"
+  },
+  "cnd": {
+    "label": "Conductor"
+  },
+  "cng": {
+    "label": "Cinematographer"
+  },
+  "cns": {
+    "label": "Censor"
+  },
+  "coe": {
+    "label": "Contestant-appellee"
+  },
+  "col": {
+    "label": "Collector"
+  },
+  "com": {
+    "label": "Compiler"
+  },
+  "con": {
+    "label": "Conservator"
+  },
+  "cop": {
+    "label": "Camera operator"
+  },
+  "cor": {
+    "label": "Collection registrar"
+  },
+  "cos": {
+    "label": "Contestant"
+  },
+  "cot": {
+    "label": "Contestant-appellant"
+  },
+  "cou": {
+    "label": "Court governed"
+  },
+  "cov": {
+    "label": "Cover designer"
+  },
+  "cpc": {
+    "label": "Copyright claimant"
+  },
+  "cpe": {
+    "label": "Complainant-appellee"
+  },
+  "cph": {
+    "label": "Copyright holder"
+  },
+  "cpl": {
+    "label": "Complainant"
+  },
+  "cpt": {
+    "label": "Complainant-appellant"
+  },
+  "cre": {
+    "label": "Creator"
+  },
+  "crp": {
+    "label": "Correspondent"
+  },
+  "crr": {
+    "label": "Corrector"
+  },
+  "crt": {
+    "label": "Court reporter"
+  },
+  "csl": {
+    "label": "Consultant"
+  },
+  "csp": {
+    "label": "Consultant to a project"
+  },
+  "cst": {
+    "label": "Costume designer"
+  },
+  "ctb": {
+    "label": "Contributor"
+  },
+  "cte": {
+    "label": "Contestee-appellee"
+  },
+  "ctg": {
+    "label": "Cartographer"
+  },
+  "ctr": {
+    "label": "Contractor"
+  },
+  "cts": {
+    "label": "Contestee"
+  },
+  "ctt": {
+    "label": "Contestee-appellant"
+  },
+  "cur": {
+    "label": "Curator"
+  },
+  "cwt": {
+    "label": "Commentator for written text"
+  },
+  "dbd": {
+    "label": "Dubbing director"
+  },
+  "dbp": {
+    "label": "Distribution place"
+  },
+  "dfd": {
+    "label": "Defendant"
+  },
+  "dfe": {
+    "label": "Defendant-appellee"
+  },
+  "dft": {
+    "label": "Defendant-appellant"
+  },
+  "dgc": {
+    "label": "Degree committee member"
+  },
+  "dgg": {
+    "label": "Degree granting institution"
+  },
+  "dgs": {
+    "label": "Degree supervisor"
+  },
+  "dis": {
+    "label": "Dissertant"
+  },
+  "djo": {
+    "label": "DJ"
+  },
+  "dln": {
+    "label": "Delineator"
+  },
+  "dnc": {
+    "label": "Dancer"
+  },
+  "dnr": {
+    "label": "Donor"
+  },
+  "dpc": {
+    "label": "Depicted"
+  },
+  "dpt": {
+    "label": "Depositor"
+  },
+  "drm": {
+    "label": "Draftsman"
+  },
+  "drt": {
+    "label": "Director"
+  },
+  "dsr": {
+    "label": "Designer"
+  },
+  "dst": {
+    "label": "Distributor"
+  },
+  "dtc": {
+    "label": "Data contributor"
+  },
+  "dte": {
+    "label": "Dedicatee"
+  },
+  "dtm": {
+    "label": "Data manager"
+  },
+  "dto": {
+    "label": "Dedicator"
+  },
+  "dub": {
+    "label": "Dubious author"
+  },
+  "edc": {
+    "label": "Editor of compilation"
+  },
+  "edd": {
+    "label": "Editorial director"
+  },
+  "edm": {
+    "label": "Editor of moving image work"
+  },
+  "edt": {
+    "label": "Editor"
+  },
+  "egr": {
+    "label": "Engraver"
+  },
+  "elg": {
+    "label": "Electrician"
+  },
+  "elt": {
+    "label": "Electrotyper"
+  },
+  "eng": {
+    "label": "Engineer"
+  },
+  "enj": {
+    "label": "Enacting jurisdiction"
+  },
+  "etr": {
+    "label": "Etcher"
+  },
+  "evp": {
+    "label": "Event place"
+  },
+  "exp": {
+    "label": "Expert"
+  },
+  "fac": {
+    "label": "Facsimilist"
+  },
+  "fds": {
+    "label": "Film distributor"
+  },
+  "fld": {
+    "label": "Field director"
+  },
+  "flm": {
+    "label": "Film editor"
+  },
+  "fmd": {
+    "label": "Film director"
+  },
+  "fmk": {
+    "label": "Filmmaker"
+  },
+  "fmo": {
+    "label": "Former owner"
+  },
+  "fmp": {
+    "label": "Film producer"
+  },
+  "fnd": {
+    "label": "Funder"
+  },
+  "fon": {
+    "label": "Founder"
+  },
+  "fpy": {
+    "label": "First party"
+  },
+  "frg": {
+    "label": "Forger"
+  },
+  "gdv": {
+    "label": "Game developer"
+  },
+  "gis": {
+    "label": "Geographic information specialist"
+  },
+  "-grt": {
+    "label": "Graphic technician"
+  },
+  "his": {
+    "label": "Host institution"
+  },
+  "hnr": {
+    "label": "Honoree"
+  },
+  "hst": {
+    "label": "Host"
+  },
+  "ill": {
+    "label": "Illustrator"
+  },
+  "ilu": {
+    "label": "Illuminator"
+  },
+  "ins": {
+    "label": "Inscriber"
+  },
+  "inv": {
+    "label": "Inventor"
+  },
+  "isb": {
+    "label": "Issuing body"
+  },
+  "itr": {
+    "label": "Instrumentalist"
+  },
+  "ive": {
+    "label": "Interviewee"
+  },
+  "ivr": {
+    "label": "Interviewer"
+  },
+  "jud": {
+    "label": "Judge"
+  },
+  "jug": {
+    "label": "Jurisdiction governed"
+  },
+  "lbr": {
+    "label": "Laboratory"
+  },
+  "lbt": {
+    "label": "Librettist"
+  },
+  "ldr": {
+    "label": "Laboratory director"
+  },
+  "led": {
+    "label": "Lead"
+  },
+  "lee": {
+    "label": "Libelee-appellee"
+  },
+  "lel": {
+    "label": "Libelee"
+  },
+  "len": {
+    "label": "Lender"
+  },
+  "let": {
+    "label": "Libelee-appellant"
+  },
+  "lgd": {
+    "label": "Lighting designer"
+  },
+  "lie": {
+    "label": "Libelant-appellee"
+  },
+  "lil": {
+    "label": "Libelant"
+  },
+  "lit": {
+    "label": "Libelant-appellant"
+  },
+  "lsa": {
+    "label": "Landscape architect"
+  },
+  "lse": {
+    "label": "Licensee"
+  },
+  "lso": {
+    "label": "Licensor"
+  },
+  "ltg": {
+    "label": "Lithographer"
+  },
+  "lyr": {
+    "label": "Lyricist"
+  },
+  "mcp": {
+    "label": "Music copyist"
+  },
+  "mdc": {
+    "label": "Metadata contact"
+  },
+  "med": {
+    "label": "Medium"
+  },
+  "mfp": {
+    "label": "Manufacture place"
+  },
+  "mfr": {
+    "label": "Manufacturer"
+  },
+  "mka": {
+    "label": "Makeup artist"
+  },
+  "mod": {
+    "label": "Moderator"
+  },
+  "mon": {
+    "label": "Monitor"
+  },
+  "mrb": {
+    "label": "Marbler"
+  },
+  "mrk": {
+    "label": "Markup editor"
+  },
+  "msd": {
+    "label": "Musical director"
+  },
+  "mte": {
+    "label": "Metal-engraver"
+  },
+  "mtk": {
+    "label": "Minute taker"
+  },
+  "mup": {
+    "label": "Music programmer"
+  },
+  "mus": {
+    "label": "Musician"
+  },
+  "mxe": {
+    "label": "Mixing engineer"
+  },
+  "nan": {
+    "label": "News anchor"
+  },
+  "nrt": {
+    "label": "Narrator"
+  },
+  "onp": {
+    "label": "Onscreen participant"
+  },
+  "opn": {
+    "label": "Opponent"
+  },
+  "org": {
+    "label": "Originator"
+  },
+  "orm": {
+    "label": "Organizer"
+  },
+  "osp": {
+    "label": "Onscreen presenter"
+  },
+  "oth": {
+    "label": "Other"
+  },
+  "own": {
+    "label": "Owner"
+  },
+  "pad": {
+    "label": "Place of address"
+  },
+  "pan": {
+    "label": "Panelist"
+  },
+  "pat": {
+    "label": "Patron"
+  },
+  "pbd": {
+    "label": "Publishing director"
+  },
+  "pbl": {
+    "label": "Publisher"
+  },
+  "pdr": {
+    "label": "Project director"
+  },
+  "pfr": {
+    "label": "Proofreader"
+  },
+  "pht": {
+    "label": "Photographer"
+  },
+  "plt": {
+    "label": "Platemaker"
+  },
+  "pma": {
+    "label": "Permitting agency"
+  },
+  "pmn": {
+    "label": "Production manager"
+  },
+  "pop": {
+    "label": "Printer of plates"
+  },
+  "ppm": {
+    "label": "Papermaker"
+  },
+  "ppt": {
+    "label": "Puppeteer"
+  },
+  "pra": {
+    "label": "Praeses"
+  },
+  "prc": {
+    "label": "Process contact"
+  },
+  "prd": {
+    "label": "Production personnel"
+  },
+  "pre": {
+    "label": "Presenter"
+  },
+  "prf": {
+    "label": "Performer"
+  },
+  "prg": {
+    "label": "Programmer"
+  },
+  "prm": {
+    "label": "Printmaker"
+  },
+  "prn": {
+    "label": "Production company"
+  },
+  "pro": {
+    "label": "Producer"
+  },
+  "prp": {
+    "label": "Production place"
+  },
+  "prs": {
+    "label": "Production designer"
+  },
+  "prt": {
+    "label": "Printer"
+  },
+  "prv": {
+    "label": "Provider"
+  },
+  "pta": {
+    "label": "Patent applicant"
+  },
+  "pte": {
+    "label": "Plaintiff-appellee"
+  },
+  "ptf": {
+    "label": "Plaintiff"
+  },
+  "pth": {
+    "label": "Patent holder"
+  },
+  "ptt": {
+    "label": "Plaintiff-appellant"
+  },
+  "pup": {
+    "label": "Publication place"
+  },
+  "rap": {
+    "label": "Rapporteur"
+  },
+  "rbr": {
+    "label": "Rubricator"
+  },
+  "rcd": {
+    "label": "Recordist"
+  },
+  "rce": {
+    "label": "Recording engineer"
+  },
+  "rcp": {
+    "label": "Addressee"
+  },
+  "rdd": {
+    "label": "Radio director"
+  },
+  "red": {
+    "label": "Redaktor"
+  },
+  "ren": {
+    "label": "Renderer"
+  },
+  "res": {
+    "label": "Researcher"
+  },
+  "rev": {
+    "label": "Reviewer"
+  },
+  "rpc": {
+    "label": "Radio producer"
+  },
+  "rps": {
+    "label": "Repository"
+  },
+  "rpt": {
+    "label": "Reporter"
+  },
+  "rpy": {
+    "label": "Responsible party"
+  },
+  "rse": {
+    "label": "Respondent-appellee"
+  },
+  "rsg": {
+    "label": "Restager"
+  },
+  "rsp": {
+    "label": "Respondent"
+  },
+  "rsr": {
+    "label": "Restorationist"
+  },
+  "rst": {
+    "label": "Respondent-appellant"
+  },
+  "rth": {
+    "label": "Research team head"
+  },
+  "rtm": {
+    "label": "Research team member"
+  },
+  "rxa": {
+    "label": "Remix artist"
+  },
+  "sad": {
+    "label": "Scientific advisor"
+  },
+  "sce": {
+    "label": "Scenarist"
+  },
+  "scl": {
+    "label": "Sculptor"
+  },
+  "scr": {
+    "label": "Scribe"
+  },
+  "sde": {
+    "label": "Sound engineer"
+  },
+  "sds": {
+    "label": "Sound designer"
+  },
+  "sec": {
+    "label": "Secretary"
+  },
+  "sfx": {
+    "label": "Special effects provider"
+  },
+  "sgd": {
+    "label": "Stage director"
+  },
+  "sgn": {
+    "label": "Signer"
+  },
+  "sht": {
+    "label": "Supporting host"
+  },
+  "sll": {
+    "label": "Seller"
+  },
+  "sng": {
+    "label": "Singer"
+  },
+  "spk": {
+    "label": "Speaker"
+  },
+  "spn": {
+    "label": "Sponsor"
+  },
+  "spy": {
+    "label": "Second party"
+  },
+  "srv": {
+    "label": "Surveyor"
+  },
+  "std": {
+    "label": "Set designer"
+  },
+  "stg": {
+    "label": "Setting"
+  },
+  "stl": {
+    "label": "Storyteller"
+  },
+  "stm": {
+    "label": "Stage manager"
+  },
+  "stn": {
+    "label": "Standards body"
+  },
+  "str": {
+    "label": "Stereotyper"
+  },
+  "swd": {
+    "label": "Software developer"
+  },
+  "tau": {
+    "label": "Television writer"
+  },
+  "tcd": {
+    "label": "Technical director"
+  },
+  "tch": {
+    "label": "Teacher"
+  },
+  "ths": {
+    "label": "Thesis advisor"
+  },
+  "tld": {
+    "label": "Television director"
+  },
+  "tlg": {
+    "label": "Television guest"
+  },
+  "tlh": {
+    "label": "Television host"
+  },
+  "tlp": {
+    "label": "Television producer"
+  },
+  "trc": {
+    "label": "Transcriber"
+  },
+  "trl": {
+    "label": "Translator"
+  },
+  "tyd": {
+    "label": "Type designer"
+  },
+  "tyg": {
+    "label": "Typographer"
+  },
+  "uvp": {
+    "label": "University place"
+  },
+  "vac": {
+    "label": "Voice actor"
+  },
+  "vdg": {
+    "label": "Videographer"
+  },
+  "vfx": {
+    "label": "Visual effects provider"
+  },
+  "-voc": {
+    "label": "Vocalist"
+  },
+  "wac": {
+    "label": "Writer of added commentary"
+  },
+  "wal": {
+    "label": "Writer of added lyrics"
+  },
+  "wam": {
+    "label": "Writer of accompanying material"
+  },
+  "wat": {
+    "label": "Writer of added text"
+  },
+  "wdc": {
+    "label": "Woodcutter"
+  },
+  "wde": {
+    "label": "Wood engraver"
+  },
+  "win": {
+    "label": "Writer of introduction"
+  },
+  "wit": {
+    "label": "Witness"
+  },
+  "wpr": {
+    "label": "Writer of preface"
+  },
+  "wst": {
+    "label": "Writer of supplementary textual content"
+  }
+}

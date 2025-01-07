@@ -21,24 +21,26 @@ for (const [key, item] of Object.entries(items)) {
 
   var contentModelName = item.field_model.replace(/\s+/g, '');
 
-        var contentModel;
-        try {
-          contentModel = require('./src/islandty/ContentModels/' + contentModelName);
-        }
-        catch (e) {
+  var contentModel;
+  try {
+    contentModel = require('./src/islandty/ContentModels/' + contentModelName);
+  }
+  catch (e) {
 
-          if (e.code != 'MODULE_NOT_FOUND') {
-            console.log(e);
-          }
-          else {
+    if (e.code != 'MODULE_NOT_FOUND') {
+      console.log(e);
+    }
+    else {
 
-          }
-          contentModelName = 'default';
-          contentModel = require('./src/islandty/ContentModels/' + contentModelName)
-        }
-contentModel.updateFilePaths(item);
+    }
+    contentModelName = 'default';
+    contentModel = require('./src/islandty/ContentModels/' + contentModelName)
+  }
+  contentModel.updateFilePaths(item);
 
-var transformedItem = islandoraHelpers.transformKeys(item)
+  var transformedItem = islandoraHelpers.transformKeys(item)
+
+
   transformedItem.layout = 'layouts/content-item.html';
 
   const yamlString = yaml.dump(transformedItem); // Convert object to YAML string
@@ -50,9 +52,9 @@ var transformedItem = islandoraHelpers.transformKeys(item)
   }
   const outputFile = outputDir + '/' + item.id + '.md';
   fs.writeFile(outputFile, content, (err) => {
-    if (err) {
-      console.error(err);
-    } else {
+  if (err) {
+    console.error(err);
+  } else {
       console.log('Wrote ' + outputFile);
     }
   });
