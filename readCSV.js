@@ -17,6 +17,8 @@ const outputDir = "src/" + process.env.contentPath;
 console.log('Using output path: ' + outputDir);
 
 
+var allLinkedAgents = {};
+
 for (const [key, item] of Object.entries(items)) {
 
   var contentModelName = item.field_model.replace(/\s+/g, '');
@@ -40,6 +42,24 @@ for (const [key, item] of Object.entries(items)) {
 
   var transformedItem = islandoraHelpers.transformKeys(item)
 
+  if ('field_linked_agent' in transformedItem) {
+    for (const [linkedAgentType, linkedAgents] of Object.entries(transformedItem['field_linked_agent'])) {
+      if (!(linkedAgentType in allLinkedAgents)) {
+        allLinkedAgents[linkedAgentType] = {};
+      }
+      for (const [linkedAgentName, linkedAgentValues] of Object.entries(linkedAgents)) {
+        for (linkedAgentValue of linkedAgentValues) {
+          if (!(linkedAgentName in allLinkedAgents[linkedAgentType])) {
+            allLinkedAgents[linkedAgentType][linkedAgentName] = {};
+          }
+          if (!(linkedAgentValue in allLinkedAgents[linkedAgentType][linkedAgentName])) {
+            allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue] = [];
+          }
+          allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue].push(transformedItem['id']);
+        }
+      }
+    }
+  }
 
   transformedItem.layout = 'layouts/content-item.html';
 
@@ -58,4 +78,13 @@ for (const [key, item] of Object.entries(items)) {
       console.log('Wrote ' + outputFile);
     }
   });
+}
+
+const linkedAgentDir = path.join(outputDir, 'linked-agents');
+fs.mkdirSync(linkedAgentDir, { recursive: true });
+for (const [linkedAgentType, linkedAgents] of Object.entries(allLinkedAgents)) {
+  fs.writeFile(path.join(linkedAgentDir, linkedAgentType + '.json'), JSON.stringify(linkedAgents, null, 2),
+   (err) => console.log(err));
+
+
 }

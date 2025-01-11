@@ -143,6 +143,7 @@ module.exports = {
       }
       if (key == 'field_linked_agent') {
         newValue = this.parseLinkedAgent(newValue);
+        this.addLinkedAgentTags(newValue);
       }
       newObj[newKey] = newValue;
       newObj['item'][newKey] = newValue;
@@ -194,6 +195,10 @@ module.exports = {
       }
     }
     return parsedRelations;
+  },
+
+  addLinkedAgentTags(newValue) {
+
   }
 
 }
