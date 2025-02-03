@@ -1,0 +1,11 @@
+services:
+  islandty:
+    image: islandty-first:latest
+    command: sh -c "npm start"
+    ports:
+      - 8080:8080
+    working_dir: /islandty
+    volumes:
+      - ./islandty:/islandty
+    environment:
+      inputMediaPath: ./islandora_demo_objects
