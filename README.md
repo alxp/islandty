@@ -14,11 +14,15 @@ you can use the same input files to generate a static website.
 - Lunr-based search (Work in progress)
 
 
+## Requirements
+
+- Node.js (Tested on version 22. currently incompatible with Node.js v. 23.x. See)
+
 ## Installation
 
 Clone the islandty repository and change directory into it.
 
-Then, running 
+Then, running
 
 ```shell
 $ npm install

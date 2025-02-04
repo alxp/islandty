@@ -71,6 +71,26 @@ module.exports = config => {
   });
 
 
+
+  // create blog categories collection
+
+  config.addCollection("allLinkedAgents", function (collection) {
+    const { getAllKeyValues } = require('./src/_data/islandoraHelpers.js');
+    let allLinkedAgents = getAllKeyValues(
+      collection.getFilteredByGlob("./src/' + process.env.contentPath + '/*.md"),
+      "categories"
+    );
+
+    let linkedAgents = allLinkedAgents.map((category) => ({
+      title: category,
+      slug: strToSlug(category),
+    }));
+
+    return linkedAgents;
+  });
+
+
+
   // ROSIE: Ignore sef files
   config.watchIgnores.add('**/*.sef.json');
 
