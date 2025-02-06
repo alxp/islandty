@@ -10,6 +10,9 @@ const { itemsWithContentModel, searchIndex } = require('./src/_data/islandoraHel
 
 const { execSync } = require('node:child_process');
 const { glob } = require('glob')
+const path = require('path');const islandoraHelpers = require('./src/_data/islandoraHelpers.js');
+islandoraHelpers.js
+islandoraHelpers
 
 // Create a helpful production flag
 const isProduction = process.env.NODE_ENV == 'production';
@@ -70,26 +73,43 @@ module.exports = config => {
     return collection.getAll().filter((item) => item.data.field_linked_agent);
   });
 
+  // create Linked Agents collections
 
+  const linkedAgentDatabases =  glob.sync("./src/" + process.env.contentPath + "/linked-agents/*.json");
+  var linkedAgentSlugs = [];
+  for (const linkedAgentDatabasePath of linkedAgentDatabases) {
+    const linkedAgentDatabaseName = path.parse(linkedAgentDatabasePath).name;
 
-  // create blog categories collection
+    const linkedAgentDatabase = require(linkedAgentDatabasePath);
+    const linkedAgentTypeNames = Object.keys(linkedAgentDatabase);
 
-  config.addCollection("allLinkedAgents", function (collection) {
-    const { getAllKeyValues } = require('./src/_data/islandoraHelpers.js');
-    let allLinkedAgents = getAllKeyValues(
-      collection.getFilteredByGlob("./src/' + process.env.contentPath + '/*.md"),
-      "categories"
-    );
+    config.addCollection("linkedAgent_" + linkedAgentDatabaseName, function (collection) {
+      const { strToSlug } = require('./src/_data/islandoraHelpers.js');
+      var sortedLinkedAgentTypes = linkedAgentTypeNames.sort(function (a, b) {
+        return a.localeCompare(b, "en", { sensitivity: "base" });
+      });
 
-    let linkedAgents = allLinkedAgents.map((category) => ({
-      title: category,
-      slug: strToSlug(category),
-    }));
+      var linkedAgentTypes = sortedLinkedAgentTypes.map((linkedAgentTypeName) => ({
+        title: linkedAgentTypeName,
+        slug: strToSlug(linkedAgentTypeName),
+      }));
 
-    return linkedAgents;
-  });
+      return linkedAgentTypes;
+    });
 
+    // Loop through the linked agent types and create collections of all of its members.
+    for (const linkedAgentTypeName of linkedAgentTypeNames) {
 
+      config.addCollection("linkedAgent_" + linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName), function (collection) {
+        var linkedAgentNames = linkedAgentDatabase[linkedAgentTypeName].map((name) => ({
+          title: name,
+          slug: islandoraHelpers.strToSlug(name),
+        }));
+
+        return linkedAgentNames;
+      });
+    }
+  }
 
   // ROSIE: Ignore sef files
   config.watchIgnores.add('**/*.sef.json');

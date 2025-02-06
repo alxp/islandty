@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const SaxonJS = require('saxon-js');
 require('dotenv').config();
-const lodash = require("lodash");
+const slugify = require('slugify');
 
 
 

@@ -1,0 +1,17 @@
+{% extends "layouts/base.html" %}
+{% set pageCriticalStyles = ['css/page.css'] %}
+
+{% set pageHeaderTitle = title %}
+{% set pageHeaderSummary = content %}
+{% set postListItems = pagination.items %}
+
+
+{% block content %}
+  <article>
+    {% include "partials/page-header.html" %}
+    {% include "partials/post-list.html" %}
+
+  </article>
+
+  {% include "partials/cta.html" %}
+{% endblock %}
