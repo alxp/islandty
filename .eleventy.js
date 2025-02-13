@@ -84,6 +84,7 @@ module.exports = config => {
     const linkedAgentTypeNames = Object.keys(linkedAgentDatabase);
 
     config.addCollection("linkedAgent_" + linkedAgentDatabaseName, function (collection) {
+
       const { strToSlug } = require('./src/_data/islandoraHelpers.js');
       var sortedLinkedAgentTypes = linkedAgentTypeNames.sort(function (a, b) {
         return a.localeCompare(b, "en", { sensitivity: "base" });
@@ -97,11 +98,13 @@ module.exports = config => {
       return linkedAgentTypes;
     });
 
+    const { strToSlug } = require('./src/_data/islandoraHelpers.js');
+
     // Loop through the linked agent types and create collections of all of its members.
     for (const linkedAgentTypeName of linkedAgentTypeNames) {
 
       config.addCollection("linkedAgent_" + linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName), function (collection) {
-        var linkedAgentNames = linkedAgentDatabase[linkedAgentTypeName].map((name) => ({
+        var linkedAgentNames = Object.keys(linkedAgentDatabase[linkedAgentTypeName]).map((name) => ({
           title: name,
           slug: islandoraHelpers.strToSlug(name),
         }));
