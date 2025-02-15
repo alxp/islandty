@@ -14,6 +14,7 @@ items = readCSV().items;
 const inputMediaPath = process.env.inputMediaPath;
 console.log('Using input media path: ' + inputMediaPath);
 const outputDir = "src/" + process.env.contentPath;
+const linkedAgentDir = "src/" + process.env.linkedAgentPath;
 console.log('Using output path: ' + outputDir);
 
 
@@ -80,11 +81,40 @@ for (const [key, item] of Object.entries(items)) {
   });
 }
 
-const linkedAgentDir = path.join(outputDir, 'linked-agents');
+
 fs.mkdirSync(linkedAgentDir, { recursive: true });
-for (const [linkedAgentType, linkedAgents] of Object.entries(allLinkedAgents)) {
-  fs.writeFile(path.join(linkedAgentDir, linkedAgentType + '.json'), JSON.stringify(linkedAgents, null, 2),
+for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLinkedAgents)) {
+  fs.writeFile(path.join(linkedAgentDir, linkedAgentDatabaseName + '.json'), JSON.stringify(linkedAgentTypes, null, 2),
    (err) => console.log(err));
+   // Create templates for each linked agent type, e.g., 'Author', 'Editor'.
+  for (linkedAgentTypeName of  Object.keys(linkedAgentTypes)) {
+    linkedAgentData = {
+      pagination: {
+        data: "collections.linkedAgent_" + linkedAgentDatabaseName + "_" + islandoraHelpers.strToSlug(linkedAgentTypeName),
+        size: 1,
+        alias: "relator",
 
+      },
+      layout: "layouts/feed.html",
+      permalink: "/" + process.env.linkedAgentPath + "/" + linkedAgentDatabaseName + "/" + islandoraHelpers.strToSlug(linkedAgentTypeName) +"/{{ relator.slug }}/index.html"
+    };
 
+    const yamlString = yaml.dump(linkedAgentData); // Convert object to YAML string
+
+    const content = `---\n${yamlString}---\n`; // Add dashes at the end
+    // If contentPath does not exist, make it.
+    const linkedAgentPath = path.join(linkedAgentDir, linkedAgentDatabaseName);
+    if (!fs.existsSync(linkedAgentPath)) {
+      fs.mkdirSync(linkedAgentPath);
+    }
+    const outputFile = linkedAgentPath + '/' + islandoraHelpers.strToSlug(linkedAgentTypeName) + ".md";
+    fs.writeFile(outputFile, content, (err) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log('Wrote ' + outputFile);
+      }
+    });
+
+  }
 }

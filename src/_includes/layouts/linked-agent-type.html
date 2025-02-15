@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %}
+{% set pageCriticalStyles = ['css/page.css'] %}
+
+{% set pageHeaderTitle = relator.title %}
+{% set pageHeaderSummary = content %}
+{% set postListItems = pagination.items %}
+{% set relatorItems = collections['linkedAgent_relators_' + relator.slug] %}
+
+
+{% block content %}
+  <article>
+    {% include "partials/page-header.html" %}
+
+{% for relatorItem in relatorItems %}
+	{% if loop.first %}
+		<ul>
+
+		{% endif %}
+
+		<li>
+			<a href="/relator/{{ relatorItem.slug }}">{{ relatorItem.title }}</a>
+		</li>
+
+		{% if loop.last %}
+		</ul>
+	{% endif %}
+{% endfor %}
+
+
+  </article>
+
+  {% include "partials/cta.html" %}
+{% endblock %}

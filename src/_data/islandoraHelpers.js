@@ -22,6 +22,22 @@ module.exports = {
   },
 
   /**
+   * Returns the value of a property nested inside an array.
+   *
+   * {@see} https://stackoverflow.com/questions/2631001/test-for-existence-of-nested-javascript-object-key
+   *
+   * @param {*} obj
+   *   The top-level object.
+   * @param  {...any} args
+   *   Any number of properties to check into the object's tree.
+   * @returns
+   *   The property value.
+   */
+  getNested(obj, ...args) {
+  return args.reduce((obj, level) => obj && obj[level], obj)
+},
+
+  /**
      * Finds the parent item from the current item
      *
      * @param {Array} items A list of islandora items

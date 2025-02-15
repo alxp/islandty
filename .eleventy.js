@@ -98,7 +98,7 @@ module.exports = config => {
       return linkedAgentTypes;
     });
 
-    const { strToSlug } = require('./src/_data/islandoraHelpers.js');
+    const { getNested, strToSlug } = require('./src/_data/islandoraHelpers.js');
 
     // Loop through the linked agent types and create collections of all of its members.
     for (const linkedAgentTypeName of linkedAgentTypeNames) {
@@ -111,6 +111,22 @@ module.exports = config => {
 
         return linkedAgentNames;
       });
+
+      // Create collections for each linked agent.
+      for (const linkedAgentName of Object.keys(linkedAgentDatabase[linkedAgentTypeName])) {
+        const linkedAgent = linkedAgentDatabase[linkedAgentTypeName][linkedAgentName];
+        config.addCollection("linkedAgent_" + linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName) + "_" + strToSlug(linkedAgentName), function (collection) {
+          const linkedAgentCollection =  collection.getAll().filter(function(item) {
+            const target = getNested(item, 'data', 'field_linked_agent', linkedAgentDatabaseName, linkedAgentTypeName);
+            if (target) {
+              return target.includes(linkedAgentName);
+            }
+            return false;
+          });
+          return linkedAgentCollection;
+        });
+
+      }
     }
   }
 
