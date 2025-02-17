@@ -96,6 +96,7 @@ for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLink
 
       },
       layout: "layouts/feed.html",
+      linkedAgentNamespace: linkedAgentDatabaseName,
       permalink: "/" + process.env.linkedAgentPath + "/" + linkedAgentDatabaseName + "/" + islandoraHelpers.strToSlug(linkedAgentTypeName) +"/{{ relator.slug }}/index.html"
     };
 

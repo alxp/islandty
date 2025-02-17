@@ -106,6 +106,8 @@ module.exports = config => {
       config.addCollection("linkedAgent_" + linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName), function (collection) {
         var linkedAgentNames = Object.keys(linkedAgentDatabase[linkedAgentTypeName]).map((name) => ({
           title: name,
+          linkedAgentNamespace: linkedAgentDatabaseName,
+          linkedAgentType: linkedAgentTypeName,
           slug: islandoraHelpers.strToSlug(name),
         }));
 
