@@ -108,6 +108,7 @@ module.exports = config => {
           title: name,
           linkedAgentNamespace: linkedAgentDatabaseName,
           linkedAgentType: linkedAgentTypeName,
+          linkedAgentTypeSlug: strToSlug(linkedAgentTypeName),
           slug: islandoraHelpers.strToSlug(name),
         }));
 
