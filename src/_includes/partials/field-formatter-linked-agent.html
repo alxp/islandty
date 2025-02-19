@@ -11,7 +11,8 @@
         {% endif %}
 
         <td>
-            {{ contributor }}
+<a href="{{ islandoraHelpers.linkedAgentUrl(relType, rel, contributor)}}">{{ contributor }}</a>
+
         </td>
     </tr>
 

@@ -244,6 +244,11 @@ module.exports = {
   return allValues;
 },
 
+linkedAgentUrl(namespace, type, name) {
+  return '/' + path.join(process.env.linkedAgentPath, this.strToSlug(namespace), this.strToSlug(type), this.strToSlug(name));
+
+},
+
 /**
  * Transform a string into a slug
  * Uses slugify package
