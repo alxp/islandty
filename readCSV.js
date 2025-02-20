@@ -5,6 +5,27 @@ const readCSV = require('./src/_data/readCSV.js');
 const slugify = require('slugify');
 const yaml = require('js-yaml');
 
+function writePageTemplate(data, dir, fileName) {
+  const yamlString = yaml.dump(data); // Convert object to YAML string
+
+  const content = `---\n${yamlString}---\n`; // Add dashes at the end
+  // If contentPath does not exist, make it.
+
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+
+  fs.writeFile( path.join(dir, fileName), content, (err) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log('Wrote ' + fileName);
+    }
+  });
+
+
+}
+
 var path = require('path');
 // Run me before the build start
 console.log("Reading input CSV and generating template files for each repository object.");
@@ -86,6 +107,9 @@ fs.mkdirSync(linkedAgentDir, { recursive: true });
 for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLinkedAgents)) {
   fs.writeFile(path.join(linkedAgentDir, linkedAgentDatabaseName + '.json'), JSON.stringify(linkedAgentTypes, null, 2),
    (err) => console.log(err));
+
+// Create a page for the Linked Agent Namespace, e.g., 'relators'.
+
    // Create templates for each linked agent type, e.g., 'Author', 'Editor'.
   for (linkedAgentTypeName of  Object.keys(linkedAgentTypes)) {
     linkedAgentData = {
@@ -99,23 +123,9 @@ for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLink
       linkedAgentNamespace: linkedAgentDatabaseName,
       permalink: "/" + process.env.linkedAgentPath + "/" + linkedAgentDatabaseName + "/" + islandoraHelpers.strToSlug(linkedAgentTypeName) +"/{{ relator.slug }}/index.html"
     };
-
-    const yamlString = yaml.dump(linkedAgentData); // Convert object to YAML string
-
-    const content = `---\n${yamlString}---\n`; // Add dashes at the end
-    // If contentPath does not exist, make it.
     const linkedAgentPath = path.join(linkedAgentDir, linkedAgentDatabaseName);
-    if (!fs.existsSync(linkedAgentPath)) {
-      fs.mkdirSync(linkedAgentPath);
-    }
-    const outputFile = linkedAgentPath + '/' + islandoraHelpers.strToSlug(linkedAgentTypeName) + ".md";
-    fs.writeFile(outputFile, content, (err) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log('Wrote ' + outputFile);
-      }
-    });
+    const outputFile = islandoraHelpers.strToSlug(linkedAgentTypeName) + ".md";
+    writePageTemplate(linkedAgentData, linkedAgentPath, outputFile);
 
   }
 }
