@@ -75,7 +75,7 @@ module.exports = config => {
 
   // create Linked Agents collections
 
-  const linkedAgentDatabases =  glob.sync("./src/" + process.env.contentPath + "/linked-agents/*.json");
+  const linkedAgentDatabases =  glob.sync("./src/" + process.env.linkedAgentPath + "/*.json");
   var linkedAgentSlugs = [];
   for (const linkedAgentDatabasePath of linkedAgentDatabases) {
     const linkedAgentDatabaseName = path.parse(linkedAgentDatabasePath).name;
