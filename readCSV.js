@@ -5,6 +5,17 @@ const readCSV = require('./src/_data/readCSV.js');
 const slugify = require('slugify');
 const yaml = require('js-yaml');
 
+/**
+ * Write a dictionary to a YAML file at the specified location.
+
+ *
+ * @param {*} data
+ *   The data to be written.
+ * @param string dir
+ *   The location of the file. WIll be created if it doesn't exist.
+ * @param {*} fileName
+ *   The filename to be created. Extension is not assumed.
+ */
 function writePageTemplate(data, dir, fileName) {
   const yamlString = yaml.dump(data); // Convert object to YAML string
 
@@ -22,8 +33,6 @@ function writePageTemplate(data, dir, fileName) {
       console.log('Wrote ' + fileName);
     }
   });
-
-
 }
 
 var path = require('path');
@@ -85,23 +94,8 @@ for (const [key, item] of Object.entries(items)) {
 
   transformedItem.layout = 'layouts/content-item.html';
 
-  const yamlString = yaml.dump(transformedItem); // Convert object to YAML string
-
-  const content = `---\n${yamlString}---\n`; // Add dashes at the end
-  // If contentPath does not exist, make it.
-  if (!fs.existsSync("src/" + process.env.contentPath)) {
-    fs.mkdirSync(outputDir);
-  }
-  const outputFile = outputDir + '/' + item.id + '.md';
-  fs.writeFile(outputFile, content, (err) => {
-  if (err) {
-    console.error(err);
-  } else {
-      console.log('Wrote ' + outputFile);
-    }
-  });
+  writePageTemplate(transformedItem, "src/" + process.env.contentPath, item.id + '.md');
 }
-
 
 fs.mkdirSync(linkedAgentDir, { recursive: true });
 for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLinkedAgents)) {
