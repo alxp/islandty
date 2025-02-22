@@ -69,16 +69,12 @@ module.exports = config => {
   config.addPlugin(rssPlugin);
 
   // ROSIE: A collection of digital objects.
-  config.addCollection('linked-agent', collection => {
-    return collection.getAll().filter((item) => item.data.field_linked_agent);
-  });
-
-  // create Linked Agents collections
 
   const linkedAgentDatabases =  glob.sync("./src/" + process.env.linkedAgentPath + "/*.json");
-  var linkedAgentSlugs = [];
+  var linkedAgentNamespaces = [];
   for (const linkedAgentDatabasePath of linkedAgentDatabases) {
     const linkedAgentDatabaseName = path.parse(linkedAgentDatabasePath).name;
+    linkedAgentNamespaces.push(linkedAgentDatabaseName);
 
     const linkedAgentDatabase = require(linkedAgentDatabasePath);
     const linkedAgentTypeNames = Object.keys(linkedAgentDatabase);
@@ -132,6 +128,19 @@ module.exports = config => {
       }
     }
   }
+
+  // Add the top-level Linked Agent collection.
+  config.addCollection("linkedAgent", function (collection) {
+    const { strToSlug } = require('./src/_data/islandoraHelpers.js');
+
+
+    var linkedAgentNamespaceCollection = linkedAgentNamespaces.map((linkedAgentNamespace) => ({
+      title: linkedAgentNamespace,
+      slug: strToSlug(linkedAgentNamespace),
+    }));
+
+    return linkedAgentNamespaceCollection;
+  });
 
   // ROSIE: Ignore sef files
   config.watchIgnores.add('**/*.sef.json');

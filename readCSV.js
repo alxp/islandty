@@ -98,11 +98,25 @@ for (const [key, item] of Object.entries(items)) {
 }
 
 fs.mkdirSync(linkedAgentDir, { recursive: true });
+
+const linkedAgentsData = {
+  pagination: {
+    data: 'collections.linkedAgent',
+    size: 1,
+    alias: 'relator'
+  },
+  layout: 'layouts/linked-agent-type.html',
+  permalink: '/linked-agent/{{ relator.slug }}/index.html'
+};
+writePageTemplate(linkedAgentsData, 'src/' +process.env.linkedAgentPath, 'linked-agent.md');
 for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLinkedAgents)) {
   fs.writeFile(path.join(linkedAgentDir, linkedAgentDatabaseName + '.json'), JSON.stringify(linkedAgentTypes, null, 2),
    (err) => console.log(err));
 
-// Create a page for the Linked Agent Namespace, e.g., 'relators'.
+
+
+// Create the Linked Agent collection data template.
+
 
    // Create templates for each linked agent type, e.g., 'Author', 'Editor'.
   for (linkedAgentTypeName of  Object.keys(linkedAgentTypes)) {
