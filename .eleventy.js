@@ -11,6 +11,7 @@ const { itemsWithContentModel, searchIndex } = require('./src/_data/islandoraHel
 const { execSync } = require('node:child_process');
 const { glob } = require('glob')
 const path = require('path');const islandoraHelpers = require('./src/_data/islandoraHelpers.js');
+const inspect = require("util").inspect;
 islandoraHelpers.js
 islandoraHelpers
 
@@ -52,6 +53,8 @@ module.exports = config => {
   });
 
   // Add filters
+
+  config.addFilter("debug", (content) => `<pre>${inspect(content)}</pre>`);
   config.addFilter('dateFilter', dateFilter);
   config.addFilter('w3DateFilter', w3DateFilter);
 
@@ -89,6 +92,7 @@ module.exports = config => {
       var linkedAgentTypes = sortedLinkedAgentTypes.map((linkedAgentTypeName) => ({
         title: linkedAgentTypeName,
         slug: strToSlug(linkedAgentTypeName),
+        collectionName: "linkedAgent_" + strToSlug(linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName))
       }));
 
       return linkedAgentTypes;
@@ -133,10 +137,11 @@ module.exports = config => {
   config.addCollection("linkedAgent", function (collection) {
     const { strToSlug } = require('./src/_data/islandoraHelpers.js');
 
-
     var linkedAgentNamespaceCollection = linkedAgentNamespaces.map((linkedAgentNamespace) => ({
       title: linkedAgentNamespace,
       slug: strToSlug(linkedAgentNamespace),
+      collectionName: "linkedAgent_" + strToSlug(linkedAgentNamespace),
+      permalinkBase: path.join(process.env.linkedAgentPath, strToSlug(linkedAgentNamespace))
     }));
 
     return linkedAgentNamespaceCollection;

@@ -4,7 +4,7 @@
 {% set pageHeaderTitle = relator.title %}
 {% set pageHeaderSummary = content %}
 {% set postListItems = pagination.items %}
-{% set relatorItems = collections['linkedAgent_relators_' + relator.slug] %}
+{% set relatorItems = collections[relator.collectionName] %}
 
 
 {% block content %}
@@ -12,13 +12,13 @@
     {% include "partials/page-header.html" %}
 
 {% for relatorItem in relatorItems %}
-	{% if loop.first %}
-		<ul>
+  {% if loop.first %}
+    <ul>
 
 		{% endif %}
 
 		<li>
-			<a href="/linked-agent/{{ relatorItem.linkedAgentNamespace }}/{{ relatorItem.linkedAgentTypeSlug }}/{{ relatorItem.slug }}">{{ relatorItem.title }}</a>
+			<a href="{{ relatorItem.slug }}">{{ relatorItem.title }}</a>
 		</li>
 
 		{% if loop.last %}

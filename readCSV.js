@@ -113,11 +113,18 @@ for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLink
   fs.writeFile(path.join(linkedAgentDir, linkedAgentDatabaseName + '.json'), JSON.stringify(linkedAgentTypes, null, 2),
    (err) => console.log(err));
 
-
-
-// Create the Linked Agent collection data template.
-
-
+  // Create the Linked Agent collection data template.
+  const linkedAgentNamespacePageData = {
+    pagination: {
+      data: "collections.linkedAgent_" + linkedAgentDatabaseName,
+      size: 1,
+      alias: "relator",
+    },
+    layout: "layouts/linked-agent-type.html",
+    linkedAgentNamespace: linkedAgentDatabaseName,
+    permalink: "/" + process.env.linkedAgentPath + "/" + linkedAgentDatabaseName + "/{{ relator.slug }}/index.html"
+  };
+  writePageTemplate(linkedAgentNamespacePageData, 'src/' + process.env.linkedAgentPath, linkedAgentDatabaseName + '.md');
    // Create templates for each linked agent type, e.g., 'Author', 'Editor'.
   for (linkedAgentTypeName of  Object.keys(linkedAgentTypes)) {
     linkedAgentData = {
