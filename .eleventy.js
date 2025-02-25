@@ -129,6 +129,9 @@ module.exports = config => {
               return target.includes(linkedAgentName);
             }
             return false;
+          })
+          .sort(function (a, b) {
+            return a['data']['title'].localeCompare(b['data']['title'], "en", { sensitivity: "base" });
           });
           return linkedAgentCollection;
         });
