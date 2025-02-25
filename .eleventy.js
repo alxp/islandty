@@ -104,7 +104,11 @@ module.exports = config => {
     for (const linkedAgentTypeName of linkedAgentTypeNames) {
 
       config.addCollection("linkedAgent_" + linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName), function (collection) {
-        var linkedAgentNames = Object.keys(linkedAgentDatabase[linkedAgentTypeName]).map((name) => ({
+        var linkedAgentNames = Object.keys(linkedAgentDatabase[linkedAgentTypeName])
+          .sort(function (a, b) {
+            return a.localeCompare(b, "en", { sensitivity: "base" });
+          })
+        .map((name) => ({
           title: name,
           linkedAgentNamespace: linkedAgentDatabaseName,
           linkedAgentType: linkedAgentTypeName,
