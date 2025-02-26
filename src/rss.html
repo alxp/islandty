@@ -9,7 +9,8 @@ permalink: '/feed.xml'
   <subtitle>{{ summary }}</subtitle>
   <link href="{{ site.url }}{{ permalink }}" rel="self"/>
   <link href="{{ site.url }}/"/>
-  <updated>{{ collections.blog | rssLastUpdatedDate }}</updated>
+<updated>{{ collections.blog | getNewestCollectionItemDate | dateToRfc822 }}</updated>
+
   <id>{{ site.url }}</id>
   <author>
     <name>{{ site.authorName }}</name>

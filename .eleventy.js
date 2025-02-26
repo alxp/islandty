@@ -12,8 +12,6 @@ const { execSync } = require('node:child_process');
 const { glob } = require('glob')
 const path = require('path');const islandoraHelpers = require('./src/_data/islandoraHelpers.js');
 const inspect = require("util").inspect;
-islandoraHelpers.js
-islandoraHelpers
 
 // Create a helpful production flag
 const isProduction = process.env.NODE_ENV == 'production';
@@ -70,6 +68,7 @@ module.exports = config => {
 
   // Plugins
   config.addPlugin(rssPlugin);
+
 
   // ROSIE: A collection of digital objects.
 
