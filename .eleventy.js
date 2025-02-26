@@ -85,17 +85,14 @@ module.exports = config => {
     config.addCollection("linkedAgent_" + linkedAgentDatabaseName, function (collection) {
 
       const { strToSlug } = require('./src/_data/islandoraHelpers.js');
-      var sortedLinkedAgentTypes = linkedAgentTypeNames.sort(function (a, b) {
+      return linkedAgentTypeNames.sort(function (a, b) {
         return a.localeCompare(b, "en", { sensitivity: "base" });
-      });
-
-      var linkedAgentTypes = sortedLinkedAgentTypes.map((linkedAgentTypeName) => ({
-        title: linkedAgentTypeName,
-        slug: strToSlug(linkedAgentTypeName),
-        collectionName: "linkedAgent_" + strToSlug(linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName))
-      }));
-
-      return linkedAgentTypes;
+      })
+        .map((linkedAgentTypeName) => ({
+          title: linkedAgentTypeName,
+          slug: strToSlug(linkedAgentTypeName),
+          collectionName: "linkedAgent_" + strToSlug(linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName))
+        }));
     });
 
     const { getNested, strToSlug } = require('./src/_data/islandoraHelpers.js');
@@ -211,6 +208,7 @@ module.exports = config => {
 
   config.amendLibrary("md", mdLib => mdLib.enable("code"));
 config.addGlobalData('contentPath', process.env.contentPath);
+  config.addGlobalData('linkedAgentPath', process.env.linkedAgentPath);
 
   // https://nodejs.org/api/util.html#util_util_inspect_object_options
   const inspect = require("util").inspect;

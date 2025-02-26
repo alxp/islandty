@@ -1,10 +1,10 @@
-{% extends "layouts/base.html" %}
+{% extends "layouts/page.html" %}
 {% set pageCriticalStyles = ['css/page.css'] %}
 
-{% set pageHeaderTitle = relator.title %}
+{% set pageHeaderTitle = data.item.title %}
 {% set pageHeaderSummary = content %}
-{% set postListItems = pagination.items %}
-{% set relatorItems = collections[relator.collectionName] %}
+
+{% set relatorItems = collections['linkedAgent'] %}
 
 
 {% block content %}
