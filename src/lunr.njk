@@ -3,13 +3,12 @@ permalink: /index.json
 ---
 
 [
-{% for object in collections.repo %}
+{% for object in collections.all %}
 
 {
-   "title":"{{object.data.title}}",
-   "url":"{{object.url}}",
-   "file":"{{object.data.ModsFile}}",
-   "content":{% searchIndex object %}
+   "title": "{{object.data.title}}",
+   "url": "{{object.url}}",
+   "content": {% searchIndex object %}
 } {% if loop.last == false %},{% endif %}
 {% endfor %} 
 ]

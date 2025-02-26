@@ -24,14 +24,7 @@ secondaryCTA:
 
 ---
 
-
-<h1>Repo Objects</h1>
-
-<ul>
-{% for object in collections.repo%} 
-  <li><a href="{{ object.url }}">{{ object.data.title }}</a></li>
-{% endfor %}
-</ul>
+<h1>Search the Repository</h1>
 
 <div id="app">
 	<input type="search" v-model="term" id="search"> <button @click="search" id="search-submit">Search</button>

@@ -111,10 +111,37 @@ module.exports = {
     return filteredItems;
   },
 
+  
+
+  searchIndex(article) {
+    let isString = value => typeof value === 'string' || value instanceof String;
+    let getIndexValue = function(value, result = '') {
+      if (!(isString(value))) {
+        for (key in value) {
+          result += key;
+          result += ' ';
+          result += getIndexValue(value[key])
+        }
+      }
+      else{
+        result += value;
+        result += ' '
+      }
+      return result;
+    };
+
+    indexString = '';
+    for (key in article.data.item) {
+      indexString += getIndexValue(article.data.item[key]);
+      indexString += ' '
+    }
+    
+    return JSON.stringify(indexString);
+  },
   /**
    * Transform the data XML file of each object by the Index XSLT.
    */
-  searchIndex(article) {
+  searchIndexMods(article) {
     const ModsFile = article.data.ModsFile;
     if (!ModsFile) {
       console.warn('Failed to extract excerpt: Document has no property "ModsFile".');
