@@ -1,13 +1,21 @@
-{% set contributors = item[name].split('|') %}
-{% set count = contributors.length %}
-{% for contributor in contributors %}
-    {% set parts = contributor.split(':') %}
+{% set linked_agents = item[name] %}
+{% for relType, relData in linked_agents %}
+  {% for rel, contributors in relData %}
+
+  {% set count = contributors.length %}
+
+    {% for contributor in contributors %}
     <tr>
         {% if loop.first %}
-        <th rowspan="{{ count }}"> {{ label }}</th>
+        <th rowspan="{{ count }}"> {{ rel }}</th>
         {% endif %}
+
         <td>
-            {{ relators.items[parts[1]] }}: {{ parts[3] }}
+<a href="{{ islandoraHelpers.linkedAgentUrl(relType, rel, contributor)}}">{{ contributor }}</a>
+
         </td>
     </tr>
+
+    {% endfor %}
+  {% endfor %}
 {% endfor %}

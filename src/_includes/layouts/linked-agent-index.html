@@ -1,0 +1,21 @@
+{% extends "layouts/page.html" %}
+{% set pageCriticalStyles = ['css/page.css'] %}
+
+{% set pageHeaderTitle = data.item.title %}
+{% set pageHeaderSummary = content %}
+
+{% set relatorItems = collections['linkedAgent'] %}
+
+
+{% block content %}
+  <article>
+    {% include "partials/page-header.html" %}
+
+
+
+{% include "partials/linked-agent-list.html" %}
+
+  </article>
+
+  {% include "partials/cta.html" %}
+{% endblock %}

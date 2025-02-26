@@ -10,6 +10,10 @@ const { itemsWithContentModel, searchIndex } = require('./src/_data/islandoraHel
 
 const { execSync } = require('node:child_process');
 const { glob } = require('glob')
+const path = require('path');const islandoraHelpers = require('./src/_data/islandoraHelpers.js');
+const inspect = require("util").inspect;
+islandoraHelpers.js
+islandoraHelpers
 
 // Create a helpful production flag
 const isProduction = process.env.NODE_ENV == 'production';
@@ -49,6 +53,8 @@ module.exports = config => {
   });
 
   // Add filters
+
+  config.addFilter("debug", (content) => `<pre>${inspect(content)}</pre>`);
   config.addFilter('dateFilter', dateFilter);
   config.addFilter('w3DateFilter', w3DateFilter);
 
@@ -66,8 +72,83 @@ module.exports = config => {
   config.addPlugin(rssPlugin);
 
   // ROSIE: A collection of digital objects.
-  config.addCollection('repo', collection => {
-    return collection.getFilteredByGlob('./src/repo/**/*.njk');
+
+  const linkedAgentDatabases =  glob.sync("./src/" + process.env.linkedAgentPath + "/*.json");
+  var linkedAgentNamespaces = [];
+  for (const linkedAgentDatabasePath of linkedAgentDatabases) {
+    const linkedAgentDatabaseName = path.parse(linkedAgentDatabasePath).name;
+    linkedAgentNamespaces.push(linkedAgentDatabaseName);
+
+    const linkedAgentDatabase = require(linkedAgentDatabasePath);
+    const linkedAgentTypeNames = Object.keys(linkedAgentDatabase);
+
+    config.addCollection("linkedAgent_" + linkedAgentDatabaseName, function (collection) {
+
+      const { strToSlug } = require('./src/_data/islandoraHelpers.js');
+      return linkedAgentTypeNames.sort(function (a, b) {
+        return a.localeCompare(b, "en", { sensitivity: "base" });
+      })
+        .map((linkedAgentTypeName) => ({
+          title: linkedAgentTypeName,
+          slug: strToSlug(linkedAgentTypeName),
+          collectionName: "linkedAgent_" + strToSlug(linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName))
+        }));
+    });
+
+    const { getNested, strToSlug } = require('./src/_data/islandoraHelpers.js');
+
+    // Loop through the linked agent types and create collections of all of its members.
+    for (const linkedAgentTypeName of linkedAgentTypeNames) {
+
+      config.addCollection("linkedAgent_" + linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName), function (collection) {
+        var linkedAgentNames = Object.keys(linkedAgentDatabase[linkedAgentTypeName])
+          .sort(function (a, b) {
+            return a.localeCompare(b, "en", { sensitivity: "base" });
+          })
+        .map((name) => ({
+          title: name,
+          linkedAgentNamespace: linkedAgentDatabaseName,
+          linkedAgentType: linkedAgentTypeName,
+          linkedAgentTypeSlug: strToSlug(linkedAgentTypeName),
+          slug: islandoraHelpers.strToSlug(name),
+        }));
+
+        return linkedAgentNames;
+      });
+
+      // Create collections for each linked agent.
+      for (const linkedAgentName of Object.keys(linkedAgentDatabase[linkedAgentTypeName])) {
+        const linkedAgent = linkedAgentDatabase[linkedAgentTypeName][linkedAgentName];
+        config.addCollection("linkedAgent_" + linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName) + "_" + strToSlug(linkedAgentName), function (collection) {
+          const linkedAgentCollection =  collection.getAll().filter(function(item) {
+            const target = getNested(item, 'data', 'field_linked_agent', linkedAgentDatabaseName, linkedAgentTypeName);
+            if (target) {
+              return target.includes(linkedAgentName);
+            }
+            return false;
+          })
+          .sort(function (a, b) {
+            return a['data']['title'].localeCompare(b['data']['title'], "en", { sensitivity: "base" });
+          });
+          return linkedAgentCollection;
+        });
+
+      }
+    }
+  }
+
+  // Add the top-level Linked Agent collection.
+  config.addCollection("linkedAgent", function (collection) {
+    const { strToSlug } = require('./src/_data/islandoraHelpers.js');
+
+    var linkedAgentNamespaceCollection = linkedAgentNamespaces.map((linkedAgentNamespace) => ({
+      title: linkedAgentNamespace,
+      slug: strToSlug(linkedAgentNamespace),
+      collectionName: "linkedAgent_" + strToSlug(linkedAgentNamespace),
+      permalinkBase: path.join(process.env.linkedAgentPath, strToSlug(linkedAgentNamespace))
+    }));
+
+    return linkedAgentNamespaceCollection;
   });
 
   // ROSIE: Ignore sef files
@@ -118,18 +199,7 @@ module.exports = config => {
         const outputDir = path.join(dir.output, process.env.contentPath, item.id);
         const result = contentModel.ingest(item, process.env.inputMediaPath, outputDir);
       }
-        /*
-      books =islandoraHelpers.itemsWithContentModel(items, 'Paged Content' );
-      for (const [key, book] of Object.entries(books)) {
-      let base_dir = path.dirname(book.file);
-      let full_path = path.join('./dist/images', base_dir, 'iiif');
-      islandoraHelpers.generateIiifMetadata(book, full_path);
-      buildIiif(full_path, process.env.serverHost + '/images/' +
-       base_dir + '/iiif');
-
-      }
-       */
-    });
+            });
 
 
 
@@ -138,6 +208,7 @@ module.exports = config => {
 
   config.amendLibrary("md", mdLib => mdLib.enable("code"));
 config.addGlobalData('contentPath', process.env.contentPath);
+  config.addGlobalData('linkedAgentPath', process.env.linkedAgentPath);
 
   // https://nodejs.org/api/util.html#util_util_inspect_object_options
   const inspect = require("util").inspect;

@@ -9,10 +9,10 @@
 <h3><a href="/{{ contentPath }}/{{ parent.id | slugify }}">{{ parent.title }}</a></h3>
 <table>
 
-    {% for name, label in fieldNames.items %}
+    {% for name, field in islandoraFieldInfo.items %}
     {% if parent[name] %}
     <tr>
-        <td> {{label }}</td>
+        <th> {{ field.label }}</th>
         <td> {{parent[name] }} </td>
     </tr>
     {% endif %}

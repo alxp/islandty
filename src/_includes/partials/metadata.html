@@ -1,41 +1,24 @@
 <div class="content-metadata">
     <table>
-        {% for name, label in fieldNames.items %}
-
-
-
-        {% if item[name] %}
-        {% if name == 'file' %}
-        {% include "partials/field-formatter-file.html" %}
-        {% elif name == 'field_linked_agent' %}
-        {% include "partials/field-formatter-linked-agent.html" %}
-        {% elif name == 'field_subject_general' %}
-        {% include "partials/field-formatter-subject.html" %}
-        {% else %}
-
-
-        {% if item[name] is string %}
-            <tr><td>{{ label }}</td><td>{{ item[name] }}</td></tr>
-        {% else %}
-        <tr><td>{{ label }}</td><td>{{ item[name] | join(',') }}</td></tr>
-    {% endif %}
-
-        {% set count = values.length %}
-        {% for value in values %}
-        <tr>
-            {% if loop.first %}
-            <th rowspan="{{ count }}"> {{ label }}</th>
+        {% for name, field in islandoraFieldInfo %}
+            {% if item[name] %}
+                {% if name == 'file' %}
+                {% include "partials/field-formatter-file.html" %}
+                {% elif name == 'field_linked_agent' %}
+                {% include "partials/field-formatter-linked-agent.html" %}
+                {% elif name == 'field_subject_general' %}
+                {% include "partials/field-formatter-subject.html" %}
+                {% else %}
+                    {% if item[name] is string %}
+                        <tr><th scope="row">{{ field.label }}</th><td>{{ item[name] | safe }}</td></tr>
+                    {% else %}
+                        <tr><th scope="row">{{ field.label }}</th><td>{{ item[name] | join(', ') | safe }}</td></tr>
+                    {% endif %}
+                {% endif %}
             {% endif %}
-            <td>
-                {{ value | safe }}
-            </td>
-        </tr>
-        {% endfor %}
-        {% endif %}
-        {% endif %}
         {% endfor %}
     </table>
     {% if mods %}
-    {% include "partials/mods-record.html" %}
+        {% include "partials/mods-record.html" %}
     {% endif%}
 </div>

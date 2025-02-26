@@ -2,7 +2,7 @@
     "name": "11ty",
     "type": "node",
     "request": "launch",
-    "program": "${workspaceRoot}/node_modules/.bin/eleventy",
+    "program": "npm start",
     "stopOnEntry": false,
     "args": [],
     "cwd": "${workspaceRoot}",

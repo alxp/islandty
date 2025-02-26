@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %}
+{% set pageCriticalStyles = ['css/page.css'] %}
+
+{% set pageHeaderTitle = relator.linkedAgentType + ' / ' + relator.title %}
+{% set pageHeaderSummary = content %}
+{% set postListItems = pagination.items %}
+{% set items = collections['linkedAgent_' + relator.linkedAgentNamespace + '_' + relator.linkedAgentTypeSlug + '_' + relator.slug] %}
+
+
+{% block content %}
+  <article>
+    {% include "partials/page-header.html" %}
+
+{% for item in items %}
+	{% if loop.first %}
+		<ul>
+
+		{% endif %}
+
+		<li>
+			<a href="/{{ contentPath }}/{{ item.data.id }}">{{ item.data.title }}</a>
+		</li>
+
+		{% if loop.last %}
+		</ul>
+	{% endif %}
+{% endfor %}
+
+
+  </article>
+
+  {% include "partials/cta.html" %}
+{% endblock %}
