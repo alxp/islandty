@@ -1,4 +1,4 @@
-{% set manifest = islandoraHelpers.getIiifManifestForItem(file) %}
+{% set manifest = islandtyHelpers.getIiifManifestForItem(file) %}
 <script src="https://roblib.github.io/mirador-integration-islandora/islandora-mirador-0.1.0.js"></script>
 <!-- By default uses Roboto font. Be sure to load this or change the font -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
@@ -13,7 +13,7 @@
       "id": "my-mirador",
       "manifests": {
         "{{ manifest }}": {
-          "provider": "Islandora"
+          "provider": "Islandty"
         }
       },
 "window":{"textOverlay":{"enabled":true,"selectable":true,"visible":false}},

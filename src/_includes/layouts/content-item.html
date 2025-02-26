@@ -5,9 +5,9 @@
 <article>
     {% include "partials/page-header.html" %}
 
-    {% set parent = islandoraHelpers.getParentContent(readCSV.items, parent_id) %}
-    {% set children = islandoraHelpers.getChildContent(readCSV.items, id) %}
-    {% set display = islandoraHelpers.getLayoutForContentModel(field_model) %}
+    {% set parent = islandtyHelpers.getParentContent(readCSV.items, parent_id) %}
+    {% set children = islandtyHelpers.getChildContent(readCSV.items, id) %}
+    {% set display = islandtyHelpers.getLayoutForContentModel(field_model) %}
 
     <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
         {{ content }}

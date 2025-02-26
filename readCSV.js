@@ -1,6 +1,6 @@
 require('dotenv').config();
 const fs = require("fs");
-const islandoraHelpers = require('./src/_data/islandoraHelpers.js');
+const islandtyHelpers = require('./src/_data/islandtyHelpers.js');
 const readCSV = require('./src/_data/readCSV.js');
 const slugify = require('slugify');
 const yaml = require('js-yaml');
@@ -71,7 +71,7 @@ for (const [key, item] of Object.entries(items)) {
   }
   contentModel.updateFilePaths(item);
 
-  var transformedItem = islandoraHelpers.transformKeys(item)
+  var transformedItem = islandtyHelpers.transformKeys(item)
 
   if ('field_linked_agent' in transformedItem) {
     for (const [linkedAgentType, linkedAgents] of Object.entries(transformedItem['field_linked_agent'])) {
@@ -129,17 +129,17 @@ for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLink
   for (linkedAgentTypeName of  Object.keys(linkedAgentTypes)) {
     linkedAgentData = {
       pagination: {
-        data: "collections.linkedAgent_" + linkedAgentDatabaseName + "_" + islandoraHelpers.strToSlug(linkedAgentTypeName),
+        data: "collections.linkedAgent_" + linkedAgentDatabaseName + "_" + islandtyHelpers.strToSlug(linkedAgentTypeName),
         size: 1,
         alias: "relator",
 
       },
       layout: "layouts/linked-agent.html",
       linkedAgentNamespace: linkedAgentDatabaseName,
-      permalink: "/" + process.env.linkedAgentPath + "/" + linkedAgentDatabaseName + "/" + islandoraHelpers.strToSlug(linkedAgentTypeName) +"/{{ relator.slug }}/index.html"
+      permalink: "/" + process.env.linkedAgentPath + "/" + linkedAgentDatabaseName + "/" + islandtyHelpers.strToSlug(linkedAgentTypeName) +"/{{ relator.slug }}/index.html"
     };
     const linkedAgentPath = path.join(linkedAgentDir, linkedAgentDatabaseName);
-    const outputFile = islandoraHelpers.strToSlug(linkedAgentTypeName) + ".md";
+    const outputFile = islandtyHelpers.strToSlug(linkedAgentTypeName) + ".md";
     writePageTemplate(linkedAgentData, linkedAgentPath, outputFile);
 
   }

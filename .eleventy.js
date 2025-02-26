@@ -6,11 +6,13 @@ require('dotenv').config();
 // Transforms
 const htmlMinTransform = require('./src/transforms/html-min-transform.js');
 
-const { itemsWithContentModel, searchIndex } = require('./src/_data/islandoraHelpers.js');
+const { itemsWithContentModel, searchIndex } = require('./src/_data/islandtyHelpers.js');
+const { getNested, strToSlug } = require('./src/_data/islandtyHelpers.js');
 
 const { execSync } = require('node:child_process');
 const { glob } = require('glob')
-const path = require('path');const islandoraHelpers = require('./src/_data/islandoraHelpers.js');
+const path = require('path');
+const islandtyHelpers = require('./src/_data/islandtyHelpers.js');
 const inspect = require("util").inspect;
 
 // Create a helpful production flag
@@ -82,8 +84,6 @@ module.exports = config => {
     const linkedAgentTypeNames = Object.keys(linkedAgentDatabase);
 
     config.addCollection("linkedAgent_" + linkedAgentDatabaseName, function (collection) {
-
-      const { strToSlug } = require('./src/_data/islandoraHelpers.js');
       return linkedAgentTypeNames.sort(function (a, b) {
         return a.localeCompare(b, "en", { sensitivity: "base" });
       })
@@ -94,7 +94,6 @@ module.exports = config => {
         }));
     });
 
-    const { getNested, strToSlug } = require('./src/_data/islandoraHelpers.js');
 
     // Loop through the linked agent types and create collections of all of its members.
     for (const linkedAgentTypeName of linkedAgentTypeNames) {
@@ -109,7 +108,7 @@ module.exports = config => {
           linkedAgentNamespace: linkedAgentDatabaseName,
           linkedAgentType: linkedAgentTypeName,
           linkedAgentTypeSlug: strToSlug(linkedAgentTypeName),
-          slug: islandoraHelpers.strToSlug(name),
+          slug: islandtyHelpers.strToSlug(name),
         }));
 
         return linkedAgentNames;
@@ -138,7 +137,6 @@ module.exports = config => {
 
   // Add the top-level Linked Agent collection.
   config.addCollection("linkedAgent", function (collection) {
-    const { strToSlug } = require('./src/_data/islandoraHelpers.js');
 
     var linkedAgentNamespaceCollection = linkedAgentNamespaces.map((linkedAgentNamespace) => ({
       title: linkedAgentNamespace,
@@ -175,7 +173,6 @@ module.exports = config => {
 		"eleventy.after",
 		async ({ dir, results, runMode, outputMode }) => {
       require('dotenv').config();
-      const islandoraHelpers = require('./src/_data/islandoraHelpers.js');
       const readCSV = require('./src/_data/readCSV.js');
       const slugify = require('slugify');
 
