@@ -1,0 +1,14 @@
+{% for relatorItem in relatorItems %}
+	{% if loop.first %}
+		<ul>
+
+		{% endif %}
+
+		<li>
+			<a href="{{ relatorItem.slug }}">{{ relatorItem.title }}</a>
+		</li>
+
+		{% if loop.last %}
+		</ul>
+	{% endif %}
+{% endfor %}
