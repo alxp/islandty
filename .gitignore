@@ -16,9 +16,11 @@ src/_includes/css
 src/islandty/staging/*
 !src/islandty/staging/README.txt
 
-# Source filessrc/images/Transcribed\ Video
+# Source files
+src/images/Transcribed\ Video
 src/images/*
 src/islandora/object/*
+src/linked-agent
 
 # Compiled XSLT transforms
 *.sef.json
