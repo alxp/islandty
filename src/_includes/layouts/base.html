@@ -16,8 +16,6 @@
         <style>{% include item %}</style>
       {% endfor %}
     {% endif %}
-    <link rel="stylesheet" media="print" href="/fonts/fonts.css?{{ assetHash }}" onload="this.media='all'" />
-
     {# Add facility for pages to declare an array of stylesheet paths #}
     {% if pageStylesheets %}
       {% for item in pageStyleSheets %}
