@@ -1,6 +1,6 @@
 <div class="content-metadata">
     <table>
-        {% for name, field in islandoraFieldInfo %}
+        {% for name, field in islandtyFieldInfo %}
             {% if item[name] %}
                 {% if name == 'file' %}
                 {% include "partials/field-formatter-file.html" %}

@@ -40,7 +40,7 @@ module.exports = {
   /**
      * Finds the parent item from the current item
      *
-     * @param {Array} items A list of islandora items
+     * @param {Array} items A list of islandty items
      * @param {Object} item The current item we want the parent of
      * @returns {Array} The resulting parent item.
      */
@@ -56,7 +56,7 @@ module.exports = {
   /**
      * Finds the children items from the current item
      *
-     * @param {Array} items A list of islandora items
+     * @param {Array} items A list of islandty items
      * @param {Object} item The current item we want the children of
      * @returns {Array} The resulting children items.
      */
@@ -176,7 +176,7 @@ module.exports = {
   },
 
   transformKeys(obj) {
-    fieldInfo = require('./islandoraFieldInfo.json');
+    fieldInfo = require('./islandtyFieldInfo.json');
     const newObj = { item: {} };
     for (const key in obj) {
       const newKey = key.replace(/:/g, '_');

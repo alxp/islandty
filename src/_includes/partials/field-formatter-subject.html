@@ -6,7 +6,7 @@
     {% set parts = subject.split(':') %}
     <tr>
         {% if loop.first %}
-        <th rowspan="{{ count }}"> {{ islandoraFieldInfo[name]['label'] }}</th>
+        <th rowspan="{{ count }}"> {{ islandtyFieldInfo[name]['label'] }}</th>
         {% endif %}
         <td>
             {{ parts[1] }}
