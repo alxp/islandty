@@ -1,7 +1,7 @@
 require('dotenv').config();
 const fs = require("fs");
-const islandtyHelpers = require('./src/_data/islandtyHelpers.js');
-const readCSV = require('./src/_data/readCSV.js');
+const islandtyHelpers = require('../../_data/islandtyHelpers.js');
+const readCSV = require('../../_data/readCSV.js');
 const slugify = require('slugify');
 const yaml = require('js-yaml');
 
@@ -44,7 +44,7 @@ items = readCSV().items;
 const inputMediaPath = process.env.inputMediaPath;
 console.log('Using input media path: ' + inputMediaPath);
 const outputDir = "src/" + process.env.contentPath;
-const linkedAgentDir = "src/" + process.env.linkedAgentPath;
+const linkedAgentDir = "./src/islandty/staging/linked-agent";
 console.log('Using output path: ' + outputDir);
 
 
@@ -56,7 +56,7 @@ for (const [key, item] of Object.entries(items)) {
 
   var contentModel;
   try {
-    contentModel = require('./src/islandty/ContentModels/' + contentModelName);
+    contentModel = require('../../islandty/ContentModels/' + contentModelName);
   }
   catch (e) {
 
@@ -67,7 +67,7 @@ for (const [key, item] of Object.entries(items)) {
 
     }
     contentModelName = 'default';
-    contentModel = require('./src/islandty/ContentModels/' + contentModelName)
+    contentModel = require('../../islandty/ContentModels/' + contentModelName)
   }
   contentModel.updateFilePaths(item);
 
@@ -94,7 +94,7 @@ for (const [key, item] of Object.entries(items)) {
 
   transformedItem.layout = 'layouts/content-item.html';
 
-  writePageTemplate(transformedItem, "src/" + process.env.contentPath, item.id + '.md');
+  writePageTemplate(transformedItem, "./src/islandty/staging/object" , item.id + '.md');
 }
 
 fs.mkdirSync(linkedAgentDir, { recursive: true });
@@ -108,7 +108,7 @@ const linkedAgentsData = {
   layout: 'layouts/linked-agent-type.html',
   permalink: '/linked-agent/{{ relator.slug }}/index.html'
 };
-writePageTemplate(linkedAgentsData, 'src/' +process.env.linkedAgentPath, 'linked-agent.md');
+writePageTemplate(linkedAgentsData, './src/islandty/staging/linked-agent', 'linked-agent.md');
 for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLinkedAgents)) {
   fs.writeFile(path.join(linkedAgentDir, linkedAgentDatabaseName + '.json'), JSON.stringify(linkedAgentTypes, null, 2),
    (err) => console.log(err));
@@ -124,7 +124,7 @@ for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLink
     linkedAgentNamespace: linkedAgentDatabaseName,
     permalink: "/" + process.env.linkedAgentPath + "/" + linkedAgentDatabaseName + "/{{ relator.slug }}/index.html"
   };
-  writePageTemplate(linkedAgentNamespacePageData, 'src/' + process.env.linkedAgentPath, linkedAgentDatabaseName + '.md');
+  writePageTemplate(linkedAgentNamespacePageData, './src/islandty/staging/linked-agent', linkedAgentDatabaseName + '.md');
    // Create templates for each linked agent type, e.g., 'Author', 'Editor'.
   for (linkedAgentTypeName of  Object.keys(linkedAgentTypes)) {
     linkedAgentData = {

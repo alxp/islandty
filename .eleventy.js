@@ -74,7 +74,7 @@ module.exports = config => {
 
   // ROSIE: A collection of digital objects.
 
-  const linkedAgentDatabases =  glob.sync("./src/" + process.env.linkedAgentPath + "/*.json");
+  const linkedAgentDatabases =  glob.sync("./src/islandty/staging/linked-agent" + "/*.json");
   var linkedAgentNamespaces = [];
   for (const linkedAgentDatabasePath of linkedAgentDatabases) {
     const linkedAgentDatabaseName = path.parse(linkedAgentDatabasePath).name;
