@@ -111,7 +111,7 @@ module.exports = {
     return filteredItems;
   },
 
-  
+
 
   searchIndex(article) {
     let isString = value => typeof value === 'string' || value instanceof String;
@@ -135,7 +135,7 @@ module.exports = {
       indexString += getIndexValue(article.data.item[key]);
       indexString += ' '
     }
-    
+
     return JSON.stringify(indexString);
   },
   /**
@@ -177,7 +177,13 @@ module.exports = {
 
   transformKeys(obj) {
     fieldInfo = require('./islandtyFieldInfo.json');
+
+// Add permalink field.
+obj['permalink'] = '/' + process.env.contentPath + '/' + obj.id + '/index.html';
+
     const newObj = { item: {} };
+
+
     for (const key in obj) {
       const newKey = key.replace(/:/g, '_');
       const splitValue = obj[key].split('|');

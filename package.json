@@ -4,9 +4,10 @@
   "description": "A static site generator for Islandora Workbench data.",
   "main": ".eleventy.js",
   "scripts": {
-    "readcsv": "node readCSV.js",
-    "start": "node readCSV.js && npx gulp && concurrently \"npx gulp watch\" \"npx eleventy --serve\"",
-    "production": "NODE_ENV=production npx gulp && NODE_ENV=production npx eleventy"
+
+    "readcsv": "node src/islandty/commands/readCSV.js",
+    "start": "node src/islandty/commands/readCSV.js && npx gulp && concurrently \"npx gulp watch\" \"npx eleventy --serve\"",
+    "production": "node src/islandty/commands/readCSV.js && NODE_ENV=production npx gulp && NODE_ENV=production npx eleventy"
   },
   "keywords": [],
   "author": "",

@@ -13,6 +13,7 @@ Thumbs.db
 node_modules
 dist
 src/_includes/css
+src/islandty/staging
 
 # Source filessrc/images/Transcribed\ Video
 src/images/*
