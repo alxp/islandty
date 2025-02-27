@@ -44,8 +44,9 @@ items = readCSV().items;
 const inputMediaPath = process.env.inputMediaPath;
 console.log('Using input media path: ' + inputMediaPath);
 const outputDir = "src/" + process.env.contentPath;
-const linkedAgentDir = "./src/islandty/staging/linked-agent";
-console.log('Using output path: ' + outputDir);
+console.log('Using output staging path: ' + outputDir);
+const linkedAgentDir = "src/" + process.env.linkedAgentPath;
+console.log('Using Linked Agent staging path: ' + linkedAgentDir);
 
 
 var allLinkedAgents = {};
@@ -79,7 +80,7 @@ for (const [key, item] of Object.entries(items)) {
         allLinkedAgents[linkedAgentType] = {};
       }
       for (const [linkedAgentName, linkedAgentValues] of Object.entries(linkedAgents)) {
-        for (linkedAgentValue of linkedAgentValues) {
+        for (const linkedAgentValue of linkedAgentValues) {
           if (!(linkedAgentName in allLinkedAgents[linkedAgentType])) {
             allLinkedAgents[linkedAgentType][linkedAgentName] = {};
           }
