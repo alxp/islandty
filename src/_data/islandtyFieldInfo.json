@@ -120,10 +120,22 @@
     },
     "hocr": {
         "label": "hOCR",
-        "cardinality": "1"
+        "cardinality": "1",
+        "downloadable": true
     },
     "file": {
-        "label": "File",
-        "cardinality": "1"
+        "label": "Original File",
+        "cardinality": "1",
+        "downloadable": true
+    },
+    "service": {
+        "label": "Service File",
+        "cardinality": "1",
+        "downloadable": true
+    },
+    "thumbnail": {
+        "label": "Thumbnail",
+        "cardinality": "1",
+        "downloadable": true
     }
 }

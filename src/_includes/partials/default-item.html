@@ -4,6 +4,8 @@
 
 {% include "partials/metadata.html" %}
 
+{% include "partials/file-downloads.html" %}
+
 {% if field_model == 'Page' %}
 <h2>Part of</h2>
 <h3><a href="/{{ contentPath }}/{{ parent.id | slugify }}">{{ parent.title }}</a></h3>

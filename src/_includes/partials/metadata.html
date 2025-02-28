@@ -2,7 +2,7 @@
     <table>
         {% for name, field in islandtyFieldInfo %}
             {% if item[name] %}
-                {% if name == 'file' %}
+                {% if name in ['file', 'service', 'hocr', 'thumbnail'] %}
                 {% include "partials/field-formatter-file.html" %}
                 {% elif name == 'field_linked_agent' %}
                 {% include "partials/field-formatter-linked-agent.html" %}

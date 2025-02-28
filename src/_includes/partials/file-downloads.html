@@ -1,0 +1,15 @@
+<div class="content-file-downloads">
+    <h2>File Downloads</h2>
+    <ul>
+        {% for name, field in islandtyFieldInfo %}
+        {% if 'downloadable' in field and field['downloadable'] %}
+        {% if item[name] %}
+        <li>{{ field['label'] }}: <a href="{{ item[name] }}">{{ item[name].split('/').pop() }}</a></li>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+    </ul>
+
+
+
+</div>
