@@ -43,7 +43,7 @@ module.exports = {
    */
   updateFilePaths(item) {
     fileFields.forEach((fileField) => {
-      if (Object.hasOwn(item, fileField) && item['fileField'] !== "") {
+      if (Object.hasOwn(item, fileField) && item[fileField] !== "") {
         const outputDir = path.join(process.env.contentPath, item.id);
         const fileName = item[fileField].replace(/^.*[\\/]/, '');
         item[fileField] = "/" + path.join (outputDir, fileName);
