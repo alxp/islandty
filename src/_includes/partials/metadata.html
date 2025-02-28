@@ -1,12 +1,13 @@
 <div class="content-metadata">
     <table>
         {% for name, field in islandtyFieldInfo %}
+          {% if 'metadata_display' not in field or field['metadata_display'] %}
             {% if item[name] %}
-                {% if name in ['file', 'service', 'hocr', 'thumbnail'] %}
+                {% if 'type' in field and field['type'] == 'file' %}
                 {% include "partials/field-formatter-file.html" %}
-                {% elif name == 'field_linked_agent' %}
+                {% elif 'type' in field and field['type'] == 'typed_relation' %}
                 {% include "partials/field-formatter-linked-agent.html" %}
-                {% elif name == 'field_subject_general' %}
+                {% elif 'type' in field and field['type'] == 'subject' %}
                 {% include "partials/field-formatter-subject.html" %}
                 {% else %}
                     {% if item[name] is string %}
@@ -16,6 +17,7 @@
                     {% endif %}
                 {% endif %}
             {% endif %}
+          {% endif %}
         {% endfor %}
     </table>
     {% if mods %}
