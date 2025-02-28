@@ -40,7 +40,7 @@ you will need to install VIPS via homebrew:
 brew install vips
 ```
 
-Then delete your node_modules folder and run npm install again.
+Then delete your `node_modules` folder and run `npm install` again.
 See the Sharp [installation instructions](https://sharp.pixelplumbing.com/install) for more info.
 
 ## Setup
