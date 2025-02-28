@@ -55,7 +55,7 @@ are accurate relative to that root folder.
 
 For Islandora Demo Objects, `git clone` the repository outside of the islandty tree.
 
-Edit the `.env` file in the project root and set the `inputMediaPath`:
+Edit the `.env` file in the islandty project root and set the `inputMediaPath`:
 
 ```ini
 inputMediaPath=../islandora_demo_objects
@@ -63,7 +63,7 @@ inputMediaPath=../islandora_demo_objects
 
 ### Point to the metadata CSV file in `.env`
 
-Edit the .env file in the project root and set `dataFileName` to
+Edit the .env file in the islandty project root and set `dataFileName` to
 the location of your workbench-esque metadata CSV:
 
 ```ini
@@ -72,7 +72,25 @@ dataFileName=../islandora_demo_objects/create_islandora_objects.csv
 
 The CSV may be within the binaries' root folder, but does not need to be.
 
+### Configure your fields
 
+Islandty comes with field configuration for the Islandora Demo Objects. 
+
+To edit it for your data, edit the file `src/_data/islandtyFieldInfo.json`. 
+It contains a json array. The key of each item is the raw column name in the CSV. 
+The value is an array that can contain the following elements:
+
+* `"label"`: a human-readable label for the field. If empty, no label will be displayed.
+* `"cardinality"`: either `"1"` or `"-1"` if the field is single or multi-valued, respectively.
+* `"type"`: Optional. May be either
+	* `"typed_relation"`: parse the field using Workbench's Typed Relation protocols 
+ 	* `"subject"`: parse the field as though it is a Workbench Taxonomy Term
+  	* `"file"`: parse the field to display a file download link.
+  	* If empty, fields will be treated as strings.
+* `"metadata_display"` Optional, defaults to `true`. If `false` (or if the column is not listed in 
+this file), then the values will not be displayed in the metadata table.
+
+The metadata table will be populated in the order that fields appear in this file.
 
 ### Generate and run the site locally.
 
