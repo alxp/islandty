@@ -54,7 +54,7 @@ Put a copy of your metadata CSV somewhere in the `src` folder such as `src/_data
 Edit the .env file in the project root and set
 the CSV source:
 
-````ini
+```ini
 dataFileName=./src/_data/create_islandora_objects.csv
 ```
 
@@ -105,6 +105,13 @@ for filename in *.jp2 ; do
   tesseract -c tessedit_create_hocr=1 -c hocr_font_info=0 $filename $basename
 	done
 ```
+
+## Known Issues/Troubleshooting
+
+- `1 high severity vulnerability`: there is a bug in the npm html-minifier package, which minifies code during production runs.
+- `Deprecation Warning` related to `sass`: The current theme includes a sass library, `gorko`, that is no longer developed. We are working to remove `gorko`.
+- `Unable to call islandtyHelpers`:  Eleventy 3.0. is not yet compatible with Node v.23, which is installed by default on a mac when you update homebrew. Downgrade Node to version 22.
+
 
 ## Maintainers
 
