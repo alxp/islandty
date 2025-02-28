@@ -94,7 +94,8 @@ module.exports = {
    *    The path of the manifest.
    */
   getIiifManifestForItem(file) {
-    let manifest_url = path.join(path.dirname(file), 'iiif/index.json');
+    const pathPrefix = process.env.pathPrefix ? process.env.pathPrefix : '/';
+    let manifest_url = path.join(pathPrefix, path.dirname(file), 'iiif/index.json');
     return manifest_url;
   },
 
