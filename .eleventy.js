@@ -203,8 +203,13 @@ module.exports = config => {
   config.setUseGitIgnore(false);
 
   config.amendLibrary("md", mdLib => mdLib.enable("code"));
-config.addGlobalData('contentPath', process.env.contentPath);
+  config.addGlobalData('contentPath', process.env.contentPath);
   config.addGlobalData('linkedAgentPath', process.env.linkedAgentPath);
+
+  // Add configurations at the top-level into Eleventy.
+  siteConfig = require('./config/site.json');
+  config.addGlobalData('site', siteConfig);
+
 
   // https://nodejs.org/api/util.html#util_util_inspect_object_options
   const inspect = require("util").inspect;
