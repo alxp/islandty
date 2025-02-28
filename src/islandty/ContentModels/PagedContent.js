@@ -72,7 +72,7 @@ module.exports = {
       const prefix = process.env.pathPrefix;
       const pathPrefix = prefix ? prefix : '/';
 
-      buildIiif(iiifPath, process.env.serverHost + pathPrefix + process.env.contentPath + '/' + item.id + '/iiif');
+      buildIiif(iiifPath, process.env.serverHost + path.join('/', pathPrefix, process.env.contentPath, item.id, 'iiif'));
     }
     defaultContentModel.ingest(item, inputMediaPath, outputDir);
   },
