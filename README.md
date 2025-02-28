@@ -47,24 +47,31 @@ See the Sharp [installation instructions](https://sharp.pixelplumbing.com/instal
 
 These instructions use the [Islandora Demo Objects](https://github.com/Islandora-Devops/islandora_demo_objects) content as a working example.
 
-### Point to the metadata CSV file in .env
+### Point to your binaries' root folder in `.env`
 
-Put a copy of your metadata CSV somewhere in the `src` folder such as `src/_data`.
+Your binaries should be in a root folder so that the paths 
+in the metadata CSV's `file` (etc) columns
+are accurate relative to that root folder.
 
-Edit the .env file in the project root and set
-the CSV source:
+For Islandora Demo Objects, `git clone` the repository outside of the islandty tree.
+
+Edit the `.env` file in the project root and set the `inputMediaPath`:
 
 ```ini
-dataFileName=./src/_data/create_islandora_objects.csv
+inputMediaPath=../islandora_demo_objects
 ```
 
-### Put binaries into the `src/images` folder.
+### Point to the metadata CSV file in `.env`
 
-Copy your binaries into the `src/images` folder so that the paths in the metadata CSV's `file` column
-are accurate relative to the `src/images`.
+Edit the .env file in the project root and set `dataFileName` to
+the location of your workbench-esque metadata CSV:
 
-For Islandora Demo Objects, `git clone` the repository outside of the islandty tree then
-copy or move the folders into `src/images`.
+```ini
+dataFileName=../islandora_demo_objects/create_islandora_objects.csv
+```
+
+The CSV may be within the binaries' root folder, but does not need to be.
+
 
 
 ### Generate and run the site locally.
