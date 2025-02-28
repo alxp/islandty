@@ -13,6 +13,7 @@ you can use the same input files to generate a static website.
 - Uses a [fork of biiif](https://github.com/alxp/biiif) to generate image files, embed hOCR, and support JP2 files.
 - Lunr-based search (Work in progress)
 
+![Screenshot of a book in Mirador with metadata and file downloads](/docs/images/demo-book-object.png)
 
 ## Requirements
 
