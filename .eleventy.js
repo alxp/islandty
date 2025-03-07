@@ -1,4 +1,5 @@
 const rssPlugin = require('@11ty/eleventy-plugin-rss');
+const { EleventyHtmlBasePlugin } = require("@11ty/eleventy");
 // Filters
 const dateFilter = require('./src/filters/date-filter.js');
 const w3DateFilter = require('./src/filters/w3-date-filter.js');
@@ -69,6 +70,8 @@ module.exports = config => {
   }
 
   // Plugins
+  config.addPlugin(EleventyHtmlBasePlugin);
+
   config.addPlugin(rssPlugin);
 
 
@@ -90,6 +93,7 @@ module.exports = config => {
         .map((linkedAgentTypeName) => ({
           title: linkedAgentTypeName,
           slug: strToSlug(linkedAgentTypeName),
+          link: "/" + process.env.linkedAgentPath + "/" + strToSlug(linkedAgentDatabaseName + "/" + strToSlug(linkedAgentTypeName)) + "/index.html",
           collectionName: "linkedAgent_" + strToSlug(linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName))
         }));
     });
@@ -103,13 +107,16 @@ module.exports = config => {
           .sort(function (a, b) {
             return a.localeCompare(b, "en", { sensitivity: "base" });
           })
-          .map((name) => ({
-            title: name,
-            linkedAgentNamespace: linkedAgentDatabaseName,
-            linkedAgentType: linkedAgentTypeName,
-            linkedAgentTypeSlug: strToSlug(linkedAgentTypeName),
-            slug: islandtyHelpers.strToSlug(name),
-          }));
+
+        .map((name) => ({
+          title: name,
+          linkedAgentNamespace: linkedAgentDatabaseName,
+          linkedAgentType: linkedAgentTypeName,
+          linkedAgentTypeSlug: strToSlug(linkedAgentTypeName),
+          link: "/" + process.env.linkedAgentPath + "/" + strToSlug(linkedAgentDatabaseName + "/" + strToSlug(linkedAgentTypeName)) + "/" + islandtyHelpers.strToSlug(name) + "/index.html",
+          slug: islandtyHelpers.strToSlug(name),
+        }));
+
 
         return linkedAgentNames;
       });
@@ -140,6 +147,7 @@ module.exports = config => {
 
     var linkedAgentNamespaceCollection = linkedAgentNamespaces.map((linkedAgentNamespace) => ({
       title: linkedAgentNamespace,
+      link: "/" + process.env.linkedAgentPath + "/" + strToSlug(linkedAgentNamespace) + "/index.html",
       slug: strToSlug(linkedAgentNamespace),
       collectionName: "linkedAgent_" + strToSlug(linkedAgentNamespace),
       permalinkBase: path.join(process.env.linkedAgentPath, strToSlug(linkedAgentNamespace))
@@ -228,7 +236,12 @@ module.exports = config => {
   config.amendLibrary("md", mdLib => mdLib.enable("code"));
   config.addGlobalData('contentPath', process.env.contentPath);
   config.addGlobalData('linkedAgentPath', process.env.linkedAgentPath);
-  config.addGlobalData('islandtyFieldInfo', islandtyFieldInfo);
+  config.addGlobalData('pathPrefix', process.env.pathPrefix);
+
+  // Add configurations at the top-level into Eleventy.
+  siteConfig = require('./config/site.json');
+  config.addGlobalData('site', siteConfig);
+
 
   // https://nodejs.org/api/util.html#util_util_inspect_object_options
   const inspect = require("util").inspect;
@@ -240,6 +253,7 @@ module.exports = config => {
     markdownTemplateEngine: 'njk',
     dataTemplateEngine: 'njk',
     htmlTemplateEngine: 'njk',
+    pathPrefix: process.env.pathPrefix,
     dir: {
       input: 'src',
       output: 'dist'

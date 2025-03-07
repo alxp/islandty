@@ -4,14 +4,14 @@
   "description": "A static site generator for Islandora Workbench data.",
   "main": ".eleventy.js",
   "scripts": {
-
+    "clean": "rm -rf src/islandty/staging/object/* src/islandty/staging/linked-agent/*",
     "readcsv": "node src/islandty/commands/readCSV.js",
     "start": "node src/islandty/commands/readCSV.js && npx gulp && concurrently \"npx gulp watch\" \"npx eleventy --serve\"",
     "production": "node src/islandty/commands/readCSV.js && NODE_ENV=production npx gulp && NODE_ENV=production npx eleventy"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@11ty/eleventy-cache-assets": "^2.3.0",
     "@11ty/eleventy-plugin-rss": "^2.0.3",

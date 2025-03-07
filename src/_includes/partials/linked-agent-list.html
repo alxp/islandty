@@ -4,8 +4,10 @@
 
 		{% endif %}
 
+
 		<li>
-			<a href="{{ relatorItem.slug }}">{{ relatorItem.title }}</a>
+		{{ relatorItem | debug }}
+			<a href="{{ relatorItem.link }}">{{ relatorItem.title }}</a>
 		</li>
 
 		{% if loop.last %}

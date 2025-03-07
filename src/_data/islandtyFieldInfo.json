@@ -45,7 +45,8 @@
     },
     "field_linked_agent": {
         "label": "Linked Agent",
-        "cardinality": "-1"
+        "cardinality": "-1",
+        "type": "typed_relation"
     },
     "field_description": {
         "label": "Description",
@@ -61,15 +62,18 @@
     },
     "field_subject_general": {
         "label": "Subject",
-        "cardinality": "-1"
+        "cardinality": "-1",
+        "type": "subject"
     },
     "field_subject": {
         "label": "Subject",
-        "cardinality": "-1"
+        "cardinality": "-1",
+        "type": "subject"
     },
     "field_geographic_subject": {
         "label": "Geographic Subject",
-        "cardinality": "-1"
+        "cardinality": "-1",
+        "type": "subject"
     },
     "field_preferred_citation": {
         "label": "Preferred Citation",
@@ -85,10 +89,8 @@
     },
     "field_digital_obj_uri": {
         "label": "",
-        "cardinality": "URI",
-        "null": [
-            "-1"
-        ]
+        "cardinality": "-1"
+
     },
     "field_archival_obj_refid": {
         "label": "Archival Object Ref ID",
@@ -120,10 +122,33 @@
     },
     "hocr": {
         "label": "hOCR",
-        "cardinality": "1"
+        "cardinality": "1",
+        "metadata_display": false,
+        "downloadable": true,
+        "type": "file"
+
     },
     "file": {
-        "label": "File",
-        "cardinality": "1"
+        "label": "Original File",
+        "cardinality": "1",
+        "metadata_display": false,
+        "downloadable": true,
+        "type": "file"
+
+    },
+    "service": {
+        "label": "Service File",
+        "cardinality": "1",
+        "metadata_display": false,
+        "downloadable": true,
+        "type": "file"
+
+    },
+    "thumbnail": {
+        "label": "Thumbnail",
+        "cardinality": "1",
+        "metadata_display": true,
+        "downloadable": true,
+        "type": "file"
     }
 }
