@@ -42,6 +42,8 @@ secondaryCTA:
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/lunr/lunr.js"></script>
+
 <script>
 const app = new Vue({
 	el:'#app',
@@ -52,20 +54,12 @@ const app = new Vue({
 		results:null
 	},
 	async created() {
-		let result = await fetch('/index.json');
-		docs = await result.json();
-		// assign an ID so it's easier to look up later, it will be the same as index
-		this.idx = lunr(function () {
-			this.ref('id');
-			this.field('title');
-			this.field('content');
+		let resultLookup = await fetch('/index-lookup.json');
+		this.docs = await resultLookup.json();
 
-			docs.forEach(function (doc, idx) {
-				doc.id = idx;
-				this.add(doc); 
-			}, this);
-		});
-		this.docs = docs;
+		let resultIndex = await fetch('/index.json');
+		const indexstring = await resultIndex.json();
+		this.idx = lunr.Index.load(indexstring);
 	},
 	computed: {
 		noResults() {
