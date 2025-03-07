@@ -70,6 +70,21 @@ h4 {
   background-color: get-color('dark');
   border-radius: 0.25rem;
 }
+
+#search {
+  border: 1px solid get-color('primary');
+  padding: 6px 12px;
+  margin-bottom: 2em;
+  width: 70%;
+  font: inherit;
+}
+
+#search-submit {
+  border: 1px solid get-color('primary');
+  background-color: get-color('light');
+  padding: 6px 12px;
+}
+
 // Import blocks
 @import 'blocks/definition-group';
 @import 'blocks/tags-list';

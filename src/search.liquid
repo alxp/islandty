@@ -1,19 +1,16 @@
 ---
 title: "Search"
-layout: 'layouts/page.html'
+layout: 'layouts/content-list.html'
 
 ---
-
-<h2>Search the Repository</h2>
-
 <div id="app">
-	<input type="search" v-model="term" id="search"> <button @click="search" id="search-submit">Search</button>
+	<input type="search" type="search" v-model="term" id="search" > <button @click="search" id="search-submit">Search</button>
 	<div v-if="results">
-		<h3>Search Results</h3>
+		<h2>Search Results</h2>
 		<ul>
 			<li v-for="result in results">
               <article>
-				<h4><a :href="result.url"> {% raw %}{{ result.title }}{% endraw %}</a></h4>
+				<h3><a :href="result.url"> {% raw %}{{ result.title }}{% endraw %}</a></h3>
               <article>
 			</li>
 		</ul>
@@ -22,12 +19,12 @@ layout: 'layouts/page.html'
 		</p>
 	</div>
     <div v-else>
-        <h3>All Repository Objects</h3>
+        <h2>All Repository Objects</h2>
         <ul>
         {% for item in readCSV.items %}
             {% if item.field_model != 'Page' %}
             <li><article>
-              <h4><a href="/{{ contentPath }}/{{ item.id | slugify }}">{{ item.title }}</a></h4>
+              <h3><a href="/{{ contentPath }}/{{ item.id | slugify }}">{{ item.title }}</a></h3>
             </article></li>
 
             {% endif %}
