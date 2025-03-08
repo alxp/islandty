@@ -12,6 +12,7 @@ Thumbs.db
 # Node modules and output
 node_modules
 dist
+web
 src/_includes/css
 src/islandty/staging/*
 !src/islandty/staging/README.txt
