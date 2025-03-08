@@ -30,7 +30,7 @@ function writePageTemplate(data, dir, fileName) {
     if (err) {
       console.error(err);
     } else {
-      console.log('Wrote ' + fileName);
+      console.log('Islandty wrote ' + fileName);
     }
   });
 }

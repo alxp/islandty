@@ -1,5 +1,5 @@
 ---
-title: "All linked Agents"
+title: "All Linked Agents"
 permalink: "{{ linkedAgentPath }}/index.html"
 layout: layouts/linked-agent-index.html
 ---

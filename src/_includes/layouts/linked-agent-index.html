@@ -6,16 +6,12 @@
 
 {% set relatorItems = collections['linkedAgent'] %}
 
-
 {% block content %}
+
   <article>
     {% include "partials/page-header.html" %}
-
-
-
-{% include "partials/linked-agent-list.html" %}
-
+    {% include "partials/linked-agent-list.html" %}
   </article>
 
-  {% include "partials/cta.html" %}
+{% include "partials/cta.html" %}
 {% endblock %}
