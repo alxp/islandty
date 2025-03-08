@@ -29,12 +29,13 @@ docker  buildx build --platform linux/amd64 -t islandty .
 If you're on a Mac with Apple silicon or other ARM64 system:
 
 ```shell
-docker  buildx build --platform linux/amd64 -t islandty .
+docker  buildx build --platform linux/arm64 -t islandty .
 ```
 
 ## Building Your Islandty Site
 
-Running ```docker compose up``` will build the site out of
+After running the `docker buildx` command in the previous step,
+running ```docker compose up``` will build the site out of
 the input CSV and content files, and serve the site using
 npm's build-in web server on port 8080.
 
