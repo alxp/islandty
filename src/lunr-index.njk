@@ -1,11 +1,12 @@
 ---
-permalink: /index.json
+permalink: /index-raw.json
 ---
 
 [
 {% for object in collections.all %}
 
 {
+   "id": {{ loop.index0 }},
    "title": "{{object.data.title}}",
    "url": "{{object.url}}",
    "content": {% searchIndex object %}

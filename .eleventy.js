@@ -77,7 +77,7 @@ module.exports = config => {
 
   // ROSIE: A collection of digital objects.
 
-  const linkedAgentDatabases =  glob.sync("./src/islandty/staging/linked-agent" + "/*.json");
+  const linkedAgentDatabases = glob.sync("./src/islandty/staging/linked-agent" + "/*.json");
   var linkedAgentNamespaces = [];
   for (const linkedAgentDatabasePath of linkedAgentDatabases) {
     const linkedAgentDatabaseName = path.parse(linkedAgentDatabasePath).name;
@@ -107,6 +107,7 @@ module.exports = config => {
           .sort(function (a, b) {
             return a.localeCompare(b, "en", { sensitivity: "base" });
           })
+
         .map((name) => ({
           title: name,
           linkedAgentNamespace: linkedAgentDatabaseName,
@@ -116,6 +117,7 @@ module.exports = config => {
           slug: islandtyHelpers.strToSlug(name),
         }));
 
+
         return linkedAgentNames;
       });
 
@@ -123,16 +125,16 @@ module.exports = config => {
       for (const linkedAgentName of Object.keys(linkedAgentDatabase[linkedAgentTypeName])) {
         const linkedAgent = linkedAgentDatabase[linkedAgentTypeName][linkedAgentName];
         config.addCollection("linkedAgent_" + linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName) + "_" + strToSlug(linkedAgentName), function (collection) {
-          const linkedAgentCollection =  collection.getAll().filter(function(item) {
+          const linkedAgentCollection = collection.getAll().filter(function (item) {
             const target = getNested(item, 'data', 'field_linked_agent', linkedAgentDatabaseName, linkedAgentTypeName);
             if (target) {
               return target.includes(linkedAgentName);
             }
             return false;
           })
-          .sort(function (a, b) {
-            return a['data']['title'].localeCompare(b['data']['title'], "en", { sensitivity: "base" });
-          });
+            .sort(function (a, b) {
+              return a['data']['title'].localeCompare(b['data']['title'], "en", { sensitivity: "base" });
+            });
           return linkedAgentCollection;
         });
 
@@ -159,9 +161,9 @@ module.exports = config => {
 
   // ROSIE: Compile XSLT
   config.on("eleventy.before", ({ dir, runMode, outputMode }) => {
-    const xsltfiles =  glob.sync('**/*.xsl');
+    const xsltfiles = glob.sync('**/*.xsl');
     for (const myfile of xsltfiles) {
-      outputFile = myfile.replace('.xsl','.sef.json')
+      outputFile = myfile.replace('.xsl', '.sef.json')
       try {
         execSync(`xslt3 -t -xsl:${myfile} -export:${outputFile} -nogo -relocate:on -ns:##html5`);
       }
@@ -176,15 +178,15 @@ module.exports = config => {
   config.addShortcode('searchIndex', article => searchIndex(article));
 
   config.on(
-		"eleventy.after",
-		async ({ dir, results, runMode, outputMode }) => {
+    "eleventy.after",
+    async ({ dir, results, runMode, outputMode }) => {
       require('dotenv').config();
       const readCSV = require('./src/_data/readCSV.js');
       const slugify = require('slugify');
 
       var path = require('path');
-      const { build:buildIiif } = require('biiif');
-			// Run me after the build ends
+      const { build: buildIiif } = require('biiif');
+      // Run me after the build ends
       console.log("eleventy after plugin run;.");
       items = readCSV().items;
       for (const [key, item] of Object.entries(items)) {
@@ -201,9 +203,32 @@ module.exports = config => {
         const outputDir = path.join(dir.output, process.env.contentPath, item.id);
         const result = contentModel.ingest(item, process.env.inputMediaPath, outputDir);
       }
-            });
 
+      // Precompile the lunr index.
+      const compiledIndexFilename = path.join(dir.output, "index.json");
+      const rawIndexFilename = path.join(dir.output, "index-raw.json");
+      const fs = require('node:fs/promises');
+      var lunr = require('lunr');
+      try {
+        const index_content = await fs.readFile(rawIndexFilename, {encoding: 'utf8'});
+        const documents = JSON.parse(index_content)
+        var idx = lunr(function() {
+          this.ref('id')
+          this.field('title')
+          this.field('content')
 
+          documents.forEach(function (doc) {
+            this.add(doc)
+          }, this)
+        })
+        fs.writeFile(compiledIndexFilename, JSON.stringify(idx));
+      } catch (err) {
+        console.error(err)
+      }
+
+    });
+      
+      // fs.writeFile(compiledIndexFilename, JSON.stringify(index));
 
   // Tell 11ty to use the .eleventyignore and ignore our .gitignore file
   config.setUseGitIgnore(false);

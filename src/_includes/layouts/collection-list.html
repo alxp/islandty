@@ -1,22 +1,20 @@
-{% extends "layouts/base.html" %} {% set pageHeaderTitle = title %} {% set
-pageCriticalStyles = ['css/page.css'] %} {% block content %}
-<article>
+{% extends "layouts/base.html" %} 
+{% set pageHeaderTitle = title %} 
+{% set pageCriticalStyles = ['css/page.css'] %} 
+{% block content %}
   {% include "partials/page-header.html" %}
-
-
-    <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
-      {{ content | safe }}
-
-      {% for item in readCSV.items %}
-        {% if item.field_model != 'Page' %}
-          {% if item.field_resource_type == 'Collection' %}
-            {% if (item.field_member_of == '' and item.parent_id == '') %}
-              <h3><a href="/{{ contentPath }}/{{ item.id | slugify }}">{{ item.title }}</a></h3>
-            {% endif %}
+  <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
+    {{ content | safe }}
+    <ul>
+    {% for item in readCSV.items %}
+      {% if item.field_model != 'Page' %}
+        {% if item.field_resource_type == 'Collection' %}
+          {% if (item.field_member_of == '' and item.parent_id == '') %}
+            <li><article><h3><a href="/{{ contentPath }}/{{ item.id | slugify }}">{{ item.title }}</a></h3></article></li>
           {% endif %}
         {% endif %}
-      {% endfor %}
-    </div>
+      {% endif %}
+    {% endfor %}
+    </ul>
   </div>
-</article>
 {% endblock %}

@@ -26,7 +26,7 @@ function writePageTemplate(data, dir, fileName) {
     fs.mkdirSync(dir);
   }
 
-  fs.writeFile( path.join(dir, fileName), content, (err) => {
+  fs.writeFile(path.join(dir, fileName), content, (err) => {
     if (err) {
       console.error(err);
     } else {
@@ -94,7 +94,7 @@ for (const [key, item] of Object.entries(items)) {
 
   transformedItem.layout = 'layouts/content-item.html';
 
-  writePageTemplate(transformedItem, "./src/islandty/staging/object" , item.id + '.md');
+  writePageTemplate(transformedItem, "./src/islandty/staging/object", item.id + '.md');
 }
 
 fs.mkdirSync(linkedAgentDir, { recursive: true });
@@ -108,10 +108,11 @@ const linkedAgentsData = {
   layout: 'layouts/linked-agent-type.html',
   permalink: '/linked-agent/{{ relator.slug }}/index.html'
 };
+
 writePageTemplate(linkedAgentsData, './src/islandty/staging/linked-agent', 'linked-agent.md');
 for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLinkedAgents)) {
   fs.writeFile(path.join(linkedAgentDir, linkedAgentDatabaseName + '.json'), JSON.stringify(linkedAgentTypes, null, 2),
-   (err) => console.log(err));
+    (err) => console.log(err));
 
   // Create the Linked Agent collection data template.
   const linkedAgentNamespacePageData = {
@@ -125,8 +126,8 @@ for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLink
     permalink: "/" + process.env.linkedAgentPath + "/" + linkedAgentDatabaseName + "/{{ relator.slug }}/index.html"
   };
   writePageTemplate(linkedAgentNamespacePageData, './src/islandty/staging/linked-agent', linkedAgentDatabaseName + '.md');
-   // Create templates for each linked agent type, e.g., 'Author', 'Editor'.
-  for (linkedAgentTypeName of  Object.keys(linkedAgentTypes)) {
+  // Create templates for each linked agent type, e.g., 'Author', 'Editor'.
+  for (linkedAgentTypeName of Object.keys(linkedAgentTypes)) {
     linkedAgentData = {
       pagination: {
         data: "collections.linkedAgent_" + linkedAgentDatabaseName + "_" + islandtyHelpers.strToSlug(linkedAgentTypeName),
@@ -136,7 +137,7 @@ for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLink
       },
       layout: "layouts/linked-agent.html",
       linkedAgentNamespace: linkedAgentDatabaseName,
-      permalink: "/" + process.env.linkedAgentPath + "/" + linkedAgentDatabaseName + "/" + islandtyHelpers.strToSlug(linkedAgentTypeName) +"/{{ relator.slug }}/index.html"
+      permalink: "/" + process.env.linkedAgentPath + "/" + linkedAgentDatabaseName + "/" + islandtyHelpers.strToSlug(linkedAgentTypeName) + "/{{ relator.slug }}/index.html"
     };
     const linkedAgentPath = path.join(linkedAgentDir, linkedAgentDatabaseName);
     const outputFile = islandtyHelpers.strToSlug(linkedAgentTypeName) + ".md";

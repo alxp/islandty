@@ -1,0 +1,94 @@
+---
+title: "Search"
+layout: 'layouts/content-list.html'
+
+---
+<div id="app">
+    
+    <input type="search" id="search" v-model="term">
+    <button @click="search" id="search-submit">Search</button>
+	<h2 ref="searchResultHeader" aria-live="assertive">All Repository Content</h2>
+    <div v-if="results" v-cloak>
+		<ul>
+			<li v-for="result in results">
+              <article>
+				<h3><a :href="result.url"> {% raw %}{{ result.title }}{% endraw %}</a></h3>
+              <article>
+			</li>
+		</ul>
+	</div>
+    <div v-else>
+        <ul>
+        {% for item in readCSV.items %}
+            {% if item.field_model != 'Page' %}
+            <li><article>
+              <h3><a href="/{{ contentPath }}/{{ item.id | slugify }}">{{ item.title }}</a></h3>
+            </article></li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+    
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/lunr/lunr.js"></script>
+
+<script>
+const app = new Vue({
+	el:'#app',
+	data:{
+		docs:null,
+		idx:null,
+		term:'',
+		results:null
+	},
+	async created() {
+		let resultLookup = await fetch('/index-lookup.json');
+		this.docs = await resultLookup.json();
+
+		let resultIndex = await fetch('/index.json');
+		const indexstring = await resultIndex.json();
+		this.idx = lunr.Index.load(indexstring);
+	},
+	computed: {
+		noResults() {
+			return this.results.length === 0;
+		}
+	},
+	methods:{
+		search() {
+			console.log('search', this.term);
+			let results = this.idx.search(this.term);
+
+			// we need to add title, url from ref
+			results.forEach(r => {
+				r.title = this.docs[r.ref].title;
+				r.url = this.docs[r.ref].url;
+			});
+
+			this.results = results;
+            if (this.term == '') {
+                this.$refs.searchResultHeader.textContent = "Showing all Repository Content";
+            }
+            if (results.length > 0) {
+                this.$refs.searchResultHeader.textContent = "Showing Results 1 to " + results.length + " of " + results.length + ".";
+            }
+            else {
+                this.$refs.searchResultHeader.textContent = "No results found.";
+            }
+		}
+	}
+});
+</script>
+<script>
+	var input = document.getElementById("search");
+	input.addEventListener("keypress", function(event) {
+		if (event.key === "Enter") {
+			event.preventDefault();
+			document.getElementById("search-submit").click();
+		}
+	});
+
+</script>
+
