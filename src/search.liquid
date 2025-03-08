@@ -4,9 +4,11 @@ layout: 'layouts/content-list.html'
 
 ---
 <div id="app">
-	<input type="search" type="search" v-model="term" id="search" > <button @click="search" id="search-submit">Search</button>
-	<div v-if="results">
-		<h2>Search Results</h2>
+    
+    <input type="search" id="search" v-model="term">
+    <button @click="search" id="search-submit">Search</button>
+	<h2 ref="searchResultHeader">All Repository Content</h2>
+    <div v-if="results" v-cloak>
 		<ul>
 			<li v-for="result in results">
               <article>
@@ -14,19 +16,14 @@ layout: 'layouts/content-list.html'
               <article>
 			</li>
 		</ul>
-		<p v-if="noResults">
-		Sorry, no results were found.
-		</p>
 	</div>
     <div v-else>
-        <h2>All Repository Objects</h2>
         <ul>
         {% for item in readCSV.items %}
             {% if item.field_model != 'Page' %}
             <li><article>
               <h3><a href="/{{ contentPath }}/{{ item.id | slugify }}">{{ item.title }}</a></h3>
             </article></li>
-
             {% endif %}
         {% endfor %}
         </ul>
@@ -71,6 +68,15 @@ const app = new Vue({
 			});
 
 			this.results = results;
+            if (this.term == '') {
+                this.$refs.searchResultHeader.textContent = "All Repository Content";
+            }
+            if (results.length > 0) {
+                this.$refs.searchResultHeader.textContent = "Search Results";
+            }
+            else {
+                this.$refs.searchResultHeader.textContent = "No results found.";
+            }
 		}
 	}
 });
