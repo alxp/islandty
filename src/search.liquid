@@ -7,7 +7,7 @@ layout: 'layouts/content-list.html'
     
     <input type="search" id="search" v-model="term">
     <button @click="search" id="search-submit">Search</button>
-	<h2 ref="searchResultHeader">All Repository Content</h2>
+	<h2 ref="searchResultHeader" aria-live="assertive">All Repository Content</h2>
     <div v-if="results" v-cloak>
 		<ul>
 			<li v-for="result in results">
@@ -69,10 +69,10 @@ const app = new Vue({
 
 			this.results = results;
             if (this.term == '') {
-                this.$refs.searchResultHeader.textContent = "All Repository Content";
+                this.$refs.searchResultHeader.textContent = "Showing all Repository Content";
             }
             if (results.length > 0) {
-                this.$refs.searchResultHeader.textContent = "Search Results";
+                this.$refs.searchResultHeader.textContent = "Showing Results 1 to " + results.length + " of " + results.length + ".";
             }
             else {
                 this.$refs.searchResultHeader.textContent = "No results found.";
