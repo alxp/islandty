@@ -34,8 +34,8 @@ module.exports = {
    *   The property value.
    */
   getNested(obj, ...args) {
-  return args.reduce((obj, level) => obj && obj[level], obj)
-},
+    return args.reduce((obj, level) => obj && obj[level], obj)
+  },
 
   /**
      * Finds the parent item from the current item
@@ -116,7 +116,7 @@ module.exports = {
 
   searchIndex(article) {
     let isString = value => typeof value === 'string' || value instanceof String;
-    let getIndexValue = function(value, result = '') {
+    let getIndexValue = function (value, result = '') {
       if (!(isString(value))) {
         for (key in value) {
           result += key;
@@ -124,7 +124,7 @@ module.exports = {
           result += getIndexValue(value[key])
         }
       }
-      else{
+      else {
         result += value;
         result += ' '
       }
@@ -179,8 +179,8 @@ module.exports = {
   transformKeys(obj) {
     fieldInfo = require('./islandtyFieldInfo.json');
 
-// Add permalink field.
-obj['permalink'] = '/' + process.env.contentPath + '/' + obj.id + '/index.html';
+    // Add permalink field.
+    obj['permalink'] = '/' + process.env.contentPath + '/' + obj.id + '/index.html';
 
     const newObj = { item: {} };
 
@@ -210,11 +210,11 @@ obj['permalink'] = '/' + process.env.contentPath + '/' + obj.id + '/index.html';
   parseLinkedAgent(values) {
     var valuesArray;
     var parsedRelations = {};
-    if (typeof(values) == 'string') {
+    if (typeof (values) == 'string') {
       if (values.length == 0) {
         valuesArray = [];
       }
-      else  {
+      else {
         valuesArray = [values];
       }
     }
@@ -258,46 +258,46 @@ obj['permalink'] = '/' + process.env.contentPath + '/' + obj.id + '/index.html';
    * @param {String} key - key to get values from
    */
   getAllKeyValues(collectionArray, key) {
-  // get all values from collection
-  let allValues = collectionArray.map((item) => {
-    let values = item.data[key] ? item.data[key] : [];
-    return values;
-  });
+    // get all values from collection
+    let allValues = collectionArray.map((item) => {
+      let values = item.data[key] ? item.data[key] : [];
+      return values;
+    });
 
-  // flatten values array
-  allValues = lodash.flattenDeep(allValues);
-  // to lowercase
-  allValues = allValues.map((item) => item.toLowerCase());
-  // remove duplicates
-  allValues = [...new Set(allValues)];
-  // order alphabetically
-  allValues = allValues.sort(function (a, b) {
-    return a.localeCompare(b, "en", { sensitivity: "base" });
-  });
-  // return
-  return allValues;
-},
+    // flatten values array
+    allValues = lodash.flattenDeep(allValues);
+    // to lowercase
+    allValues = allValues.map((item) => item.toLowerCase());
+    // remove duplicates
+    allValues = [...new Set(allValues)];
+    // order alphabetically
+    allValues = allValues.sort(function (a, b) {
+      return a.localeCompare(b, "en", { sensitivity: "base" });
+    });
+    // return
+    return allValues;
+  },
 
-linkedAgentUrl(namespace, type, name) {
-  return '/' + path.join(process.env.linkedAgentPath, this.strToSlug(namespace), this.strToSlug(type), this.strToSlug(name));
+  linkedAgentUrl(namespace, type, name) {
+    return '/' + path.join(process.env.linkedAgentPath, this.strToSlug(namespace), this.strToSlug(type), this.strToSlug(name));
 
-},
+  },
 
-/**
- * Transform a string into a slug
- * Uses slugify package
- *
- * @param {String} str - string to slugify
- */
-strToSlug(str) {
-  const options = {
-    replacement: "-",
-    remove: /[&,+()$~%.'":*?<>{}]/g,
-    lower: true,
-  };
+  /**
+   * Transform a string into a slug
+   * Uses slugify package
+   *
+   * @param {String} str - string to slugify
+   */
+  strToSlug(str) {
+    const options = {
+      replacement: "-",
+      remove: /[&,+()$~%.'":*?<>{}]/g,
+      lower: true,
+    };
 
-  return slugify(str, options);
-}
+    return slugify(str, options);
+  }
 
 
 
