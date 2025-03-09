@@ -113,7 +113,7 @@ const linkedAgentsData = {
 writePageTemplate(linkedAgentsData, './src/islandty/staging/linked-agent', 'linked-agent.md');
 for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLinkedAgents)) {
   fs.writeFile(path.join(linkedAgentDir, linkedAgentDatabaseName + '.json'), JSON.stringify(linkedAgentTypes, null, 2),
-    (err) => console.log(err));
+    (err) => {if (err) { console.log(err);}});
 
   // Create the Linked Agent collection data template.
   const linkedAgentNamespacePageData = {
