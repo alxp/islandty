@@ -45,7 +45,7 @@ const inputMediaPath = process.env.inputMediaPath;
 console.log('Using input media path: ' + inputMediaPath);
 const outputDir = "src/" + process.env.contentPath;
 console.log('Using output staging path: ' + outputDir);
-const linkedAgentDir = "src/" + process.env.linkedAgentPath;
+const linkedAgentDir = "./src/islandty/staging/linked-agent";
 console.log('Using Linked Agent staging path: ' + linkedAgentDir);
 
 
