@@ -26,6 +26,7 @@ If you're running on an Intel AMD 64 system:
 ```shell
 docker  buildx build --platform linux/amd64 -t islandty .
 ```
+
 If you're on a Mac with Apple silicon or other ARM64 system:
 
 ```shell

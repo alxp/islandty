@@ -227,7 +227,7 @@ module.exports = config => {
       }
 
     });
-      
+
       // fs.writeFile(compiledIndexFilename, JSON.stringify(index));
 
   // Tell 11ty to use the .eleventyignore and ignore our .gitignore file
@@ -256,7 +256,7 @@ module.exports = config => {
     pathPrefix: process.env.pathPrefix,
     dir: {
       input: 'src',
-      output: 'dist'
+      output: process.env.outputDir ? process.env.outputDir : 'web'
     }
   };
 };
