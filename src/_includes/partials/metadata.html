@@ -9,6 +9,8 @@
                 {% include "partials/field-formatter-linked-agent.html" %}
                 {% elif 'type' in field and field['type'] == 'subject' %}
                 {% include "partials/field-formatter-subject.html" %}
+                {% elif 'type' in field and field['type'] == 'reference' %}
+                {% include "partials/field-formatter-reference.html" %}
                 {% else %}
                     {% if item[name] is string %}
                         <tr><th scope="row">{{ field.label }}</th><td>{{ item[name] | safe }}</td></tr>

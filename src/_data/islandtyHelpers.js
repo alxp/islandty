@@ -112,6 +112,24 @@ module.exports = {
     return filteredItems;
   },
 
+  /**
+   * Get all content items with the given fieldname equal to the given value).
+   *
+   * @param {*} items
+   * @param {*} fieldname
+   * @param {*} model
+   * @returns
+   */
+  itemsWithFieldValue(items, fieldname, value) {
+    fieldInfo = require('./islandtyFieldInfo.json');
+    field = fieldInfo[fieldname]
+    if (field.cardinality == "1") {
+      return items.filter(x => x[fieldname] == value);
+    }
+    else {
+      return items.filter(x => value in x[fieldname]);
+    }
+  },
 
 
   searchIndex(article) {
@@ -280,7 +298,6 @@ module.exports = {
 
   linkedAgentUrl(namespace, type, name) {
     return '/' + path.join(process.env.linkedAgentPath, this.strToSlug(namespace), this.strToSlug(type), this.strToSlug(name));
-
   },
 
   /**
