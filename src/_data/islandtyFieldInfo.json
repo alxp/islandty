@@ -17,7 +17,13 @@
     },
     "field_member_of": {
         "label": "Member Of",
-        "cardinality": "-1"
+        "cardinality": "-1",
+        "metadata_display": false
+    },
+    "parent_id": {
+        "label": "Parent",
+        "cardinality": "-1",
+        "type": "reference"
     },
     "field_weight": {
         "label": "Weight",
