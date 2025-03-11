@@ -1,6 +1,5 @@
 const {parallel, series, watch} = require('gulp');
 
-const iiifManifest = require('./gulp-tasks/iiif-manifest.js');
 
 const images = require('./gulp-tasks/images.js');
 

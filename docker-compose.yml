@@ -2,11 +2,14 @@ services:
   islandty:
     image: islandty:latest
     command: sh -c "npm start"
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
     ports:
       - 8080:8080
     working_dir: /islandty
     volumes:
       - ../islandora_demo_objects:/islandty/islandora_demo_objects
+      - ./src:/islandty/src
       - ./web:/islandty/web
     environment:
       inputMediaPath: ./islandora_demo_objects
