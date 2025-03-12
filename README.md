@@ -21,7 +21,7 @@ you can use the same input files to generate a static website.
 - Node.js (Tested on version 22. currently incompatible with Node.js v. 23.x. See [issue](https://github.com/11ty/eleventy/issues/3625).)
 - VIPS (for JP2 support - see below)
 
-### VIPS - for JP2 support
+### Installing VIPS for JP2 support
 
 To support generating tiles and thumbnails for JP2 images
 (required for the Mirador viewer),
