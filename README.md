@@ -19,24 +19,16 @@ you can use the same input files to generate a static website.
 ## Requirements
 
 - Node.js (Tested on version 22. currently incompatible with Node.js v. 23.x. See [issue](https://github.com/11ty/eleventy/issues/3625).)
+- VIPS (for JP2 support - see below)
 
-## Installation
-
-Clone the islandty repository and change directory into it.
-
-Then, running
-
-```shell
-$ npm install
-```
-
-will get all the dependencies.
-
-### JP2 support
+### VIPS - for JP2 support
 
 To support generating tiles and thumbnails for JP2 images
 (required for the Mirador viewer),
 you will need to install VIPS.
+
+You can use Mirador with TIFF files
+without VIPS.
 
 #### macOS via homebrew
 
@@ -57,23 +49,43 @@ Per the experimental Dockerfile, on Alpine Linux it is:
 apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community --repository http://dl-3.alpinelinux.org/alpine/edge/main build-base vips-dev
 ```
 
+## Installation
+
+Clone the islandty repository and change directory into it.
+
+Then, run
+
+```shell
+$ npm install
+```
+
+to get all the dependencies.
+
 ## Setup
 
 These instructions use the [Islandora Demo Objects](https://github.com/Islandora-Devops/islandora_demo_objects) content as a working example.
 
 ### Point to your binaries' root folder in `.env`
 
-Your binaries should be in a root folder so that the paths
-in the metadata CSV's `file` (etc) columns
-are accurate relative to that root folder.
+Your binaries and input data should be in a root folder such that the paths
+that point to the files in the metadata CSV
+are accurate relative to that root folder. These paths 
+may be in the `file` column, `thumbnail` column, or whatever
+you have configured as file columns in your field configuration.
 
-For Islandora Demo Objects, `git clone` the repository outside of the islandty tree.
+For Islandora Demo Objects, `git clone` the 
+Islandora Demo Objects repository outside of the islandty tree. 
 
-Edit the `.env` file in the islandty project root and set the `inputMediaPath`:
+If you have custom data, also put it outside the islandty tree.
+
+Edit the `.env` file in the islandty project root and set the `inputMediaPath`
+to your input data's root folder:
 
 ```ini
 inputMediaPath=../islandora_demo_objects
 ```
+
+If using a relative path, it is relative to the Islandty folder.
 
 ### Point to the metadata CSV file in `.env`
 
@@ -84,11 +96,13 @@ the location of your workbench-esque metadata CSV:
 dataFileName=../islandora_demo_objects/create_islandora_objects.csv
 ```
 
-The CSV may be within the binaries' root folder, but does not need to be.
+The CSV may be within the binaries' root folder, but does not need to be. 
+If using a relative path, it is relative to the Islandty folder.
 
 ### Configure your fields
 
-Islandty comes with field configuration for the Islandora Demo Objects.
+Islandty comes with field configuration for the Islandora Demo Objects,
+but this can be easily configured to display custom metadata fields.
 
 To edit it for your data, edit the file `src/_data/islandtyFieldInfo.json`.
 It contains a json array. The key of each item is the raw column name in the CSV.
