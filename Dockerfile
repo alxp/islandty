@@ -7,7 +7,6 @@ RUN apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/
 COPY docker/linux/ /islandty/installer/linux
 RUN /islandty/installer/$TARGETPLATFORM.sh
 COPY ./gulp-tasks/ /islandty/gulp-tasks/
-COPY ./config/ /islandty/config/
 COPY gulpfile.js /islandty/
 COPY .eleventy.js /islandty/
 COPY .env /islandty/

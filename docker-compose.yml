@@ -9,6 +9,7 @@ services:
     working_dir: /islandty
     volumes:
       - ../islandora_demo_objects:/islandty/islandora_demo_objects
+      - ./config:/islandty/config
       - ./src:/islandty/src
       - ./web:/islandty/web
     environment:

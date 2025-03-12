@@ -121,7 +121,7 @@ module.exports = {
    * @returns
    */
   itemsWithFieldValue(items, fieldname, value) {
-    fieldInfo = require('./islandtyFieldInfo.json');
+    fieldInfo = require('../../config/islandtyFieldInfo.json');
     field = fieldInfo[fieldname]
     if (field.cardinality == "1") {
       return items.filter(x => x[fieldname] == value);
@@ -195,7 +195,7 @@ module.exports = {
   },
 
   transformKeys(obj) {
-    fieldInfo = require('./islandtyFieldInfo.json');
+    fieldInfo = require('../../config/islandtyFieldInfo.json');
 
     // Add permalink field.
     obj['permalink'] = '/' + process.env.contentPath + '/' + obj.id + '/index.html';

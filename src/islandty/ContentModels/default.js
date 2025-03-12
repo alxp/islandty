@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const islandtyFieldInfo = require('../../_data/islandtyFieldInfo.json')
+const islandtyFieldInfo = require('../../../config/islandtyFieldInfo.json')
 
 require('dotenv').config();
 
