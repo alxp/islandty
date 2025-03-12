@@ -12,7 +12,7 @@ you can use the same input files to generate a static website.
 - Mirador viewer with embedded hOCR
 - Content-model based system that moves files into place and can be used to generate derivatives.
 - Uses a [fork of biiif](https://github.com/alxp/biiif) to generate image files, embed hOCR, and support JP2 files.
-- Lunr-based search
+- [Lunr](https://lunrjs.com)-based search
 
 ![Screenshot of a book in Mirador with metadata and file downloads](/docs/images/demo-book-object.png)
 
@@ -36,14 +36,11 @@ without VIPS.
 brew install vips
 ```
 
-Then delete your `node_modules` folder and run `npm install` again.
 See the Sharp [installation instructions](https://sharp.pixelplumbing.com/install) for more info.
 
 #### Linux
 
 Most popular distributions include a VIPS devel package.
-
-Per the experimental Dockerfile, on Alpine Linux it is:
 
 ```shell
 apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community --repository http://dl-3.alpinelinux.org/alpine/edge/main build-base vips-dev
@@ -61,6 +58,12 @@ $ npm install
 
 to get all the dependencies.
 
+### Docker-based installation
+
+If you're having trouble running node.js locally,
+see the instructions for running Islandty inside
+a docker container at[ docs/docker.md](docs/docker.md).
+
 ## Setup
 
 These instructions use the [Islandora Demo Objects](https://github.com/Islandora-Devops/islandora_demo_objects) content as a working example.
@@ -69,12 +72,12 @@ These instructions use the [Islandora Demo Objects](https://github.com/Islandora
 
 Your binaries and input data should be in a root folder such that the paths
 that point to the files in the metadata CSV
-are accurate relative to that root folder. These paths 
+are accurate relative to that root folder. These paths
 may be in the `file` column, `thumbnail` column, or whatever
 you have configured as file columns in your field configuration.
 
-For Islandora Demo Objects, `git clone` the 
-Islandora Demo Objects repository outside of the islandty tree. 
+For Islandora Demo Objects, `git clone` the
+Islandora Demo Objects repository outside of the islandty tree.
 
 If you have custom data, also put it outside the islandty tree.
 
@@ -96,7 +99,7 @@ the location of your workbench-esque metadata CSV:
 dataFileName=../islandora_demo_objects/create_islandora_objects.csv
 ```
 
-The CSV may be within the binaries' root folder, but does not need to be. 
+The CSV may be within the binaries' root folder, but does not need to be.
 If using a relative path, it is relative to the Islandty folder.
 
 ### Configure your fields
@@ -148,7 +151,7 @@ object with content model ''Page' it will
 add it to the IIIF manifest generated via biiif.
 
 If you have Tesseract installed locally, you can generate hOCR
-for all image files in a folder with the followingbash script:
+for all image files in a folder with the following bash script:
 
 ```bash
 # Create a set of hOCR files from a directory of JP2s.
@@ -181,6 +184,6 @@ that Islandty has built on and become a part of.
 
 ## Copyright and License
 
-Copyright (c) 2024 by Alexander O'Neill and Rosemary Le Faive.
+Copyright (c) 2024-2025 by Alexander O'Neill and Rosemary Le Faive.
 
 All rights reserved except those permitted by the license and applicable laws.
