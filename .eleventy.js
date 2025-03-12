@@ -185,24 +185,9 @@ module.exports = config => {
       const slugify = require('slugify');
 
       var path = require('path');
-      const { build: buildIiif } = require('biiif');
+
       // Run me after the build ends
       console.log("eleventy after plugin run;.");
-      items = readCSV().items;
-      for (const [key, item] of Object.entries(items)) {
-        var contentModelName = item.field_model.replace(/\s+/g, '');
-
-        var contentModel;
-        try {
-          contentModel = require('./src/islandty/ContentModels/' + contentModelName);
-        }
-        catch (e) {
-          contentModelName = 'default';
-          contentModel = require('./src/islandty/ContentModels/' + contentModelName)
-        }
-        const outputDir = path.join(dir.output, process.env.contentPath, item.id);
-        const result = contentModel.ingest(item, process.env.inputMediaPath, outputDir);
-      }
 
       // Precompile the lunr index.
       const compiledIndexFilename = path.join(dir.output, "index.json");
