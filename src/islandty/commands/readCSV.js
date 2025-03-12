@@ -96,6 +96,8 @@ for (const [key, item] of Object.entries(items)) {
   transformedItem.layout = 'layouts/content-item.html';
 
   writePageTemplate(transformedItem, "./src/islandty/staging/object", item.id + '.md');
+  const objectOutputDir = path.join(process.env.outputDir, process.env.contentPath, item.id);
+  const result = contentModel.ingest(transformedItem, process.env.inputMediaPath, objectOutputDir);
 }
 
 fs.mkdirSync(linkedAgentDir, { recursive: true });
