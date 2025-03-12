@@ -150,5 +150,12 @@
         "metadata_display": true,
         "downloadable": true,
         "type": "file"
+    },
+    "extracted": {
+        "label": "Extracted Text",
+        "cardinality": "1",
+        "metadata_display": false,
+        "downloadable": true,
+        "type": "file"
     }
 }

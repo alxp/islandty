@@ -1,9 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const islandtyFieldInfo = require('../../_data/islandtyFieldInfo.json')
 
 require('dotenv').config();
 
-const fileFields = ['file', 'service', 'thumbnail'];
+const fileFields = Object.keys(islandtyFieldInfo).filter((field) => islandtyFieldInfo[field].type == 'file'
+                  && (islandtyFieldInfo[field].metadata_display || islandtyFieldInfo[field].downloadable ));
 
 module.exports = {
 
