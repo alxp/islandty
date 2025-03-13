@@ -8,6 +8,13 @@
     "cwd": "${workspaceRoot}",
     "console": "internalConsole",
     "configurations": [
+{
+
+    "command": "npm start",
+    "name": "Run npm dev",
+    "request": "launch",
+    "type": "node-terminal"
+}
 
     ],
 }
