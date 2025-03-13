@@ -107,7 +107,7 @@ If using a relative path, it is relative to the Islandty folder.
 Islandty comes with field configuration for the Islandora Demo Objects,
 but this can be easily configured to display custom metadata fields.
 
-To edit it for your data, edit the file `src/_data/islandtyFieldInfo.json`.
+To edit it for your data, edit the file `config/islandtyFieldInfo.json`.
 It contains a json array. The key of each item is the raw column name in the CSV.
 The value is an array that can contain the following elements:
 

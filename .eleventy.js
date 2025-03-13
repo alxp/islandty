@@ -227,6 +227,10 @@ module.exports = config => {
   siteConfig = require('./config/site.json');
   config.addGlobalData('site', siteConfig);
 
+  // Add field config to Eleventy
+  fieldConfig = require('./config/islandtyFieldInfo.json');
+  config.addGlobalData('islandtyFieldInfo', fieldConfig);
+
 
   // https://nodejs.org/api/util.html#util_util_inspect_object_options
   const inspect = require("util").inspect;
