@@ -1,55 +1,57 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
-const islandtyFieldInfo = require('../../../config/islandtyFieldInfo.json')
+const islandtyFieldInfo = require('../../../config/islandtyFieldInfo.json');
 
 require('dotenv').config();
 
-const fileFields = Object.keys(islandtyFieldInfo).filter((field) => islandtyFieldInfo[field].type == 'file'
-                  && (islandtyFieldInfo[field].metadata_display || islandtyFieldInfo[field].downloadable ));
+const fileFields = Object.keys(islandtyFieldInfo).filter((field) =>
+  islandtyFieldInfo[field].type === 'file' &&
+  (islandtyFieldInfo[field].metadata_display || islandtyFieldInfo[field].downloadable)
+);
 
 module.exports = {
-
   /**
-   * Moves an object's files into the correct directory structure.
-   *
-   * @param {*} item
+   * Async version of file ingestion
    */
-  ingest(item, inputMediaPath, outputDir) {
+  async ingest(item, inputMediaPath, outputDir) {
+    try {
+      // Create output directory if it doesn't exist
+      await fs.mkdir(outputDir, { recursive: true });
 
-    fileFields.forEach((fileField) => {
-      if (Object.hasOwn(item, fileField) && item[fileField] !== "") {
-        const inputFile = path.join(inputMediaPath, item[fileField]);
-        const fileName = inputFile.replace(/^.*[\\/]/, '');
-        const outputPath = path.join(outputDir, fileName);
-        fs.copyFile(inputFile, outputPath, (err) => {
-          if (err) {
-            console.log(`Error copying ${outputPath}:`, err);
+      // Process all file fields in parallel
+      await Promise.all(fileFields.map(async (fileField) => {
+        if (item[fileField] && item[fileField] !== "") {
+          const inputFile = path.join(inputMediaPath, item[fileField]);
+          const fileName = path.basename(inputFile);
+          const outputPath = path.join(outputDir, fileName);
+
+          try {
+            await fs.copyFile(inputFile, outputPath);
+            console.log(`Successfully copied ${outputPath}`);
+          } catch (err) {
+            console.error(`Error copying ${outputPath}:`, err);
+            throw err; // Rethrow to catch in outer try/catch
           }
-          else     {
-            console.log(`Wrote ${outputPath}.`);
-          }
-        });
-      ``}
-    });
+        }
+      }));
+
+      return true; // Indicate success
+    } catch (error) {
+      console.error('Error in ingest:', error);
+      throw error; // Propagate error to caller
+    }
   },
 
   /**
-   * Alter the file paths to be relative to where
- they will end up.   *
-   *
-  * E.g.,
-  * Bef ore:                        After:
-  * inputdata/books/1/p33/p33.tiff  [contentPath/1/p33.tiff
-   * @param {*} item
-   *    The item array.
+   * Synchronous path updates (no async needed)
    */
   updateFilePaths(item) {
     fileFields.forEach((fileField) => {
-      if (Object.hasOwn(item, fileField) && item[fileField] !== "") {
+      if (item[fileField] && item[fileField] !== "") {
         const outputDir = path.join(process.env.contentPath, item.id);
-        const fileName = item[fileField].replace(/^.*[\\/]/, '');
-        item[fileField] = "/" + path.join (outputDir, fileName);
+        const fileName = path.basename(item[fileField]);
+        item[fileField] = `/${path.join(outputDir, fileName)}`;
       }
     });
   }
-}
+};

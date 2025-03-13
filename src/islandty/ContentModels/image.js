@@ -1,21 +1,26 @@
-const fs = require('fs');
 const path = require('path');
-const SaxonJS = require('saxon-js');
 const defaultContentModel = require('./default.js');
 require('dotenv').config();
 
-
 module.exports = {
+  /**
+   * Async version of ingest that properly awaits the default model
+   */
+  async ingest(item, inputMediaPath, outputDir) {
+    try {
+      // Await the async operation from the default model
+      await defaultContentModel.ingest(item, inputMediaPath, outputDir);
+    } catch (err) {
+      console.error(`Error in media_audio ingest: ${err.message}`);
+      throw err; // Propagate the error
+    }
+  },
 
   /**
-   * Moves an object's files into the correct directory structure.
-   *
-   * @param {*} item
+   * Sync method remains unchanged as it just delegates to sync operation
    */
-  ingest(item, inputMediaPath, outputDir) {
-    defaultContentModel.ingest(item, inputMediaPath, outputDir);
-  },
   updateFilePaths(item) {
+    // This remains synchronous as the base implementation is sync
     defaultContentModel.updateFilePaths(item);
   }
-}
+};

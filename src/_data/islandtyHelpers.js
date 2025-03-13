@@ -205,9 +205,11 @@ module.exports = {
 
     for (const key in obj) {
       const newKey = key.replace(/:/g, '_');
-      const splitValue = obj[key].split('|');
       var newValue = obj[key];
-      if (fieldInfo[key] && fieldInfo[key]['cardinality'] != 1) {
+      if (fieldInfo[key] && fieldInfo[key]['cardinality'] != 1
+        && typeof obj[key].split === 'function'
+      ) {
+        const splitValue = obj[key].split('|');
         newValue = splitValue;
       }
       if (key == 'field_linked_agent') {
