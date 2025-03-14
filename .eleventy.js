@@ -222,6 +222,8 @@ module.exports = config => {
   config.addGlobalData('contentPath', process.env.contentPath);
   config.addGlobalData('linkedAgentPath', process.env.linkedAgentPath);
   config.addGlobalData('pathPrefix', process.env.pathPrefix);
+  const islandtyFieldConfig = require('./config/islandtyFieldInfo.json');
+  config.addGlobalData('islandtyFieldInfo', islandtyFieldConfig);
 
   // Add configurations at the top-level into Eleventy.
   siteConfig = require('./config/site.json');
