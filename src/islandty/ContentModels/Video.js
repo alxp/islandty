@@ -10,22 +10,22 @@ module.exports = {
       await defaultContentModel.ingest(item, inputMediaPath, outputDir);
       await mediaHelpers.createDirectoryStructure(
         mediaHelpers.parseFieldTrack(
-            item['media:audio:field_track']
-          ),
+          item['media:video:field_track']
+        ),
         inputMediaPath,
         outputDir
       );
     } catch (err) {
-      throw new Error(`Media audio ingestion failed: ${err.message}`);
+      throw new Error(`Media video ingestion failed: ${err.message}`);
     }
   },
 
   updateFilePaths(item) {
     defaultContentModel.updateFilePaths(item);
 
-    if (item['media:audio:field_track']) {
+    if (item['media:video:field_track']) {
       const outputDir = path.join('/', process.env.contentPath, item.id);
-      item['media:audio:field_track'] = mediaHelpers.updateTrackField(item['media:audio:field_track'],outputDir);
+      item['media:video:field_track'] = mediaHelpers.updateTrackField(item['media:video:field_track'], outputDir);
     }
   },
 
