@@ -12,7 +12,7 @@ module.exports = {
           media_audio_track: this.parseFieldTrack(
             item['media:audio:field_track']
           )
-},
+        },
         inputMediaPath,
         outputDir
       );
@@ -25,9 +25,8 @@ module.exports = {
     defaultContentModel.updateFilePaths(item);
 
     if (item['media:audio:field_track']) {
-      item['media:audio:field_track'] = this.parseFieldTrack(
-        item['media:audio:field_track']
-      );
+      const outputDir = path.join(process.env.contentPath, item.id);
+      item['media:audio:field_track'] = this.updateTrackField(item['media:audio:field_track'],outputDir);
     }
   },
 
@@ -130,5 +129,24 @@ module.exports = {
       value !== null &&
       !Array.isArray(value) &&
       Object.values(value).every(v => typeof v === 'object');
+  },
+
+  updateTrackField(trackField, newPath) {
+    // Split the trackField into the first three components and the original path
+    const parts = trackField.split(':');
+    if (parts.length < 4) {
+      throw new Error('Invalid trackField format');
+    }
+    const components = parts.slice(0, 3);
+    const originalPath = parts.slice(3).join(':'); // Handle paths containing colons
+
+    // Extract the filename from the original path
+    const filename = path.posix.basename(originalPath);
+
+    // Construct the new path with the components as subdirectories and the original filename
+    const newFilePath = path.posix.join(newPath, ...components, filename);
+
+    // Combine the components and the new file path into the updated trackField
+    return `${components.join(':')}:${newFilePath}`;
   }
 };
