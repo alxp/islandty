@@ -5,8 +5,8 @@
 <figure>
     <figcaption>Listen</figcaption>
     <audio controls>
-        <source src="{{ ['/images/', audioUrl] | join }}" />
+        <source src="{{ audioUrl }}" />
         <track default kind="{{ trackData[1] }}" srclang="{{ trackData[2] }}"
-            src="{{ ['/images/', trackData[3]] | join }}" />
+            src="{{ trackData[3] }}" />
     </audio>
 </figure>

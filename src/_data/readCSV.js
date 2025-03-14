@@ -1,21 +1,30 @@
-
-const parse = require('csv-parse/sync');
-require('dotenv').config();
-const fs = require("fs");
+const csv = require('csv');
+const fs = require('fs');
 
 function readCSV() {
-  let csv = fs.readFileSync(process.env.dataFileName, { encoding: 'utf8', });
+  return new Promise((resolve, reject) => {
+    const parser = csv.parse({
+      columns: true,
+      skip_empty_lines: true
+    });
 
-  let data = parse.parse(csv, { columns: true, skip_empty_lines: true });
+    const records = [];
 
-  return data;
+    // Use createReadStream for better memory handling
+    fs.createReadStream(process.env.dataFileName)
+      .pipe(parser)
+      .on('data', (record) => records.push(record))
+      .on('end', () => resolve(records))
+      .on('error', (err) => reject(err));
+  });
 }
 
-module.exports = function () {
-  const data = readCSV();
-
-// Add in the Schema metadata.
-
-
-  return { items: data };
+module.exports = async function () {
+  try {
+    const data = await readCSV();
+    return { items: data };
+  } catch (err) {
+    console.error('CSV processing error:', err);
+    throw err;
+  }
 };
