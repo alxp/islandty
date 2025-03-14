@@ -25,7 +25,7 @@ module.exports = {
     defaultContentModel.updateFilePaths(item);
 
     if (item['media:audio:field_track']) {
-      const outputDir = path.join(process.env.contentPath, item.id);
+      const outputDir = path.join('/', process.env.contentPath, item.id, 'media_audio_track');
       item['media:audio:field_track'] = this.updateTrackField(item['media:audio:field_track'],outputDir);
     }
   },
