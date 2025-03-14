@@ -74,6 +74,15 @@ module.exports = config => {
 
   config.addPlugin(rssPlugin);
 
+  // Short codes
+  config.addShortcode("mediaTrackLabel", async function (type, langCode) {
+
+    const languageNames = new Intl.DisplayNames(['en'], { type: 'language' });
+    const langLabel = languageNames.of(langCode);
+
+    return (type + ' ' + langLabel);
+
+   });
 
   // ROSIE: A collection of digital objects.
 
