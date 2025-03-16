@@ -1,4 +1,4 @@
-<h3>{{title }}</h3>
+<h3>{{ title }}</h3>
 
 {% include "partials/thumbnail.html" %}
 
@@ -6,18 +6,3 @@
 
 {% include "partials/file-downloads.html" %}
 
-{% if field_model == 'Page' %}
-<h2>Part of</h2>
-<h3><a href="/{{ contentPath }}/{{ parent.id | slugify }}">{{ parent.title }}</a></h3>
-<table>
-
-    {% for name, field in islandtyFieldInfo.items %}
-    {% if parent[name] %}
-    <tr>
-        <th> {{ field.label }}</th>
-        <td> {{parent[name] }} </td>
-    </tr>
-    {% endif %}
-    {% endfor %}
-</table>
-{% endif %}
