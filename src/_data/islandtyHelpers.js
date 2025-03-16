@@ -61,7 +61,7 @@ module.exports = {
      * @returns {Array} The resulting children items.
      */
   getChildContent(items, item_id) {
-    let filteredItems = items.filter(x => x.parent_id == item_id);
+    let filteredItems = items.filter(x =>  (x.parent_id.split('|').includes(item_id)));
 
     return filteredItems;
   },
