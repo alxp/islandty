@@ -2,7 +2,7 @@
     <table>
         {% for name, field in islandtyFieldInfo %}
           {% if 'metadata_display' not in field or field['metadata_display'] %}
-            {% if item[name] %}
+            {% if item[name] and item[name] != '' %}
                 {% if 'type' in field and field['type'] == 'file' %}
                 {% include "partials/field-formatter-file.html" %}
                 {% elif 'type' in field and field['type'] == 'typed_relation' %}
