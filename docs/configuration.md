@@ -2,7 +2,6 @@
 
 Settings live in two places:
 
-
 1. The .env file at the top of the project
 2. Files inside the config folder.
 
@@ -20,12 +19,22 @@ then have the path /islandora/object/newspapers-233.
 This is the path prefix for all linked agent
 listings pages.
 
+So if this value is set to "linked-agent" and
+your site includes a Relators vocabulary
+you have an object with the author "L. M. Montgomery",
+then the URL that lists all content
+with that author would appear at:
+
+/linked-agent/relators/author/l-m-montgomery
 
 ```dataFileName=../islandora_demo_objects/create_islandora_objects.csv```
 
 The location of the CSV file that Islandty reads.
 
 It does not need to be in the same folder as your input media files.
+
+It can also be a Google Sheets spreadsheet's public
+sharing URL.
 
 ```inputMediaPath=../islandora_demo_objects```
 
