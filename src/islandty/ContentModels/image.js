@@ -1,3 +1,4 @@
+const fs = require('fs').promises;
 const path = require('path');
 const defaultContentModel = require('./default.js');
 require('dotenv').config();
@@ -17,10 +18,11 @@ module.exports = {
   },
 
   /**
-   * Sync method remains unchanged as it just delegates to sync operation
+   *  Update File Paths after ingest.
    */
-  updateFilePaths(item) {
-    // This remains synchronous as the base implementation is sync
+  async updateFilePaths(item) {
+
     defaultContentModel.updateFilePaths(item);
+
   }
 };

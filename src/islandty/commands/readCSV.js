@@ -52,7 +52,7 @@ async function main() {
             const objectOutputDir = path.join(process.env.outputDir, process.env.contentPath, item.id);
             await contentModel.ingest(item, inputMediaPath, objectOutputDir);
       // Update file paths
-      contentModel.updateFilePaths(item);
+      await contentModel.updateFilePaths(item);
 
       const transformedItem = islandtyHelpers.transformKeys(item);
 

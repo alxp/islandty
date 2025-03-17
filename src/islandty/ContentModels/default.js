@@ -45,7 +45,7 @@ module.exports = {
   /**
    * Synchronous path updates (no async needed)
    */
-  updateFilePaths(item) {
+  async updateFilePaths(item) {
     fileFields.forEach((fileField) => {
       if (item[fileField] && item[fileField] !== "") {
         const outputDir = path.join(process.env.contentPath, item.id);
@@ -53,5 +53,9 @@ module.exports = {
         item[fileField] = `/${path.join(outputDir, fileName)}`;
       }
     });
+    if (item['extracted']) {
+      extractedText = await fs.readFile(path.join(process.env.outputDir, item['extracted']), { encoding: 'utf8'});
+      item['extractedText'] = extractedText;
+    }
   }
 };

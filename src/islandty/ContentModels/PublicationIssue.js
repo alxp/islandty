@@ -19,7 +19,7 @@ module.exports = {
     }
   },
 
-  updateFilePaths(item) {
+  async updateFilePaths(item) {
     defaultContentModel.updateFilePaths(item);
   }
 };

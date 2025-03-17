@@ -20,7 +20,7 @@ module.exports = {
     }
   },
 
-  updateFilePaths(item) {
+  async updateFilePaths(item) {
     defaultContentModel.updateFilePaths(item);
 
     if (item['media:video:field_track']) {
