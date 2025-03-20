@@ -1,6 +1,6 @@
 # Islandty
 
-Islandty builds a static web site from a CSV input file formatted for [Islandora Workbench](https://github.com/mjordan/islandora_workbench), built on the
+Islandty builds a static web site from a CSV or Google Sheets document input file formatted for [Islandora Workbench](https://github.com/mjordan/islandora_workbench), built on the
 [Eleventy](https://www.11ty.dev) platform.
 
 So if you use Islandora Workbench to populate an Islandora site
