@@ -1,5 +1,6 @@
 const rssPlugin = require('@11ty/eleventy-plugin-rss');
 const { EleventyHtmlBasePlugin } = require("@11ty/eleventy");
+const miradorPlugin = require('eleventy-plugin-mirador');
 // Filters
 const dateFilter = require('./src/filters/date-filter.js');
 const w3DateFilter = require('./src/filters/w3-date-filter.js');
@@ -73,6 +74,14 @@ module.exports = config => {
   config.addPlugin(EleventyHtmlBasePlugin);
 
   config.addPlugin(rssPlugin);
+
+  config.addPlugin(miradorPlugin, {window: {
+    textOverlay: {
+      enabled: true,
+      selectable: true,
+      visible: false
+    },
+}});
 
   // Short codes
   config.addShortcode("mediaTrackLabel", async function (type, langCode) {

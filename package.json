@@ -18,6 +18,8 @@
     "biiif": "github:alxp/biiif#master-dist",
     "concurrently": "^9.1.2",
     "csv": "^6.3.8",
+    "deepmerge": "^4.3.1",
+    "eleventy-plugin-mirador": "github:alxp/eleventy-plugin-mirador#main",
     "dotenv": "^16.4.5",
     "gorko": "^0.9.1",
     "gulp": "^5.0.0",
