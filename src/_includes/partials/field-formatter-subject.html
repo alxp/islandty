@@ -1,15 +1,25 @@
 {% set subjects = item[name] %}
-{% set count = subjects.length %}
 
-{% for subject in subjects %}
+{% if field.cardinality == "1" %}
+  {% set parts = subjects.split(':') %}
+  <tr>
+      <th> {{ field.label }}</th>
+      <td>
+          {{ parts[1] if parts[1] else parts[0] }}
+      </td>
+  </tr>
 
+{% else %}
+  {% set count = subjects.length %}
+  {% for subject in subjects %}
     {% set parts = subject.split(':') %}
     <tr>
         {% if loop.first %}
-        <th rowspan="{{ count }}"> {{ islandtyFieldInfo[name]['label'] }}</th>
+        <th rowspan="{{ count }}"> {{ field.label }}</th>
         {% endif %}
         <td>
-            {{ parts[1] }}
+            {{ parts[1] if parts[1] else parts[0] }}
         </td>
     </tr>
-{% endfor %}
+    {% endfor %}
+{% endif %}

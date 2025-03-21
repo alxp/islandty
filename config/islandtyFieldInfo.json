@@ -9,11 +9,13 @@
     },
     "field_resource_type": {
         "label": "Resource Type",
-        "cardinality": "1"
+        "cardinality": "1",
+        "type": "subject"
     },
     "field_model": {
         "label": "Model",
-        "cardinality": "1"
+        "cardinality": "1",
+        "type": "subject"
     },
     "field_member_of": {
         "label": "Member Of",
@@ -39,7 +41,8 @@
     },
     "field_genre": {
         "label": "Genre",
-        "cardinality": "-1"
+        "cardinality": "-1",
+        "type": "subject"
     },
     "field_edtf_date_created": {
         "label": "Date Created",
