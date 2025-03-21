@@ -4,13 +4,13 @@
           {% if 'metadata_display' not in field or field['metadata_display'] %}
             {% if item[name] and item[name] != '' %}
                 {% if 'type' in field and field['type'] == 'file' %}
-                {% include "partials/field-formatter-file.html" %}
+                  {% include "partials/field-formatter-file.html" %}
                 {% elif 'type' in field and field['type'] == 'typed_relation' %}
-                {% include "partials/field-formatter-linked-agent.html" %}
+                  {% include "partials/field-formatter-linked-agent.html" %}
                 {% elif 'type' in field and field['type'] == 'subject' %}
-                {% include "partials/field-formatter-subject.html" %}
+                  {% include "partials/field-formatter-subject.html" %}
                 {% elif 'type' in field and field['type'] == 'reference' %}
-                {% include "partials/field-formatter-reference.html" %}
+                  {% include "partials/field-formatter-reference.html" %}
                 {% else %}
                     {% if item[name] is string %}
                         <tr><th scope="row">{{ field.label }}</th><td>{{ item[name] | safe }}</td></tr>

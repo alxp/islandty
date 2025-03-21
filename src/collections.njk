@@ -7,8 +7,8 @@ All top-level collections in the repository.
 <ul>
 {% for item in readCSV.items %}
   {% if item.field_model != 'Page' %}
-    {% if item.field_resource_type == 'Collection' %}
-      {% if (item.field_member_of == '' and item.parent_id == '') %}
+    {% if item.field_model == 'Collection' %}
+      {% if item.parent_id == '' %}
         <li><article><h3><a href="/{{ contentPath }}/{{ item.id | slugify }}">{{ item.title }}</a></h3></article></li>
       {% endif %}
     {% endif %}

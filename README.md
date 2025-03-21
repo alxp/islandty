@@ -113,41 +113,48 @@ The value is an array that can contain the following elements:
 
 * `"label"`: a human-readable label for the field. If empty, no label will be displayed.
 * `"cardinality"`: either `"1"` or `"-1"` if the field is single or multi-valued, respectively.
-* `"type"`: Optional. May be either
+* `"type"`: Optional. It may be either
 	* `"typed_relation"`: parse the field using Workbench's Typed Relation protocols
- 	* `"subject"`: parse the field as though it is a Workbench Taxonomy Term
-  	* `"file"`: parse the field to display a file download link.
+ 	* `"subject"`: parse the field as though it is a Workbench Taxonomy Term.
+	  In your data, a vocabulary may be prepended to the term with a colon 
+	  (e.g. `field_model:Image`) and Islandty will only display the term (e.g. "Image"). This type option will not work for terms that contain 
+	  colons. This type option also populates the metadata table with a 
+	  multi-row header if the field is multi-valued.
+  	* `"file"`: Required if intending to use this file in Islandty. By 
+	  default, it will render a downloadable file link in the metadata table. 
+	    See also: 
+	  the `"metadata_display"` option and the `"downloadable"` option.
   	* If empty, fields will be treated as strings.
 * `"metadata_display"` Optional, defaults to `true`. If `false` (or if the column is not listed in
 this file), then the values will not be displayed in the metadata table.
-
+* `"downloadable"` Optional, defaults to `false`. Render a downloadable file 
+  link in a "File Downloads" section below the metadata.
 The metadata table will be populated in the order that fields appear in this file.
 
 ### Generate and run the site locally.
 
-
-Then run the site generator with npm
+Run the site generator with the command `npm start`.
 
 ```shell
 $ npm start
 ```
 
-The site will be served at htttp://localhost:8080/.
+The site will be served at http://localhost:8080/.
 
 ## MODS Support
 
-Add a 'mods' column to the CSV input data file
-to have Islandty include it in the
+Add a `mods` column to the CSV input data file
+to have Islandty include MODS data in the
 object's metadata section directly. This lets you avoid
 having to extract all of those fields
-to CSV columns if your source metadata is in MODS format.
+to CSV columns if your source metadata is in MODS format. 
+Islandty uses an XSLT to extract metadata for display.
 
 ## hOCR support
 
 If Islandty finds a file with extension .hocr
-
 in the same folder as a source image for an
-object with content model ''Page' it will
+object with content model 'Page' it will
 add it to the IIIF manifest generated via biiif.
 
 If you have Tesseract installed locally, you can generate hOCR
@@ -158,7 +165,7 @@ for all image files in a folder with the following bash script:
 for filename in *.jp2 ; do
   extension="${filename##*.}"
   basename="${filename%.$extension}"
-  tesseract -c tessedit_create_hocr=1 -c hocr_font_info=0 $filename $basename
+  tesseract -c tessedit_create_hocr=1 -c hocr_font_info=0 "$filename" "$basename"
 	done
 ```
 

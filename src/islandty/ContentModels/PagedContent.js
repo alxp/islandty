@@ -17,64 +17,65 @@ module.exports = {
       if (pages.length > 0) {
         // Process pages sequentially to maintain order
         for (const page of pages) {
-          const inputFile = path.join(inputMediaPath, page.file);
-          const fileName = path.basename(inputFile);
-          const baseName = fileName.replace(/\.[^/.]+$/, "");
-          const outputPath = path.join(outputDir, 'iiif', `_${baseName}`);
+          if (page.file) {
+            const inputFile = path.join(inputMediaPath, page.file);
+            const fileName = path.basename(inputFile);
+            const baseName = fileName.replace(/\.[^/.]+$/, "");
+            const outputPath = path.join(outputDir, 'iiif', `_${baseName}`);
 
-          // Create directory if needed
-          await fs.mkdir(outputPath, { recursive: true });
+            // Create directory if needed
+            await fs.mkdir(outputPath, {recursive: true});
 
-          // Copy main file
-          const destFile = path.join(outputPath, fileName);
-          await fs.copyFile(inputFile, destFile);
-          console.log(`Copied ${destFile}`);
+            // Copy main file
+            const destFile = path.join(outputPath, fileName);
+            await fs.copyFile(inputFile, destFile);
+            console.log(`Copied ${destFile}`);
 
-          // Handle hOCR files
-          let hocrFile = page.hocr;
-          if (!hocrFile) {
-            // Check for implicit hOCR file
-            const potentialHocrFile = path.join(
-              path.dirname(inputFile),
-              `${baseName}.hocr`
-            );
-            try {
-              await fs.access(potentialHocrFile);
-              hocrFile = potentialHocrFile;
-              page.hocr = hocrFile;
-              console.log(`Found hOCR file ${potentialHocrFile}`);
-            } catch {
-              // File doesn't exist, continue
+            // Handle hOCR files
+            let hocrFile = page.hocr;
+            if (!hocrFile) {
+              // Check for implicit hOCR file
+              const potentialHocrFile = path.join(
+                  path.dirname(inputFile),
+                  `${baseName}.hocr`
+              );
+              try {
+                await fs.access(potentialHocrFile);
+                hocrFile = potentialHocrFile;
+                page.hocr = hocrFile;
+                console.log(`Found hOCR file ${potentialHocrFile}`);
+              } catch {
+                // File doesn't exist, continue
+              }
+            }
+
+            if (hocrFile) {
+              const hocrFileName = path.basename(hocrFile);
+              const hocrDest = path.join(outputPath, hocrFileName);
+              await fs.copyFile(hocrFile, hocrDest);
+              console.log(`Copied hOCR file ${hocrDest}`);
             }
           }
 
-          if (hocrFile) {
-            const hocrFileName = path.basename(hocrFile);
-            const hocrDest = path.join(outputPath, hocrFileName);
-            await fs.copyFile(hocrFile, hocrDest);
-            console.log(`Copied hOCR file ${hocrDest}`);
-          }
+          // Generate IIIF manifest and tiles
+          const iiifPath = path.join(outputDir, 'iiif');
+          generateIiifMetadata(item, iiifPath);
+
+          const prefix = process.env.pathPrefix || '/';
+          const iiifOptions = new URL(
+                  path.join(prefix, process.env.contentPath, item.id, 'iiif'),
+                  process.env.serverHost
+              ).toString()
+          ;
+
+          // Wrap BIIIF build in promise
+          await new Promise((resolve, reject) => {
+            buildIiif(iiifPath, iiifOptions)
+                .then(resolve)
+                .catch(reject);
+          });
         }
-
-        // Generate IIIF manifest and tiles
-        const iiifPath = path.join(outputDir, 'iiif');
-        generateIiifMetadata(item, iiifPath);
-
-        const prefix = process.env.pathPrefix || '/';
-        const iiifOptions = new URL(
-            path.join(prefix, process.env.contentPath, item.id, 'iiif'),
-            process.env.serverHost
-          ).toString()
-        ;
-
-        // Wrap BIIIF build in promise
-        await new Promise((resolve, reject) => {
-          buildIiif(iiifPath, iiifOptions)
-            .then(resolve)
-            .catch(reject);
-        });
       }
-
       // Process default ingestion
       await defaultContentModel.ingest(item, inputMediaPath, outputDir);
 
