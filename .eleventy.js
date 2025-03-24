@@ -15,6 +15,7 @@ const { execSync } = require('node:child_process');
 const { glob } = require('glob')
 const path = require('path');
 const islandtyHelpers = require('./src/_data/islandtyHelpers.js');
+const { miradorAppUrl } = require('eleventy-plugin-mirador/src/libs/defaultconfig.js');
 const inspect = require("util").inspect;
 
 // Create a helpful production flag
@@ -75,7 +76,8 @@ module.exports = config => {
 
   config.addPlugin(rssPlugin);
 
-  config.addPlugin(miradorPlugin, {window: {
+  config.addPlugin(miradorPlugin, {miradorAppUrl: "/main.js",
+    window: {
     textOverlay: {
       enabled: true,
       selectable: true,
