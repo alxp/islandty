@@ -31,56 +31,62 @@ layout: 'layouts/content-list.html'
     
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="https://unpkg.com/lunr/lunr.js"></script>
+<script src="/js/vue.global.prod.js"></script>
+<script src="/js/lunr.min.js"></script>
 
 <script>
-const app = new Vue({
-	el:'#app',
-	data:{
-		docs:null,
-		idx:null,
-		term:'',
-		results:null
-	},
-	async created() {
-		let resultLookup = await fetch('/index-lookup.json');
-		this.docs = await resultLookup.json();
+const { createApp } = Vue;
 
-		let resultIndex = await fetch('/index.json');
-		const indexstring = await resultIndex.json();
-		this.idx = lunr.Index.load(indexstring);
-	},
-	computed: {
-		noResults() {
-			return this.results.length === 0;
-		}
-	},
-	methods:{
-		search() {
-			console.log('search', this.term);
-			let results = this.idx.search(this.term);
+const app = createApp({
+  data() {
+    return {
+      docs: null,
+      idx: null,
+      term: '',
+      results: null
+    }
+  },
+  async mounted() {
+    let resultLookup = await fetch('/index-lookup.json');
+    this.docs = await resultLookup.json();
 
-			// we need to add title, url from ref
-			results.forEach(r => {
-				r.title = decodeEntities(this.docs[r.ref].title);
-				r.url = this.docs[r.ref].url;
-			});
+    let resultIndex = await fetch('/index.json');
+    const indexstring = await resultIndex.json();
+    this.idx = lunr.Index.load(indexstring);
+  },
+  computed: {
+    noResults() {
+      return this.results && this.results.length === 0;
+    }
+  },
+  methods: {
+    search() {
+      console.log('search', this.term);
+      let results = this.idx.search(this.term);
 
-			this.results = results;
-            if (this.term == '') {
-                this.$refs.searchResultHeader.textContent = "Showing all Repository Content";
-            }
-            if (results.length > 0) {
-                this.$refs.searchResultHeader.textContent = "Showing Results 1 to " + results.length + " of " + results.length + ".";
-            }
-            else {
-                this.$refs.searchResultHeader.textContent = "No results found.";
-            }
-		}
-	}
+      // we need to add title, url from ref
+      results.forEach(r => {
+        r.title = decodeEntities(this.docs[r.ref].title);
+        r.url = this.docs[r.ref].url;
+      });
+
+      this.results = results;
+      if (this.term == '') {
+        this.$refs.searchResultHeader.textContent = "Showing all Repository Content";
+      }
+      if (results.length > 0) {
+        this.$refs.searchResultHeader.textContent = "Showing Results 1 to " + results.length + " of " + results.length + ".";
+      }
+      else {
+        this.$refs.searchResultHeader.textContent = "No results found.";
+      }
+    }
+  }
 });
+
+app.mount('#app');
 </script>
+
 <script>
 var decodeEntities = (function() {
   // this prevents any overhead from creating the object each time

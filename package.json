@@ -19,8 +19,8 @@
     "concurrently": "^9.1.2",
     "csv": "^6.3.8",
     "deepmerge": "^4.3.1",
-    "eleventy-plugin-mirador": "github:alxp/eleventy-plugin-mirador#main",
     "dotenv": "^16.4.5",
+    "eleventy-plugin-mirador": "github:alxp/eleventy-plugin-mirador#main",
     "gorko": "^0.9.1",
     "gulp": "^5.0.0",
     "gulp-clean-css": "^4.3.0",
@@ -32,6 +32,7 @@
     "moment": "^2.30.1",
     "sass": "^1.85.1",
     "saxon-js": "^2.6.0",
+    "vue": "^3.5.13",
     "write-yaml-file": "^5.0.0",
     "xslt-processor": "^3.3.1",
     "xslt3": "^2.6.0"
