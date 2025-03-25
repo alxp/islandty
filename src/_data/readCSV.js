@@ -2,6 +2,7 @@ const csv = require('csv');
 const fs = require('fs');
 const axios = require('axios');
 const { PassThrough } = require('stream');
+const islandtyHelpers = require('./islandtyHelpers.js');
 
 function readCSV() {
   return new Promise((resolve, reject) => {
@@ -71,7 +72,8 @@ function transformGoogleSheetsUrl(url, sheetName) {
 
 module.exports = async function () {
   try {
-    const data = await readCSV();
+    let data = await readCSV();
+    data = islandtyHelpers.cleanInputData(data);
     return { items: data };
   } catch (err) {
     console.error('CSV processing error:', err);

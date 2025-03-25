@@ -8,6 +8,37 @@ const slugify = require('slugify');
 
 module.exports = {
 
+  cleanInputData(data) {
+    const fieldMappings = [
+      { destination: 'id', source: 'node_id' },
+      { destination: 'parent_id', source: 'field_member_of' }
+    ];
+
+    return data.map(record => {
+      const newRecord = { ...record };
+
+      for (const mapping of fieldMappings) {
+        const dest = mapping.destination;
+        const src = mapping.source;
+
+        // Check if destination field is missing or empty
+        const currentDestValue = newRecord[dest];
+        if (currentDestValue === undefined || currentDestValue === null || currentDestValue === '') {
+          // Get source value
+          const srcValue = newRecord[src];
+
+          // Set destination based on source value
+          if (srcValue !== undefined && srcValue !== null && srcValue !== '') {
+            newRecord[dest] = srcValue;
+          } else {
+            newRecord[dest] = '';
+          }
+        }
+      }
+
+      return newRecord;
+    });
+  },
   generateIiifMetadata(book, bookPath) {
     const writeYamlFile = require('write-yaml-file');
     info = {
