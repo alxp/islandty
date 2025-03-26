@@ -41,7 +41,7 @@ async function main() {
       if (!item.id && item.node_id) {
         item.id = item.node_id;
       }
-      let contentModelName = item.field_model.replace(/\s+/g, '');
+      let contentModelName = item.field_model.split(':').pop().replace(/\s+/g, '');
       let contentModel;
 
       try {

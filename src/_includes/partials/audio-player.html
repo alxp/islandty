@@ -1,12 +1,16 @@
 {% set audioUrl = service %}
 
-{% set trackData = media_audio_field_track.split(':') %}
+{% if media_audio_field_track %}
+  {% set trackData = media_audio_field_track.split(':') %}
+{% endif %}
 
 <figure>
     <figcaption>Listen</figcaption>
     <audio controls>
         <source src="{{ audioUrl }}" />
-        <track default kind="{{ trackData[1] }}" srclang="{{ trackData[2] }}"
+        {% if trackData %}
+          <track default kind="{{ trackData[1] }}" srclang="{{ trackData[2] }}"
+        {% endif %}
             src="{{ trackData[3] }}" />
     </audio>
 </figure>
