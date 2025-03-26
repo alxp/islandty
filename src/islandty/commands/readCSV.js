@@ -38,7 +38,10 @@ async function main() {
 
     // Process all items
     for (const item of Object.values(items)) {
-      let contentModelName = item.field_model.replace(/\s+/g, '');
+      if (!item.id && item.node_id) {
+        item.id = item.node_id;
+      }
+      let contentModelName = item.field_model.split(':').pop().replace(/\s+/g, '');
       let contentModel;
 
       try {
