@@ -36,6 +36,10 @@ module.exports = {
         }
       }
 
+      for (const fieldName of ['field_model']) {
+        newRecord[fieldName] = record[fieldName].split(':').pop();
+      }
+
       return newRecord;
     });
   },
