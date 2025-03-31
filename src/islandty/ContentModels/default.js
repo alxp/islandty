@@ -1,13 +1,10 @@
 const fs = require('fs').promises;
 const path = require('path');
 const islandtyFieldInfo = require('../../../config/islandtyFieldInfo.json');
-
+const islandtyHelpers = require('../../_data/islandtyHelpers.js')
 require('dotenv').config();
 
-const fileFields = Object.keys(islandtyFieldInfo).filter((field) =>
-  islandtyFieldInfo[field].type === 'file' &&
-  (islandtyFieldInfo[field].metadata_display || islandtyFieldInfo[field].downloadable)
-);
+const fileFields = islandtyHelpers.getFileFields();
 
 module.exports = {
   /**
