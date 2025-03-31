@@ -1,13 +1,15 @@
 
-{% set trackData = media_video_field_track.split(':') %}
+{% if media_video_field_track %}
+	{% set trackData = media_video_field_track.split(':') %}
+{% endif %}
 
 <div class="video">
     <video height="500" width="800" controls>
         <source src="{{ file }}" type="video/mp4">
-
-        <track default kind="{{ trackData[1] }}" srclang="{{ trackData[2] }}" src="{{ trackData[3] }}"
-label="{% mediaTrackLabel trackData[1],trackData[2] %}">
-
+        {% if trackData %}
+          <track default kind="{{ trackData[1] }}" srclang="{{ trackData[2] }}" src="{{ trackData[3] }}"
+          label="{% mediaTrackLabel trackData[1],trackData[2] %}">
+        {% endif %}
 
     </video>
 </div>

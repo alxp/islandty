@@ -1,13 +1,10 @@
 const fs = require('fs').promises;
 const path = require('path');
 const islandtyFieldInfo = require('../../../config/islandtyFieldInfo.json');
-
+const islandtyHelpers = require('../../_data/islandtyHelpers.js')
 require('dotenv').config();
 
-const fileFields = Object.keys(islandtyFieldInfo).filter((field) =>
-  islandtyFieldInfo[field].type === 'file' &&
-  (islandtyFieldInfo[field].metadata_display || islandtyFieldInfo[field].downloadable)
-);
+const fileFields = islandtyHelpers.getFileFields();
 
 module.exports = {
   /**
@@ -20,7 +17,7 @@ module.exports = {
 
       // Process all file fields in parallel
       await Promise.all(fileFields.map(async (fileField) => {
-        if (item[fileField] && item[fileField] !== "") {
+        if (item[fileField] && item[fileField] !== "" && item[fileField] !== 'False') {
           const inputFile = path.join(inputMediaPath, item[fileField]);
           const fileName = path.basename(inputFile);
           const outputPath = path.join(outputDir, fileName);
@@ -47,7 +44,7 @@ module.exports = {
    */
   async updateFilePaths(item) {
     fileFields.forEach((fileField) => {
-      if (item[fileField] && item[fileField] !== "") {
+      if (item[fileField] && item[fileField] !== "" && item[fileField] !== 'False') {
         const outputDir = path.join(process.env.contentPath, item.id);
         const fileName = path.basename(item[fileField]);
         item[fileField] = `/${path.join(outputDir, fileName)}`;

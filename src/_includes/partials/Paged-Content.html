@@ -1,6 +1,9 @@
 <h3>{{ title }}</h3>
 
-{% include "partials/mirador.html" %}
+{% set manifest = islandtyHelpers.getIiifManifestForItem(item) %}
+
+{% mirador 'my-mirador',manifest %}
+
 
 
 {% include "partials/thumbnail.html" %}
