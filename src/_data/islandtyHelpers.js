@@ -8,6 +8,48 @@ const slugify = require('slugify');
 
 module.exports = {
 
+  cleanInputData(data) {
+    const fieldMappings = [
+      { destination: 'id', source: 'node_id' },
+      { destination: 'parent_id', source: 'field_member_of' }
+    ];
+
+    return data.map(record => {
+      const newRecord = { ...record };
+
+      for (const mapping of fieldMappings) {
+        const dest = mapping.destination;
+        const src = mapping.source;
+
+        // Check if destination field is missing or empty
+        const currentDestValue = newRecord[dest];
+        if (currentDestValue === undefined || currentDestValue === null || currentDestValue === '') {
+          // Get source value
+          const srcValue = newRecord[src];
+
+          // Set destination based on source value
+          if (srcValue !== undefined && srcValue !== null && srcValue !== '') {
+            newRecord[dest] = srcValue;
+          } else {
+            newRecord[dest] = '';
+          }
+        }
+      }
+
+      for (const fieldName of ['field_model']) {
+        newRecord[fieldName] = record[fieldName].split(':').pop();
+      }
+
+      // The Islandora Workbench export feature sets missing file cells to "False".
+      const fileFields = this.getFileFields();
+      for (const fieldName of fileFields) {
+        if (record[fieldName] == 'False') {
+          newRecord.fieldName = '';
+        }
+      }
+      return newRecord;
+    });
+  },
   generateIiifMetadata(book, bookPath) {
     const writeYamlFile = require('write-yaml-file');
     info = {
@@ -21,6 +63,14 @@ module.exports = {
     writeYamlFile.sync(path.join(bookPath, 'info.yml'), info);
   },
 
+  getFileFields() {
+    const islandtyFieldInfo = require('../../config/islandtyFieldInfo.json');
+
+    return Object.keys(islandtyFieldInfo).filter((field) =>
+      islandtyFieldInfo[field].type === 'file' &&
+      (islandtyFieldInfo[field].metadata_display || islandtyFieldInfo[field].downloadable)
+    );
+  },
   /**
    * Returns the value of a property nested inside an array.
    *
@@ -93,10 +143,9 @@ module.exports = {
    * @returns
    *    The path of the manifest.
    */
-  getIiifManifestForItem(file) {
+  getIiifManifestForItem(item) {
     const pathPrefix = process.env.pathPrefix ? process.env.pathPrefix : '/';
-    let manifest_url = path.join("/", pathPrefix, path.dirname(file), 'iiif/index.json');
-    return manifest_url;
+    return path.join("/", pathPrefix, process.env.contentPath, item.id, 'iiif/index.json');
   },
 
   /**
