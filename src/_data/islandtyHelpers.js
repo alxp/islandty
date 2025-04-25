@@ -87,6 +87,17 @@ module.exports = {
     return args.reduce((obj, level) => obj && obj[level], obj)
   },
 
+  getChildPosition(items, object, parent_id) {
+    let childItems = this.getChildContent(items, parent_id);
+    let index = 0;
+    for (const childItem of childItems) {
+      if (childItem.data.id = object.data.id) {
+        return index;
+      }
+    }
+    return false;
+  },
+
   /**
      * Finds the parent item from the current item
      *
@@ -95,7 +106,7 @@ module.exports = {
      * @returns {Array} The resulting parent item.
      */
   getParentContent(items, item_id) {
-    let filteredItems = items.filter(x => x.id == item_id);
+    let filteredItems = items.filter(x => x.id == item_id || (x.data && x.data.id == item_id));
 
     // Lastly, get just the first
     filteredItems = filteredItems[0];
@@ -111,7 +122,7 @@ module.exports = {
      * @returns {Array} The resulting children items.
      */
   getChildContent(items, item_id) {
-    let filteredItems = items.filter(x =>  (x.parent_id.split('|').includes(item_id)));
+    let filteredItems = items.filter(x => (x.parent_id.split('|').includes(item_id)));
 
     return filteredItems;
   },
@@ -226,6 +237,25 @@ module.exports = {
   },
 
   /**
+   * Get the document's Title and URL for display as a link.
+   *
+   * Also gives content models a chance to modify the data.
+   */
+  objectIndexMetadata(items, object) {
+    if (object.data.field_model == 'Page') {
+      const parent = this.getParentContent(items, object.data.parent_id);
+      const page = object.data.field_weight;
+      if (parent) {
+        object.data.title = object.data.title + ' – ' + parent.data.title;
+      }
+      if (page) {
+        object.url = parent.url + '?page=' + page;
+      }
+    }
+    return object;
+  },
+
+  /**
    * Transform the XSLT file into HTML by a given XSLT.
    */
   processXSLT(xml, stylesheet) {
@@ -242,7 +272,6 @@ module.exports = {
       return null;
     }
   },
-
   transformKeys(obj) {
     fieldInfo = require('../../config/islandtyFieldInfo.json');
 
