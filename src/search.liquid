@@ -4,7 +4,7 @@ layout: 'layouts/content-list.html'
 
 ---
 <div id="app">
-    
+
     <input type="search" id="search" v-model="term">
     <button @click="search" id="search-submit">Search</button>
 	<h2 ref="searchResultHeader" aria-live="assertive">All Repository Content</h2>
@@ -13,6 +13,7 @@ layout: 'layouts/content-list.html'
 			<li v-for="result in results">
               <article>
 				<h3><a :href="result.url"> {% raw %}{{ result.title }}{% endraw %}</a></h3>
+        <div class="search-result-body"><p>{% raw %}{{ result.description }}{% endraw %}</p></div>
               <article>
 			</li>
 		</ul>
@@ -28,7 +29,7 @@ layout: 'layouts/content-list.html'
         {% endfor %}
         </ul>
     </div>
-    
+
 </div>
 
 <script src="/js/vue.global.prod.js"></script>
@@ -68,6 +69,7 @@ const app = createApp({
       results.forEach(r => {
         r.title = decodeEntities(this.docs[r.ref].title);
         r.url = this.docs[r.ref].url;
+        r.description = decodeEntities(this.docs[r.ref].description);
       });
 
       this.results = results;

@@ -9,7 +9,8 @@ permalink: /index-lookup.json
   {% set newData = islandtyHelpers.objectIndexMetadata(collections.all, object) %}
    "id": {{ loop.index0 }},
    "title": "{{ newData.data.title }}",
-   "url": "{{ newData.url }}"
+   "url": "{{ newData.url }}",
+   "description": "{{ newData.data.field_description }}"
 } {% if loop.last == false %},{% endif %}
 {% endfor %}
 ]
