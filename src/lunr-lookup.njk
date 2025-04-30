@@ -10,7 +10,7 @@ permalink: /index-lookup.json
    "id": {{ loop.index0 }},
    "title": "{{ newData.data.title }}",
    "url": "{{ newData.url }}",
-   "description": "{{ newData.data.field_description }}"
+   "description": "{{ newData.data.field_description | truncate(300) }}"
 } {% if loop.last == false %},{% endif %}
 {% endfor %}
 ]
