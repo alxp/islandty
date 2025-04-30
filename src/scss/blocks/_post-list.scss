@@ -13,3 +13,28 @@
     }
   }
 }
+
+
+/* Search result teaser body field truncation */
+
+.search-result-body {
+  p {
+    max-height: calc(3.5 * get-size('700'));
+    overflow: hidden;
+    position: relative;
+
+    &:after {
+      content: "";
+      display: block;
+      height: calc(1.5em + 1px); // Matches line-height and adds 1px for safety
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      pointer-events: none;
+      background: linear-gradient(to right,
+          transparent,
+          get-color('light') 80%);
+    }
+  }
+}

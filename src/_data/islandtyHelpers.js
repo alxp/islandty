@@ -244,12 +244,16 @@ module.exports = {
   objectIndexMetadata(items, object) {
     if (object.data.field_model == 'Page') {
       const parent = this.getParentContent(items, object.data.parent_id);
-      const page = object.data.field_weight;
+      let page = object.data.field_weight;
       if (parent) {
         object.data.title = object.data.title + ' – ' + parent.data.title;
       }
-      if (page) {
-        object.url = parent.url + '?page=' + page;
+      if (!isNaN(page)) {
+        // Pages in Islandora are 1-indexed.
+        page -= 1;
+        if (page > 0) {
+          object.url = parent.url + '?page=' + page;
+        }
       }
     }
     return object;
