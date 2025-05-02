@@ -6,18 +6,72 @@ const islandtyHelpers = require('./islandtyHelpers.js');
 
 function readCSV() {
   return new Promise((resolve, reject) => {
+    let isAlternateFormat = false;
+    let headerSkipped = false;
+    let rowsToSkip = 0;
+    let columnToIgnore = 0;
+    let headers = [];
+
     const parser = csv.parse({
-      columns: true,
-      skip_empty_lines: true
+      skip_empty_lines: true,
+      on_record: (record, context) => {
+        // Detect if this is the alternate format (first column contains "REMOVE THIS COLUMN")
+        if (!headerSkipped && record[0] === 'REMOVE THIS COLUMN (KEEP THIS ROW)') {
+          isAlternateFormat = true;
+          columnToIgnore = 1; // Ignore first column
+          rowsToSkip = 2; // Skip 2 extra rows after header
+        }
+
+        // For the header row in alternate format, remove first column
+        if (isAlternateFormat && !headerSkipped && headers.length === 0) {
+          headers = record.slice(columnToIgnore);
+          headerSkipped = true;
+          return null; // Skip this record
+        }
+
+        // Skip extra rows in alternate format
+        if (isAlternateFormat && rowsToSkip > 0) {
+          rowsToSkip--;
+          return null;
+        }
+
+        // For all data rows, remove first column if alternate format
+        if (isAlternateFormat && columnToIgnore > 0) {
+          return record.slice(columnToIgnore);
+        }
+
+        return record;
+      }
     });
 
     const records = [];
-
     let dataSource = process.env.dataFileName;
+
+    const processData = (stream) => {
+      stream
+        .pipe(parser)
+        .on('data', (record) => {
+          // Only push data records (skip header and skipped rows)
+          if (record && headerSkipped) {
+            // Convert array to object using headers
+            const obj = {};
+            headers.forEach((header, i) => {
+              // Skip if we've run out of values in this record
+              if (i < record.length) {
+                obj[header] = record[i];
+              }
+            });
+            records.push(obj);
+          }
+        })
+        .on('end', () => {
+          resolve(records);
+        })
+        .on('error', (err) => reject(err));
+    };
 
     // Check if the dataSource is a URL
     if (dataSource.startsWith('http://') || dataSource.startsWith('https://')) {
-
       dataSource = transformGoogleSheetsUrl(dataSource, process.env.googleSheetName);
 
       // Use axios to download the file from the URL
@@ -27,21 +81,12 @@ function readCSV() {
         responseType: 'stream'
       })
         .then((response) => {
-          // Pipe the response stream to the CSV parser
-          response.data
-            .pipe(parser)
-            .on('data', (record) => records.push(record))
-            .on('end', () => resolve(records))
-            .on('error', (err) => reject(err));
+          processData(response.data);
         })
         .catch((err) => reject(err));
     } else {
       // Use createReadStream for local files
-      fs.createReadStream(dataSource)
-        .pipe(parser)
-        .on('data', (record) => records.push(record))
-        .on('end', () => resolve(records))
-        .on('error', (err) => reject(err));
+      processData(fs.createReadStream(dataSource));
     }
   });
 }

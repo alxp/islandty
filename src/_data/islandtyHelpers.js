@@ -242,17 +242,19 @@ module.exports = {
    * Also gives content models a chance to modify the data.
    */
   objectIndexMetadata(items, object) {
+    console.log("lunr debug, object ID: " + object.data.id);
     if (object.data.field_model == 'Page') {
       const parent = this.getParentContent(items, object.data.parent_id);
       let page = object.data.field_weight;
       if (parent) {
         object.data.title = object.data.title + ' – ' + parent.data.title;
-      }
-      if (!isNaN(page)) {
-        // Pages in Islandora are 1-indexed.
-        page -= 1;
-        if (page > 0) {
-          object.url = parent.url + '?page=' + page;
+
+        if (!isNaN(page)) {
+          // Pages in Islandora are 1-indexed.
+          page -= 1;
+          if (page > 0) {
+            object.url = parent.url + '?page=' + page;
+          }
         }
       }
     }
