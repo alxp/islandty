@@ -1,5 +1,6 @@
 const readCSVModule = require('./readCSV.js');
 const path = require('path');
+require('dotenv').config();
 
 async function getMergedFieldConfig() {
   // Load JSON config
@@ -11,17 +12,23 @@ async function getMergedFieldConfig() {
     jsonConfig = {};
   }
 
-  // Try to get CSV field info
-  let csvFieldInfo = { labels: {}, cardinality: {} };
-  try {
-    const result = await readCSVModule();
-    if (result.fieldInfo) {
-      csvFieldInfo = result.fieldInfo;
-    }
-  } catch (error) {
-    console.log('Could not load CSV field info:', error.message);
-  }
+  const csvOverrideEnabled = process.env.CSVOverrideFieldInfo === 'true';
 
+  // Only proceed with CSV processing if override is enabled
+  let csvFieldInfo = { labels: {}, cardinality: {} };
+  if (csvOverrideEnabled) {
+    try {
+      const result = await readCSVModule();
+      if (result.fieldInfo) {
+        csvFieldInfo = result.fieldInfo;
+        console.log('CSV field info override is enabled - merging with JSON config');
+      }
+    } catch (error) {
+      console.log('Could not load CSV field info:', error.message);
+    }
+  } else {
+    console.log('CSV field info override is disabled - using JSON config only');
+  }
   // Create merged configuration
   const mergedConfig = { ...jsonConfig };
 
