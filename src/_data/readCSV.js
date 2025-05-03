@@ -11,6 +11,8 @@ function readCSV() {
     let rowsToSkip = 0;
     let columnToIgnore = 0;
     let headers = [];
+    let fieldLabels = {};
+    let fieldCardinality = {};
 
     const parser = csv.parse({
       skip_empty_lines: true,
@@ -27,6 +29,28 @@ function readCSV() {
           headers = record.slice(columnToIgnore);
           headerSkipped = true;
           return null; // Skip this record
+        }
+
+        // Get field labels (first row after header in alternate format)
+        if (isAlternateFormat && headerSkipped && rowsToSkip === 2) {
+          record.slice(columnToIgnore).forEach((label, i) => {
+            if (i < headers.length) {
+              fieldLabels[headers[i]] = label;
+            }
+          });
+          rowsToSkip--;
+          return null;
+        }
+
+        // Get field cardinality (second row after header in alternate format)
+        if (isAlternateFormat && headerSkipped && rowsToSkip === 1) {
+          record.slice(columnToIgnore).forEach((cardinality, i) => {
+            if (i < headers.length) {
+              fieldCardinality[headers[i]] = cardinality === 'unlimited' ? '-1' : cardinality;
+            }
+          });
+          rowsToSkip--;
+          return null;
         }
 
         // Skip extra rows in alternate format
@@ -65,7 +89,13 @@ function readCSV() {
           }
         })
         .on('end', () => {
-          resolve(records);
+          resolve({
+            items: records,
+            fieldInfo: {
+              labels: fieldLabels,
+              cardinality: fieldCardinality
+            }
+          });
         })
         .on('error', (err) => reject(err));
     };
@@ -117,9 +147,12 @@ function transformGoogleSheetsUrl(url, sheetName) {
 
 module.exports = async function () {
   try {
-    let data = await readCSV();
-    data = islandtyHelpers.cleanInputData(data);
-    return { items: data };
+    let { items, fieldInfo } = await readCSV();
+    items = islandtyHelpers.cleanInputData(items);
+    return {
+      items: items,
+      fieldInfo: fieldInfo
+    };
   } catch (err) {
     console.error('CSV processing error:', err);
     throw err;

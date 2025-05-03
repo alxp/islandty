@@ -25,7 +25,7 @@ async function main() {
   console.log("Reading input CSV and generating template files for each repository object.");
 
   try {
-    const { items } = await readCSV();
+    const { items, fieldInfo } = await readCSV();
     const inputMediaPath = process.env.inputMediaPath;
     const outputDir = path.join("src", process.env.contentPath);
     const linkedAgentDir = "./src/islandty/staging/linked-agent";
@@ -57,7 +57,7 @@ async function main() {
       // Update file paths
       await contentModel.updateFilePaths(item);
 
-      const transformedItem = islandtyHelpers.transformKeys(item);
+      const transformedItem = islandtyHelpers.transformKeys(item, fieldInfo);
 
       // Process linked agents
       if (transformedItem.field_linked_agent) {
