@@ -53,3 +53,9 @@ The base URL where the site will be served from.
 The directory name where the HTML and supporting
 files will be written to on disck.
 
+
+```CSVOverrideFieldInfo```
+
+The Islandora Workbench 'export_csv' task will autment the CSV with metadata about each field, specifically a Label and the Cardinality.  If this setting is set to 'true', these values in the CSV will supercede the values in config/islandtyFieldInfo.json.
+
+If set to 'false', or if no field metdata is present in the CSV, islandtyFieldINfo.json will be used.
