@@ -14,13 +14,14 @@ const {getNested, strToSlug} = require('./src/_data/islandtyHelpers.js');
 const {execSync} = require('node:child_process');
 const {glob} = require('glob')
 const path = require('path');
+const fieldConfigHelper = require('./src/_data/fieldConfigHelper.js');
 const islandtyHelpers = require('./src/_data/islandtyHelpers.js');
 const inspect = require("util").inspect;
 
 // Create a helpful production flag
 const isProduction = process.env.NODE_ENV == 'production';
 
-module.exports = config => {
+module.exports = async config => {
 
     config.setServerOptions({
         // Default values are shown:
@@ -235,8 +236,7 @@ module.exports = config => {
     config.addGlobalData('contentPath', process.env.contentPath);
     config.addGlobalData('linkedAgentPath', process.env.linkedAgentPath);
     config.addGlobalData('pathPrefix', process.env.pathPrefix);
-    const islandtyFieldConfig = require('./config/islandtyFieldInfo.json');
-    config.addGlobalData('islandtyFieldInfo', islandtyFieldConfig);
+  config.addGlobalData('islandtyFieldInfo', await fieldConfigHelper.getMergedFieldConfig());
 
     // Add configurations at the top-level into Eleventy.
     siteConfig = require('./config/site.json');

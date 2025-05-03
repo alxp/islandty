@@ -242,17 +242,19 @@ module.exports = {
    * Also gives content models a chance to modify the data.
    */
   objectIndexMetadata(items, object) {
+    console.log("lunr debug, object ID: " + object.data.id);
     if (object.data.field_model == 'Page') {
       const parent = this.getParentContent(items, object.data.parent_id);
       let page = object.data.field_weight;
       if (parent) {
         object.data.title = object.data.title + ' – ' + parent.data.title;
-      }
-      if (!isNaN(page)) {
-        // Pages in Islandora are 1-indexed.
-        page -= 1;
-        if (page > 0) {
-          object.url = parent.url + '?page=' + page;
+
+        if (!isNaN(page)) {
+          // Pages in Islandora are 1-indexed.
+          page -= 1;
+          if (page > 0) {
+            object.url = parent.url + '?page=' + page;
+          }
         }
       }
     }
@@ -276,30 +278,45 @@ module.exports = {
       return null;
     }
   },
-  transformKeys(obj) {
-    fieldInfo = require('../../config/islandtyFieldInfo.json');
+  transformKeys(obj, csvFieldInfo = { labels: {}, cardinality: {} }) {
+    const jsonFieldInfo = require('../../config/islandtyFieldInfo.json');
 
     // Add permalink field.
     obj['permalink'] = '/' + process.env.contentPath + '/' + obj.id + '/index.html';
 
     const newObj = { item: {} };
 
-
     for (const key in obj) {
       const newKey = key.replace(/:/g, '_');
-      var newValue = obj[key];
-      if (fieldInfo[key] && fieldInfo[key]['cardinality'] != 1
-        && typeof obj[key].split === 'function'
-      ) {
+      let newValue = obj[key];
+
+      // Determine cardinality - prioritize CSV info over JSON
+      let cardinality = '1'; // default
+      if (csvFieldInfo.cardinality && csvFieldInfo.cardinality[key]) {
+        cardinality = csvFieldInfo.cardinality[key];
+      } else if (jsonFieldInfo[key] && jsonFieldInfo[key].cardinality) {
+        cardinality = jsonFieldInfo[key].cardinality;
+      }
+
+      // Split values if cardinality is not 1
+      if (cardinality != '1' && typeof obj[key].split === 'function') {
         const splitValue = obj[key].split('|');
         newValue = splitValue;
       }
+
       if (key == 'field_linked_agent') {
         newValue = this.parseLinkedAgent(newValue);
-        //this.addLinkedAgentTags(newValue);
       }
+
       newObj[newKey] = newValue;
       newObj['item'][newKey] = newValue;
+
+      // Add label if available (prioritize CSV)
+      if (csvFieldInfo.labels && csvFieldInfo.labels[key]) {
+        newObj[`${newKey}_label`] = csvFieldInfo.labels[key];
+      } else if (jsonFieldInfo[key] && jsonFieldInfo[key].label) {
+        newObj[`${newKey}_label`] = jsonFieldInfo[key].label;
+      }
     }
     return newObj;
   },
