@@ -64,6 +64,12 @@ module.exports = async config => {
         // if your global data lives elsewhere, this file path will need to change a bit
         return require(`./src/_data/${data}.csv`);
     });
+    config.addFilter('getLinkFromTitle', (collection, title) => {
+        var link = '';
+        const filtered = collection.filter(item => item.title == title)
+        return filtered[0].link;
+
+    });
 
     // only minify HTML if we are in productionbecause it slows builds _right_ down
     if (isProduction) {
@@ -120,18 +126,20 @@ module.exports = async config => {
 
             config.addCollection("linkedAgent_" + linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName), function (collection) {
                 var linkedAgentNames = Object.keys(linkedAgentDatabase[linkedAgentTypeName])
-                    .sort(function (a, b) {
-                        return a.localeCompare(b, "en", {sensitivity: "base"});
-                    })
 
-                    .map((name) => ({
+                    .map((name) => {
+                        nameSlug = linkedAgentDatabase[linkedAgentTypeName][name]['nameSlug'];
+                        return {
                         title: name,
                         linkedAgentNamespace: linkedAgentDatabaseName,
                         linkedAgentType: linkedAgentTypeName,
                         linkedAgentTypeSlug: strToSlug(linkedAgentTypeName),
-                        link: "/" + process.env.linkedAgentPath + "/" + strToSlug(linkedAgentDatabaseName + "/" + strToSlug(linkedAgentTypeName)) + "/" + islandtyHelpers.strToSlug(name) + "/index.html",
-                        slug: islandtyHelpers.strToSlug(name),
-                    }));
+                        link: "/" + process.env.linkedAgentPath + "/" + strToSlug(linkedAgentDatabaseName + "/" + strToSlug(linkedAgentTypeName)) + "/" + nameSlug + "/index.html",
+                        slug: nameSlug
+                    }})
+                    .sort(function (a, b) {
+                        return a['title'].localeCompare(b['title'], "en", { sensitivity: "base" });
+                    });
 
                 return linkedAgentNames;
             });
@@ -139,7 +147,8 @@ module.exports = async config => {
             // Create collections for each linked agent.
             for (const linkedAgentName of Object.keys(linkedAgentDatabase[linkedAgentTypeName])) {
                 const linkedAgent = linkedAgentDatabase[linkedAgentTypeName][linkedAgentName];
-                config.addCollection("linkedAgent_" + linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName) + "_" + strToSlug(linkedAgentName), function (collection) {
+                const linkedAgentNameSlug = linkedAgentDatabase[linkedAgentTypeName][linkedAgentName]['nameSlug']
+                config.addCollection("linkedAgent_" + linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName) + "_" + linkedAgentNameSlug, function (collection) {
                     const linkedAgentCollection = collection.getAll().filter(function (item) {
                         const target = getNested(item, 'data', 'field_linked_agent', linkedAgentDatabaseName, linkedAgentTypeName);
                         if (target) {
@@ -236,7 +245,7 @@ module.exports = async config => {
     config.addGlobalData('contentPath', process.env.contentPath);
     config.addGlobalData('linkedAgentPath', process.env.linkedAgentPath);
     config.addGlobalData('pathPrefix', process.env.pathPrefix);
-  config.addGlobalData('islandtyFieldInfo', await fieldConfigHelper.getMergedFieldConfig());
+    config.addGlobalData('islandtyFieldInfo', await fieldConfigHelper.getMergedFieldConfig());
 
     // Add configurations at the top-level into Eleventy.
     siteConfig = require('./config/site.json');

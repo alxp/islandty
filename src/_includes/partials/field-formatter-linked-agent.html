@@ -1,6 +1,8 @@
 {% set linked_agents = item[name] %}
 {% for relType, relData in linked_agents %}
+
   {% for rel, contributors in relData %}
+  {%- set relCollection =  collections['linkedAgent_' + relType + '_' + rel|slugify ] -%}
 
   {% set count = contributors.length %}
 
@@ -11,7 +13,7 @@
         {% endif %}
 
         <td>
-<a href="{{ islandtyHelpers.linkedAgentUrl(relType, rel, contributor)}}">{{ contributor }}</a>
+<a href="{{ relCollection|getLinkFromTitle(contributor) }}">{{ contributor }}</a>
 
         </td>
     </tr>
