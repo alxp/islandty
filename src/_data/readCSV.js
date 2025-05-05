@@ -31,6 +31,12 @@ function readCSV() {
           return null; // Skip this record
         }
 
+        if (!isAlternateFormat && !headerSkipped && headers.length === 0) {
+          headers = record;
+          headerSkipped = true;
+          return null; // Skip this record
+        }
+
         // Get field labels (first row after header in alternate format)
         if (isAlternateFormat && headerSkipped && rowsToSkip === 2) {
           record.slice(columnToIgnore).forEach((label, i) => {
