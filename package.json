@@ -7,7 +7,8 @@
     "clean": "rm -rf src/islandty/staging/object/* src/islandty/staging/linked-agent/* web",
     "readcsv": "node src/islandty/commands/readCSV.js",
     "start": "node src/islandty/commands/readCSV.js && npx gulp && concurrently \"npx gulp watch\" \"npx eleventy --serve\"",
-    "production": "node src/islandty/commands/readCSV.js && NODE_ENV=production npx gulp && NODE_ENV=production npx eleventy"
+    "production": "node src/islandty/commands/readCSV.js && NODE_ENV=production npx gulp && NODE_ENV=production npx eleventy",
+        "readcsv:custom": "node src/islandty/commands/readCSV.js --config path/to/your/config.yml"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +17,7 @@
     "@11ty/eleventy-cache-assets": "^2.3.0",
     "@11ty/eleventy-plugin-rss": "^2.0.3",
     "biiif": "github:alxp/biiif#master-dist",
+    "commander": "^13.1.0",
     "concurrently": "^9.1.2",
     "csv": "^6.3.8",
     "deepmerge": "^4.3.1",

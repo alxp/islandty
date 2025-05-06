@@ -5,6 +5,7 @@ const islandtyHelpers = require('../../_data/islandtyHelpers.js');
 const readCSV = require('../../_data/readCSV.js');
 const slugify = require('slugify');
 const yaml = require('js-yaml');
+const { program } = require('commander');
 
 async function writePageTemplate(data, dir, fileName) {
   const yamlString = yaml.dump(data);
@@ -21,18 +22,23 @@ async function writePageTemplate(data, dir, fileName) {
   }
 }
 
-async function main() {
+async function main(configPath = 'src/islandty/config/default.yml') {
   console.log("Reading input CSV and generating template files for each repository object.");
 
   try {
-    const { items, fieldInfo } = await readCSV();
-    const inputMediaPath = process.env.inputMediaPath;
+    // Load config file
+    const configFile = await fs.readFile(configPath, 'utf8');
+    const config = yaml.load(configFile);
+    process.env.CSV_CONFIG_PATH = configPath;
+    const { items, fieldInfo } = await readCSV(config.csv);
+    const inputMediaPath = config.csv.inputMediaPath;
     const outputDir = path.join("src", process.env.contentPath);
     const linkedAgentDir = "./src/islandty/staging/linked-agent";
 
     console.log('Using input media path:', inputMediaPath);
     console.log('Using output staging path:', outputDir);
     console.log('Using Linked Agent staging path:', linkedAgentDir);
+
 
     const allLinkedAgents = {};
 
@@ -159,8 +165,15 @@ async function main() {
   }
 }
 
-// Execute main function
-main().catch(error => {
+// Set up command line interface
+program
+  .option('-c, --config <path>', 'path to config file', 'src/islandty/config/default.yml')
+  .parse(process.argv);
+
+const options = program.opts();
+
+// Execute main function with config path
+main(options.config).catch(error => {
   console.error('Unhandled error:', error);
   process.exit(1);
 });
