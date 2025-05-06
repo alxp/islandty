@@ -1,0 +1,3 @@
+csv:
+  dataFileName: ../islandora_demo_objects/create_islandora_objects.csv
+  inputMediaPath: ../islandora_demo_objects
