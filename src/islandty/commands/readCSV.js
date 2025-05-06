@@ -73,10 +73,13 @@ async function main() {
               }
 
               if (!allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue]) {
-                allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue] = [];
+                allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue] = {
+                  nameSlug: islandtyHelpers.strToSlugWithCounter(linkedAgentValue),
+                  values: []
+                };
               }
 
-              allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue].push(transformedItem.id);
+              allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue]['values'].push(transformedItem.id);
             }
           }
         }

@@ -3,8 +3,7 @@ const path = require('path');
 const SaxonJS = require('saxon-js');
 require('dotenv').config();
 const slugify = require('slugify');
-
-
+const slugifyWithCounter = require('@sindresorhus/slugify').slugifyWithCounter();
 
 module.exports = {
 
@@ -415,8 +414,22 @@ module.exports = {
     };
 
     return slugify(str, options);
-  }
+  },
 
+   /**
+   * Transform a string into a slug
+   * Uses slugify package
+   *
+   * @param {String} str - string to slugify
+   */
+   strToSlugWithCounter(str) {
+    const options = {
+      replacement: "-",
+      remove: /[&,+()$~%.'":*?<>{}]/g,
+      lower: true,
+    };
 
+    return slugifyWithCounter(str, options);
+  },
 
 }
