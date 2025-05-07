@@ -166,7 +166,7 @@ module.exports = {
    * @returns
    */
   itemsWithContentModel(items, model) {
-    let filteredItems = items.filter(x => x.field_model == model);
+    let filteredItems = items.filter(x => x.data.field_model == model);
 
     return filteredItems;
   },

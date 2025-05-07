@@ -19,16 +19,6 @@ layout: 'layouts/content-list.html'
 		</ul>
 	</div>
     <div v-else>
-        <ul>
-        {% for item in readCSV.items %}
-            {% if item.field_model != 'Page' %}
-            <li><article>
-              <h3><a href="/{{ contentPath }}/{{ item.id | slugify }}">{{ item.title }}</a></h3>
-            </article></li>
-            {% endif %}
-        {% endfor %}
-        </ul>
-    </div>
 
 </div>
 

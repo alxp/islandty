@@ -1,15 +1,16 @@
 ---
 title: Collections
 layout: 'layouts/content-list.html'
---- 
+---
 All top-level collections in the repository.
 
 <ul>
-{% for item in readCSV.items %}
-  {% if item.field_model != 'Page' %}
-    {% if item.field_model == 'Collection' %}
-      {% if item.parent_id == '' %}
-        <li><article><h3><a href="/{{ contentPath }}/{{ item.id | slugify }}">{{ item.title }}</a></h3></article></li>
+{% for item in islandtyHelpers.itemsWithContentModel(collections.all, 'Collection') %}
+
+  {% if item.data.field_model != 'Page' %}
+    {% if item.data.field_model == 'Collection' %}
+      {% if item.data.parent_id == '' %}
+        <li><article><h3><a href="/{{ contentPath }}/{{ item.data.id | slugify }}">{{ item.data.title }}</a></h3></article></li>
       {% endif %}
     {% endif %}
   {% endif %}
