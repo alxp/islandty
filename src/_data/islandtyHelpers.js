@@ -121,10 +121,21 @@ module.exports = {
      * @returns {Array} The resulting children items.
      */
   getChildContent(items, item_id) {
-    let filteredItems = items.filter(x => (x.parent_id.split('|').includes(item_id)));
+  let filteredItems = items.filter(x => {
+    // Check x.parent_id if it exists
+    const parentId1 = x.parent_id;
+    const parentId1Valid = parentId1 && typeof parentId1 === 'string' && parentId1.split('|').includes(item_id);
 
-    return filteredItems;
-  },
+    // Check x.data.parent_id if it exists
+    const parentId2 = x.data?.parent_id;
+    const parentId2Valid = parentId2 && typeof parentId2 === 'object' && parentId2.includes(item_id);
+
+    // Return true if either condition is met
+    return parentId1Valid || parentId2Valid;
+  });
+
+  return filteredItems;
+},
 
   /**
    * Finds the normalized content model associated with a string

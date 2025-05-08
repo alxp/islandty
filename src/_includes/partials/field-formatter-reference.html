@@ -3,14 +3,15 @@
 
 {% for target in targets %}
 
-{% set targetItem = islandtyHelpers.itemsWithFieldValue(readCSV.items, 'id', target)[0] %}
-    
-    <tr>
-        {% if loop.first %}
-        <th rowspan="{{ count }}">{{ islandtyFieldInfo[name]['label'] }}</th>
-        {% endif %}
-        <td>
-            <a href="/{{ contentPath }}/{{ targetItem.id | slugify }}">{{ targetItem.title }}</a>
-        </td>
-    </tr>
+	{% set targetItem = islandtyHelpers.itemsWithFieldValue(collections.all, 'id', target)[0] %}
+
+	<tr>
+		{% if loop.first %}
+			<th rowspan="{{ count }}">{{ islandtyFieldInfo[name]['label'] }}</th>
+		{% endif %}
+		<td>
+			<a href="/{{ contentPath }}/{{ targetItem.id | slugify }}">{{ targetItem.title }}</a>
+		</td>
+	</tr>
 {% endfor %}
+

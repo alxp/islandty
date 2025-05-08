@@ -5,8 +5,8 @@
 <article>
     {% include "partials/page-header.html" %}
 
-    {% set parent = islandtyHelpers.getParentContent(readCSV.items, parent_id) %}
-    {% set children = islandtyHelpers.getChildContent(readCSV.items, id) %}
+    {% set parent = islandtyHelpers.getParentContent(collections.all, parent_id) %}
+    {% set children = islandtyHelpers.getChildContent(collections.all, id) %}
     {% set display = islandtyHelpers.getLayoutForContentModel(field_model) %}
 
     <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
