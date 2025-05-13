@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
+const crypto = require('crypto');
 const islandtyHelpers = require('../_data/islandtyHelpers.js');
 require('dotenv').config();
 
@@ -77,6 +78,49 @@ class OCFLStorage {
     return this;
   }
 
+  async calculateFileHash(filePath) {
+    const fileBuffer = await fs.readFile(filePath);
+    return crypto.createHash('sha256').update(fileBuffer).digest('hex');
+  }
+
+  async filesChanged(object, importItems) {
+    try {
+      const currentFiles = new Map();
+
+      // Get current files and their hashes from latest version
+      for await (const file of object.files()) {
+        const content = await object.read(file);
+        const hash = crypto.createHash('sha256').update(content).digest('hex');
+        currentFiles.set(file, hash);
+      }
+
+      // Check if any files are different
+      for (const [src, dest] of importItems) {
+        const newHash = await this.calculateFileHash(src);
+        if (currentFiles.has(dest)) {
+          if (currentFiles.get(dest) !== newHash) {
+            return true; // File content changed
+          }
+        } else {
+          return true; // New file added
+        }
+      }
+
+      // Check for deleted files
+      const importedFiles = new Set(importItems.map(([_, dest]) => dest));
+      for (const existingFile of currentFiles.keys()) {
+        if (!importedFiles.has(existingFile)) {
+          return true; // File was deleted
+        }
+      }
+
+      return false; // No changes detected
+    } catch (error) {
+      console.error('Error comparing files:', error);
+      return true; // Assume changes if we can't compare
+    }
+  }
+
   async copyFiles(item, inputMediaPath, outputDir) {
     if (!this.storage) await this.initialize();
 
@@ -95,11 +139,24 @@ class OCFLStorage {
     }
 
     try {
-      await object.import(importItems);
-      console.log(`Successfully imported files to OCFL object ${objectId}`);
+      // Check if files have changed
+      const changesExist = await this.filesChanged(object, importItems);
+
+      if (changesExist) {
+        console.log(`Changes detected, creating new version for object ${objectId}`);
+        await object.update(async (transaction) => {
+          for (const [src, dest] of importItems) {
+            await transaction.import(src, dest);
+          }
+        });
+        console.log(`Created new version for object ${objectId}`);
+      } else {
+        console.log(`No changes detected for object ${objectId}, keeping current version`);
+      }
+
       return true;
     } catch (err) {
-      console.error(`Error importing to OCFL object ${objectId}:`, err);
+      console.error(`Error processing OCFL object ${objectId}:`, err);
       throw err;
     }
   }
@@ -107,29 +164,37 @@ class OCFLStorage {
   async updateFilePaths(item) {
     const fileFields = islandtyHelpers.getFileFields();
 
-    fileFields.forEach((fileField) => {
-      if (item[fileField] && item[fileField] !== "" && item[fileField] !== 'False') {
-        const fileName = path.basename(item[fileField]);
-        // Direct path to the file in OCFL structure
-        item[fileField] = `/ocfl-files/${item.id}/v1/content/${fileName}`;
-      }
-    });
+    try {
+      const object = this.storage.object(item.id);
+      const inventory = await object.getInventory();
+      const latestVersion = inventory.head;
 
-    if (item['extracted']) {
-      try {
-        const object = this.storage.object(item.id);
-        const extractedPath = path.basename(item['extracted']);
-        const extractedText = await object.read(extractedPath);
-        item['extractedText'] = extractedText.toString('utf8');
-        // Update extracted path to match OCFL structure
-        item['extracted'] = `/ocfl-files/${item.id}/v1/content/${extractedPath}`;
-      } catch (error) {
-        console.error(`Error reading extracted text from OCFL object ${item.id}:`, error);
-        item['extractedText'] = '';
+      fileFields.forEach((fileField) => {
+        if (item[fileField] && item[fileField] !== "" && item[fileField] !== 'False') {
+          const fileName = path.basename(item[fileField]);
+          // Use latest version path
+          item[fileField] = `/ocfl-files/${item.id}/${latestVersion}/content/${fileName}`;
+        }
+      });
+
+      if (item['extracted']) {
+        try {
+          const extractedPath = path.basename(item['extracted']);
+          const extractedText = await object.read(extractedPath);
+          item['extractedText'] = extractedText.toString('utf8');
+          item['extracted'] = `/ocfl-files/${item.id}/${latestVersion}/content/${extractedPath}`;
+        } catch (error) {
+          console.error(`Error reading extracted text from OCFL object ${item.id}:`, error);
+          item['extractedText'] = '';
+        }
       }
+    } catch (error) {
+      console.error(`Error updating paths for object ${item.id}:`, error);
+      throw error;
     }
   }
 }
+
 
 module.exports = {
   FileSystemStorage,
