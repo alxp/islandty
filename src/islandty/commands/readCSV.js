@@ -51,9 +51,12 @@ async function main() {
         contentModel = require('../../islandty/ContentModels/default');
       }
 
+      // Initialize content model with storage handler
+      await contentModel.init();
+
       // Ingest media files
-            const objectOutputDir = path.join(process.env.outputDir, process.env.contentPath, item.id);
-            await contentModel.ingest(item, inputMediaPath, objectOutputDir);
+      const objectOutputDir = path.join(process.env.outputDir, process.env.contentPath, item.id);
+      await contentModel.ingest(item, inputMediaPath, objectOutputDir);
       // Update file paths
       await contentModel.updateFilePaths(item);
 
