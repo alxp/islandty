@@ -1,18 +1,12 @@
-const defaultContentModel = require('./default.js');
-const mediaHelpers = require('./src/islandty/lib/MediaHelpers.js');
+// src/islandty/ContentModels/Audio.js
+const DefaultContentModel = require('./default.js');
+const mediaHelpers = require('../lib/MediaHelpers.js');
+const path = require('path');
 
-
-module.exports = {
-  async init() {
-    await defaultContentModel.init();
-    this.storageHandler = defaultContentModel.storageHandler;
-    this.defaultModel = defaultContentModel;
-    return this;
-  },
-
+class AudioContentModel extends DefaultContentModel {
   async ingest(item, inputMediaPath, outputDir) {
     try {
-      await this.defaultModel.ingest(item, inputMediaPath, outputDir);
+      await super.ingest(item, inputMediaPath, outputDir);
 
       if (item['media:audio:field_track']) {
         const tracks = mediaHelpers.parseFieldTrack(item['media:audio:field_track']);
@@ -27,17 +21,28 @@ module.exports = {
     } catch (err) {
       throw new Error(`Audio ingestion failed: ${err.message}`);
     }
-  },
+  }
 
   async updateFilePaths(item) {
-    await this.defaultModel.updateFilePaths(item);
+    await super.updateFilePaths(item);
 
     if (item['media:audio:field_track']) {
       const basePath = await this.storageHandler.getContentBasePath(item.id);
-      item['media:audio:field_track'] = updateTrackField(
+      item['media:audio:field_track'] = this.updateTrackField(
         item['media:audio:field_track'],
         basePath
       );
     }
   }
-};
+
+  updateTrackField(trackField, basePath) {
+    const tracks = mediaHelpers.parseFieldTrack(trackField);
+    for (const track of tracks) {
+      const fileName = path.basename(track.file);
+      track.file = path.join(basePath, fileName);
+    }
+    return mediaHelpers.serializeFieldTrack(tracks);
+  }
+}
+
+module.exports = AudioContentModel;
