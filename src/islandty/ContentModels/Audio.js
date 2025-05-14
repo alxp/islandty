@@ -1,33 +1,43 @@
-const fs = require('fs').promises;
-const mediaHelpers = require('../lib/MediaHelpers.js');
-const path = require('path');
 const defaultContentModel = require('./default.js');
-require('dotenv').config();
+const mediaHelpers = require('./src/islandty/lib/MediaHelpers.js');
+
 
 module.exports = {
+  async init() {
+    await defaultContentModel.init();
+    this.storageHandler = defaultContentModel.storageHandler;
+    this.defaultModel = defaultContentModel;
+    return this;
+  },
+
   async ingest(item, inputMediaPath, outputDir) {
     try {
-      await defaultContentModel.ingest(item, inputMediaPath, outputDir);
-      await mediaHelpers.createDirectoryStructure(
-        mediaHelpers.parseFieldTrack(
-            item['media:audio:field_track']
-          ),
-        inputMediaPath,
-        outputDir
-      );
+      await this.defaultModel.ingest(item, inputMediaPath, outputDir);
+
+      if (item['media:audio:field_track']) {
+        const tracks = mediaHelpers.parseFieldTrack(item['media:audio:field_track']);
+        for (const track of tracks) {
+          await this.storageHandler.copyFiles(
+            { [track.file]: track.file },
+            inputMediaPath,
+            outputDir
+          );
+        }
+      }
     } catch (err) {
-      throw new Error(`Media audio ingestion failed: ${err.message}`);
+      throw new Error(`Audio ingestion failed: ${err.message}`);
     }
   },
 
   async updateFilePaths(item) {
-    defaultContentModel.updateFilePaths(item);
+    await this.defaultModel.updateFilePaths(item);
 
     if (item['media:audio:field_track']) {
-      const outputDir = path.join('/', process.env.contentPath, item.id);
-      item['media:audio:field_track'] = mediaHelpers.updateTrackField(item['media:audio:field_track'],outputDir);
+      const basePath = await this.storageHandler.getContentBasePath(item.id);
+      item['media:audio:field_track'] = updateTrackField(
+        item['media:audio:field_track'],
+        basePath
+      );
     }
-  },
-
-
+  }
 };

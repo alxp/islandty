@@ -4,9 +4,33 @@ const crypto = require('crypto');
 const islandtyHelpers = require('../_data/islandtyHelpers.js');
 require('dotenv').config();
 
-class FileSystemStorage {
+class StorageBase {
+
   constructor(config = {}) {
     this.config = config;
+  }
+
+  async copyFiles(item, inputMediaPath, outputDir) {
+    throw new Error('Not implemented');
+  }
+
+  async updateFilePaths(item) {
+    throw new Error('Not implemented');
+  }
+
+  getContentBasePath(itemId) {
+    throw new Error('Not implemented');
+  }
+
+  getFullContentPath(itemId, fileName) {
+    throw new Error('Not implemented');
+  }
+}
+
+class FileSystemStorage extends StorageBase {
+  constructor(config = {}) {
+    super(config); // Call parent constructor
+    // FileSystem-specific initialization
   }
 
   async copyFiles(item, inputMediaPath, outputDir) {
@@ -47,11 +71,19 @@ class FileSystemStorage {
       item['extractedText'] = extractedText;
     }
   }
+
+  getContentBasePath(itemId) {
+    return `/${path.join(process.env.contentPath, itemId)}`;
+  }
+
+  getFullContentPath(itemId, fileName) {
+    return `/${path.join(process.env.contentPath, itemId, fileName)}`;
+  }
 }
 
-class OCFLStorage {
+class OCFLStorage extends StorageBase {
   constructor(config = {}) {
-    this.config = config;
+    super(config); // Call parent constructor first
     this.ocfl = require('@ocfl/ocfl-fs');
     this.storage = null;
     this.ocflWebRoot = path.join(process.env.outputDir, 'ocfl-files');
@@ -80,18 +112,26 @@ class OCFLStorage {
 
   async calculateFileHash(filePath) {
     const fileBuffer = await fs.readFile(filePath);
-    return crypto.createHash('sha256').update(fileBuffer).digest('hex');
+    return crypto.createHash('sha512').update(fileBuffer).digest('hex');
   }
 
   async filesChanged(object, importItems) {
     try {
+      // Check if object exists and has files
+      const exists = await this.objectExists(object);
+      if (!exists) return true; // New object needs first version
+
       const currentFiles = new Map();
 
-      // Get current files and their hashes from latest version
-      for await (const file of object.files()) {
-        const content = await object.read(file);
-        const hash = crypto.createHash('sha256').update(content).digest('hex');
-        currentFiles.set(file, hash);
+      const files = await object.files();
+
+      // Get current files from latest version
+      for (const file of files) {
+        //const content = await object.readFile(file);
+
+        //const hash = crypto.createHash('sha256').update(content).digest('hex');
+        const hash = file.digest;
+        currentFiles.set(file.logicalPath, hash);
       }
 
       // Check if any files are different
@@ -193,6 +233,33 @@ class OCFLStorage {
       throw error;
     }
   }
+
+  async getContentBasePath(itemId) {
+
+    try {
+      const object = this.storage.object(itemId);
+      const inventory = await object.getInventory();
+      return `/ocfl-files/${itemId}/${inventory.head}/content`;
+    } catch (error) {
+      // If no inventory exists yet (first version), default to v1
+      return `/ocfl-files/${itemId}/v1/content`;
+    }
+  }
+
+
+  async getFullContentPath(itemId, fileName) {
+    const base = await this.getContentBasePath(itemId);
+    return `${base}/${fileName}`;
+  }
+
+  async objectExists(object) {
+    try {
+      const inventory = await object.getInventory();
+      return inventory !== null;
+    } catch (error) {
+      return false;
+    }
+  }
 }
 
 
@@ -206,4 +273,6 @@ module.exports = {
     }
     return new FileSystemStorage(config);
   }
+
+
 };

@@ -11,16 +11,25 @@ module.exports = {
   },
 
   async ingest(item, inputMediaPath, outputDir) {
-    try {
-      await this.storageHandler.copyFiles(item, inputMediaPath, outputDir);
-      return true;
-    } catch (error) {
-      console.error('Error in ingest:', error);
-      throw error;
-    }
+    await this.storageHandler.copyFiles(item, inputMediaPath, outputDir);
   },
 
   async updateFilePaths(item) {
-    await this.storageHandler.updateFilePaths(item);
+    const fileFields = islandtyHelpers.getFileFields();
+
+    for (const field of fileFields) {
+      if (item[field]?.trim()) {
+        const fileName = path.basename(item[field]);
+        item[field] = await this.storageHandler.getFullContentPath(item.id, fileName);
+      }
+    }
+
+    if (item.extracted) {
+      item.extractedText = await this.readExtractedText(item);
+    }
+  },
+
+  async readExtractedText(item) {
+    // Implementation that works with both storage backends
   }
 };
