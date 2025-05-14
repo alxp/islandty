@@ -42,16 +42,16 @@ async function main() {
         item.id = item.node_id;
       }
       let contentModelName = item.field_model.split(':').pop().replace(/\s+/g, '');
-      let contentModel;
+      let ContentModelClass;
 
       try {
-        contentModel = require(`../../islandty/ContentModels/${contentModelName}`);
+        ContentModelClass = require(`../../islandty/ContentModels/${contentModelName}`);
       } catch (e) {
         if (e.code !== 'MODULE_NOT_FOUND') throw e;
-        contentModel = require('../../islandty/ContentModels/default');
+        ContentModelClass = require('../../islandty/ContentModels/default');
       }
 
-      // Initialize content model with storage handler
+      const contentModel = new ContentModelClass();
       await contentModel.init();
 
       // Ingest media files
