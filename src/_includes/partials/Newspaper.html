@@ -12,7 +12,12 @@
     <h2>Children</h2>
     <ul>
         {% for child in children %}
-        <li><a href="/{{ contentPath }}/{{ child.id | slugify }}">{{ child.title }}</a></li>
+<li>
+	<a href="/{{ contentPath }}/{{ child.data.id | slugify }}">{{ child.data.title }}</a>
+</li>
+
+</li>
+
         {% endfor %}
     </ul>
 </div>
