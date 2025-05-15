@@ -10,7 +10,7 @@ class StorageBase {
     this.config = config;
   }
 
-  async copyFiles(item, inputMediaPath, outputDir) {
+  async copyFiles(filesMap, inputMediaPath, outputDir) {
     throw new Error('Not implemented');
   }
 
@@ -33,28 +33,13 @@ class FileSystemStorage extends StorageBase {
     // FileSystem-specific initialization
   }
 
-  async copyFiles(item, inputMediaPath, outputDir) {
-    const fileFields = islandtyHelpers.getFileFields();
-
+  async copyFiles(filesMap, inputMediaPath, outputDir) {
     await fs.mkdir(outputDir, { recursive: true });
 
-    await Promise.all(fileFields.map(async (fileField) => {
-      if (item[fileField] && item[fileField] !== "" && item[fileField] !== 'False') {
-        const inputFile = path.join(inputMediaPath, item[fileField]);
-        const fileName = path.basename(inputFile);
-        const outputPath = path.join(outputDir, fileName);
-
-        try {
-          await fs.copyFile(inputFile, outputPath);
-          console.log(`Successfully copied ${outputPath}`);
-        } catch (err) {
-          console.error(`Error copying ${outputPath}:`, err);
-          throw err;
-        }
-      }
+    await Promise.all(Object.entries(filesMap).map(async ([srcPath, destFileName]) => {
+      const outputPath = path.join(outputDir, destFileName);
+      await fs.copyFile(srcPath, outputPath);
     }));
-
-    return true;
   }
 
   async updateFilePaths(item) {
@@ -131,7 +116,7 @@ class OCFLStorage extends StorageBase {
 
         //const hash = crypto.createHash('sha256').update(content).digest('hex');
         const hash = file.digest;
-        currentFiles.set(file.logicalPath, hash);
+        currentFiles.set(file, hash);
       }
 
       // Check if any files are different
@@ -161,43 +146,20 @@ class OCFLStorage extends StorageBase {
     }
   }
 
-  async copyFiles(item, inputMediaPath, outputDir) {
+  async copyFiles(filesMap, inputMediaPath, outputDir) {
     if (!this.storage) await this.initialize();
-
-    const objectId = item.id;
+    const objectId = path.basename(outputDir);
     const object = this.storage.object(objectId);
 
-    const fileFields = islandtyHelpers.getFileFields();
-    const importItems = [];
+    const importItems = Object.entries(filesMap).map(([src, dest]) => [src, dest]);
+    const changesExist = await this.filesChanged(object, importItems);
 
-    for (const fileField of fileFields) {
-      if (item[fileField] && item[fileField] !== "" && item[fileField] !== 'False') {
-        const inputFile = path.join(inputMediaPath, item[fileField]);
-        const fileName = path.basename(inputFile);
-        importItems.push([inputFile, fileName]);
-      }
-    }
-
-    try {
-      // Check if files have changed
-      const changesExist = await this.filesChanged(object, importItems);
-
-      if (changesExist) {
-        console.log(`Changes detected, creating new version for object ${objectId}`);
-        await object.update(async (transaction) => {
-          for (const [src, dest] of importItems) {
-            await transaction.import(src, dest);
-          }
-        });
-        console.log(`Created new version for object ${objectId}`);
-      } else {
-        console.log(`No changes detected for object ${objectId}, keeping current version`);
-      }
-
-      return true;
-    } catch (err) {
-      console.error(`Error processing OCFL object ${objectId}:`, err);
-      throw err;
+    if (changesExist) {
+      await object.update(async (transaction) => {
+        for (const [src, dest] of importItems) {
+          await transaction.import(src, dest);
+        }
+      });
     }
   }
 

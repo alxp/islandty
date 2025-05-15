@@ -54,10 +54,9 @@ async function main() {
       const contentModel = new ContentModelClass();
       await contentModel.init();
 
-      // Ingest media files
+      // Process files using content model
       const objectOutputDir = path.join(process.env.outputDir, process.env.contentPath, item.id);
       await contentModel.ingest(item, inputMediaPath, objectOutputDir);
-      // Update file paths
       await contentModel.updateFilePaths(item);
 
       const transformedItem = islandtyHelpers.transformKeys(item, fieldInfo);

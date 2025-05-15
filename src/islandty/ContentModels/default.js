@@ -1,4 +1,3 @@
-// src/islandty/ContentModels/default.js
 const path = require('path');
 const islandtyHelpers = require('../../_data/islandtyHelpers.js');
 const { createStorageHandler } = require('../storageHandler');
@@ -13,12 +12,31 @@ class DefaultContentModel {
   }
 
   async ingest(item, inputMediaPath, outputDir) {
-    await this.storageHandler.copyFiles(item, inputMediaPath, outputDir);
+    const files = this.buildFilesList(item, inputMediaPath, outputDir);
+    await this.storageHandler.copyFiles(files, inputMediaPath, outputDir);
+  }
+
+  buildFilesList(item, inputMediaPath, outputDir) {
+    const files = {};
+    const fileFields = islandtyHelpers.getFileFields();
+
+    fileFields.forEach(field => {
+      if (item[field]?.trim()) {
+        const srcPath = path.join(inputMediaPath, item[field]);
+        const fileName = path.basename(item[field]);
+        files[srcPath] = fileName;
+      }
+    });
+
+    return files;
   }
 
   async updateFilePaths(item) {
     const fileFields = islandtyHelpers.getFileFields();
-
+    // Handle extracted text
+    if (item.extracted) {
+      //item.extractedText = await fs.readFile(path.join(process.env.outputDir, item['extracted']), { encoding: 'utf8' });
+    }
     for (const field of fileFields) {
       if (item[field]?.trim()) {
         const fileName = path.basename(item[field]);
@@ -26,13 +44,6 @@ class DefaultContentModel {
       }
     }
 
-    if (item.extracted) {
-      item.extractedText = await this.readExtractedText(item);
-    }
-  }
-
-  async readExtractedText(item) {
-    // Implementation that works with both storage backends
   }
 }
 
