@@ -14,6 +14,10 @@ class StorageBase {
     throw new Error('Not implemented');
   }
 
+  isOCFL() {
+    return false;
+  }
+
   async updateFilePaths(item) {
     throw new Error('Not implemented');
   }
@@ -221,6 +225,10 @@ class OCFLStorage extends StorageBase {
     } catch (error) {
       return false;
     }
+  }
+
+  isOCFL() {
+    return true;
   }
 }
 

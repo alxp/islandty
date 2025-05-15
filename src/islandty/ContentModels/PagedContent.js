@@ -1,91 +1,161 @@
-const {build: buildIiif} = require('biiif');
-const {promises: fs} = require('fs');
+const { build: buildIiif } = require('biiif');
+const { promises: fs } = require('fs');
 const path = require('path');
-const defaultContentModel = require('./default.js');
-const {getChildContent, generateIiifMetadata} = require('../../_data/islandtyHelpers.js');
+const DefaultContentModel = require('./default.js');
+const { getChildContent, generateIiifMetadata } = require('../../_data/islandtyHelpers.js');
 const readCSV = require('../../_data/readCSV.js');
 require('dotenv').config();
 
-module.exports = {
-    async ingest(item, inputMediaPath, outputDir) {
-        console.log("Processing paged content model ingest");
+class PagedContentModel extends DefaultContentModel {
+  async ingest(item, inputMediaPath, outputDir) {
+    console.log("Processing paged content model ingest");
 
-        try {
-            const {items: allItems} = await readCSV();
-            const pages = getChildContent(allItems, item.id);
+    try {
+      // 1. Process core files through storage handler (preservation copies)
+      await super.ingest(item, inputMediaPath, outputDir);
 
-            if (pages.length > 0) {
-                // Process pages sequentially to maintain order
-                for (const page of pages) {
-                    if (page.file) {
-                        const inputFile = path.join(inputMediaPath, page.file);
-                        const fileName = path.basename(inputFile);
-                        const baseName = fileName.replace(/\.[^/.]+$/, "");
-                        const outputPath = path.join(outputDir, 'iiif', `_${baseName}`);
+      // 2. Always process IIIF derivatives to filesystem (working copies)
+      const { items: allItems } = await readCSV();
+      const pages = getChildContent(allItems, item.id);
 
-                        // Create directory if needed
-                        await fs.mkdir(outputPath, {recursive: true});
+      if (pages.length > 0) {
+        const iiifPath = path.join(
+          process.env.outputDir,
+          process.env.contentPath,
+          item.id,
+          'iiif'
+        );
 
-                        // Copy main file
-                        const destFile = path.join(outputPath, fileName);
-                        await fs.copyFile(inputFile, destFile);
-                        console.log(`Copied ${destFile}`);
+        // Create IIIF directory structure and copy source files
+        await this.createIIIFStructure(pages, inputMediaPath, iiifPath);
 
-                        // Handle hOCR files
-                        let hocrFile = page.hocr;
-                        if (!hocrFile) {
-                            // Check for implicit hOCR file
-                            const potentialHocrFile = path.join(
-                                path.dirname(inputFile),
-                                `${baseName}.hocr`
-                            );
-                            try {
-                                await fs.access(potentialHocrFile);
-                                hocrFile = potentialHocrFile;
-                                page.hocr = hocrFile;
-                                console.log(`Found hOCR file ${potentialHocrFile}`);
-                            } catch {
-                                // File doesn't exist, continue
-                            }
-                        }
+        // Generate IIIF metadata and build manifest
+        await this.processIIIFDerivatives(item, iiifPath);
+      }
 
-                        if (hocrFile) {
-                            const hocrFileName = path.basename(hocrFile);
-                            const hocrDest = path.join(outputPath, hocrFileName);
-                            await fs.copyFile(hocrFile, hocrDest);
-                            console.log(`Copied hOCR file ${hocrDest}`);
-                        }
-                    }
-                }
-
-                // Generate IIIF manifest and tiles
-                const iiifPath = path.join(outputDir, 'iiif');
-                generateIiifMetadata(item, iiifPath);
-
-                const prefix = process.env.pathPrefix || '/';
-                const iiifOptions = new URL(
-                        path.join(prefix, process.env.contentPath, item.id, 'iiif'),
-                        process.env.serverHost
-                    ).toString()
-                ;
-
-                // Wrap BIIIF build in promise
-                await new Promise((resolve, reject) => {
-                    buildIiif(iiifPath, iiifOptions)
-                        .then(resolve)
-                        .catch(reject);
-                });
-
-            }
-            // Process default ingestion
-            await defaultContentModel.ingest(item, inputMediaPath, outputDir);
-
-        } catch (err) {
-            throw new Error(`Paged content ingestion failed: ${err.message}`);
-        }
-    },
-
-    async updateFilePaths(item) {
-        defaultContentModel.updateFilePaths(item);
+    } catch (err) {
+      throw new Error(`Paged content ingestion failed: ${err.message}`);
     }
-};
+  }
+
+  buildFilesList(item, inputMediaPath, outputDir) {
+    const files = super.buildFilesList(item, inputMediaPath, outputDir);
+    this.addPageFiles(files, item, inputMediaPath);
+    return files;
+  }
+
+  async addPageFiles(files, item, inputMediaPath) {
+    try {
+      const { items: allItems } = await readCSV();
+      const pages = getChildContent(allItems, item.id);
+
+      for (const page of pages) {
+        if (page.file) {
+          const inputFile = path.join(inputMediaPath, page.file);
+          const fileName = path.basename(page.file);
+
+          // Store in OCFL (if enabled) under pages directory
+          files[inputFile] = path.join('pages', fileName);
+
+          // Add hOCR files if they exist
+          const hocrFile = await this.findHocrFile(page, inputMediaPath);
+          if (hocrFile) {
+            files[hocrFile] = path.join('pages', path.basename(hocrFile));
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error adding page files:', err);
+    }
+  }
+
+  async createIIIFStructure(pages, inputMediaPath, iiifPath) {
+    try {
+      // Process pages sequentially to maintain order
+      for (const page of pages) {
+        if (page.file) {
+          const inputFile = path.join(inputMediaPath, page.file);
+          const fileName = path.basename(inputFile);
+          const baseName = fileName.replace(/\.[^/.]+$/, "");
+          const pageOutputPath = path.join(iiifPath, `_${baseName}`);
+
+          // Create underscored directory
+          await fs.mkdir(pageOutputPath, { recursive: true });
+
+          // Copy main file to IIIF working directory
+          const destFile = path.join(pageOutputPath, fileName);
+          await fs.copyFile(inputFile, destFile);
+
+          // Copy hOCR file if exists
+          const hocrFile = await this.findHocrFile(page, inputMediaPath);
+          if (hocrFile) {
+            const hocrFileName = path.basename(hocrFile);
+            const hocrDest = path.join(pageOutputPath, hocrFileName);
+            await fs.copyFile(hocrFile, hocrDest);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error creating IIIF structure:', err);
+      throw err;
+    }
+  }
+
+
+  async findHocrFile(page, inputMediaPath) {
+    if (page.hocr) return path.join(inputMediaPath, page.hocr);
+
+    // Check for implicit hOCR file
+    const baseName = path.basename(page.file, path.extname(page.file));
+    const potentialHocrFile = path.join(
+      path.dirname(path.join(inputMediaPath, page.file)),
+      `${baseName}.hocr`
+    );
+
+    try {
+      await fs.access(potentialHocrFile);
+      return potentialHocrFile;
+    } catch {
+      return null;
+    }
+  }
+
+  async processIIIFDerivatives(item, iiifPath) {
+  try {
+    // Generate IIIF metadata using helper function
+    generateIiifMetadata(item, iiifPath);
+
+    // Build IIIF manifest
+    const prefix = process.env.pathPrefix || '/';
+    const iiifOptions = new URL(
+      path.join(prefix, process.env.contentPath, item.id, 'iiif'),
+      process.env.serverHost
+    ).toString();
+
+    await buildIiif(iiifPath, iiifOptions);
+
+    // Store IIIF manifest path in frontmatter
+    item.iiifManifest = path.join('iiif', 'manifest.json');
+
+  } catch (err) {
+    console.error('IIIF processing failed:', err);
+    throw err;
+  }
+}
+
+  async updateFilePaths(item) {
+    await super.updateFilePaths(item);
+
+    // Update IIIF manifest path
+    if (item.iiifManifest) {
+      item.iiifManifest = path.join(
+        process.env.contentPath,
+        item.id,
+        'iiif',
+        'manifest.json'
+      );
+    }
+  }
+}
+
+module.exports = PagedContentModel;
