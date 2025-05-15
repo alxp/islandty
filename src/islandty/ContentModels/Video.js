@@ -1,33 +1,35 @@
-const fs = require('fs').promises;
-const mediaHelpers = require('../lib/MediaHelpers.js');
 const path = require('path');
-const defaultContentModel = require('./default.js');
-require('dotenv').config();
+const DefaultContentModel = require('./default.js');
+const mediaHelpers = require('../lib/MediaHelpers.js');
 
-module.exports = {
-  async ingest(item, inputMediaPath, outputDir) {
-    try {
-      await defaultContentModel.ingest(item, inputMediaPath, outputDir);
-      await mediaHelpers.createDirectoryStructure(
-        mediaHelpers.parseFieldTrack(
-          item['media:video:field_track']
-        ),
-        inputMediaPath,
-        outputDir
-      );
-    } catch (err) {
-      throw new Error(`Media video ingestion failed: ${err.message}`);
-    }
-  },
-
-  async updateFilePaths(item) {
-    defaultContentModel.updateFilePaths(item);
+class VideoContentModel extends DefaultContentModel {
+  buildFilesList(item, inputMediaPath, outputDir) {
+    const files = super.buildFilesList(item, inputMediaPath, outputDir);
 
     if (item['media:video:field_track']) {
-      const outputDir = path.join('/', process.env.contentPath, item.id);
-      item['media:video:field_track'] = mediaHelpers.updateTrackField(item['media:video:field_track'], outputDir);
+      const trackStructure = mediaHelpers.parseFieldTrack(item['media:video:field_track']);
+      const trackFiles = mediaHelpers.flattenTrackStructure(trackStructure);
+
+      Object.entries(trackFiles).forEach(([relPath, destPath]) => {
+        const srcPath = path.join(inputMediaPath, relPath);
+        files[srcPath] = destPath;
+      });
     }
-  },
 
+    return files;
+  }
 
-};
+  async updateFilePaths(item) {
+    await super.updateFilePaths(item);
+
+    if (item['media:video:field_track']) {
+      const basePath = await this.storageHandler.getContentBasePath(item.id);
+      item['media:video:field_track'] = mediaHelpers.updateTrackField(
+        item['media:video:field_track'],
+        basePath
+      );
+    }
+  }
+}
+
+module.exports = VideoContentModel;
