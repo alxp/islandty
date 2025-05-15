@@ -40,9 +40,19 @@ class FileSystemStorage extends StorageBase {
   async copyFiles(filesMap, inputMediaPath, outputDir) {
     await fs.mkdir(outputDir, { recursive: true });
 
-    await Promise.all(Object.entries(filesMap).map(async ([srcPath, destFileName]) => {
-      const outputPath = path.join(outputDir, destFileName);
-      await fs.copyFile(srcPath, outputPath);
+    await Promise.all(Object.entries(filesMap).map(async ([srcPath, destPath]) => {
+      const fullDestPath = path.join(outputDir, destPath);
+      const destDir = path.dirname(fullDestPath);
+
+      try {
+        // Create directory structure if needed
+        await fs.mkdir(destDir, { recursive: true });
+        await fs.copyFile(srcPath, fullDestPath);
+        console.log(`Copied ${srcPath} to ${fullDestPath}`);
+      } catch (err) {
+        console.error(`Error copying ${srcPath}:`, err);
+        throw err;
+      }
     }));
   }
 

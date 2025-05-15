@@ -253,7 +253,6 @@ module.exports = {
    * Also gives content models a chance to modify the data.
    */
   objectIndexMetadata(items, object) {
-    console.log("lunr debug, object ID: " + object.data.id);
     if (object.data.field_model == 'Page') {
       const parent = this.getParentContent(items, object.data.parent_id);
       let page = object.data.field_weight;

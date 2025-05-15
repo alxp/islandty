@@ -13,7 +13,8 @@ class AudioContentModel extends DefaultContentModel {
 
       Object.entries(trackFiles).forEach(([relPath, destPath]) => {
         const srcPath = path.join(inputMediaPath, relPath);
-        files[srcPath] = destPath;
+        // Preserve directory structure in destination path
+        files[srcPath] = destPath; // destPath already includes subdirectories
       });
     }
 
