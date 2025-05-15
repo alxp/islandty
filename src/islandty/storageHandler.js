@@ -217,7 +217,7 @@ class OCFLStorage extends StorageBase {
   async objectExists(object) {
     try {
       const inventory = await object.getInventory();
-      return inventory !== null;
+      return !(!inventory);
     } catch (error) {
       return false;
     }

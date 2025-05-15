@@ -129,7 +129,7 @@ module.exports = {
 
     // Check x.data.parent_id if it exists
     const parentId2 = x.data?.parent_id;
-    const parentId2Valid = parentId2 && typeof parentId2 === 'string' && parentId2.includes(item_id);
+    const parentId2Valid = parentId2 && typeof parentId2 === 'object' && parentId2.includes(item_id);
 
     // Return true if either condition is met
     return parentId1Valid || parentId2Valid;
