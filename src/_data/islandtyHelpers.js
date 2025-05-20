@@ -195,10 +195,10 @@ module.exports = {
     fieldInfo = require('../../config/islandtyFieldInfo.json');
     field = fieldInfo[fieldname]
     if (field.cardinality == "1") {
-      return items.filter(x => x[fieldname] == value);
+      return items.filter(x => x['data'][fieldname] == value);
     }
     else {
-      return items.filter(x => value in x[fieldname]);
+      return items.filter(x => value in x['data'][fieldname]);
     }
   },
 
