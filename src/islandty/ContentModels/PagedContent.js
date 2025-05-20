@@ -94,17 +94,6 @@ class PagedContentModel extends DefaultContentModel {
 
 
   async createIIIFStructure(item, pages, inputMediaPath, iiifPath) {
-    // Get actual version from OCFL
-    const version = await this.getLatestOcflVersion(item.id);
-    const ocflContentPath = path.join(
-      process.env.outputDir,
-      'ocfl-files',
-      item.id,
-      version,
-      'content'
-    );
-
-    // Copy files from OCFL to IIIF directory
     for (const [index, page] of pages.entries()) {
       if (!page.file) continue;
 
@@ -114,53 +103,77 @@ class PagedContentModel extends DefaultContentModel {
 
       await fs.mkdir(iiifPageDir, { recursive: true });
 
-      // Construct source path using OCFL-preserved files
-      const ocflImagePath = path.join(
-        ocflContentPath,
-        'pages',
-        `${index.toString().padStart(4, '0')}_${path.basename(page.file)}`
-      );
-
-      // Verify file exists before copying
-      try {
-        await fs.access(ocflImagePath);
-      } catch {
-        throw new Error(`Missing OCFL file: ${ocflImagePath}`);
+      // Handle main image file
+      let sourcePath;
+      if (this.storageHandler.isOCFL()) {
+        const version = await this.getLatestOcflVersion(item.id);
+        const ocflContentPath = path.join(
+          process.env.outputDir,
+          'ocfl-files',
+          item.id,
+          version,
+          'content'
+        );
+        sourcePath = path.join(
+          ocflContentPath,
+          'pages',
+          `${index.toString().padStart(4, '0')}_${path.basename(page.file)}`
+        );
+      } else {
+        sourcePath = path.join(inputMediaPath, page.file);
       }
 
-      const iiifImagePath = path.join(iiifPageDir, path.basename(page.file));
-      await fs.copyFile(ocflImagePath, iiifImagePath);
+      const destPath = path.join(iiifPageDir, path.basename(page.file));
+      await fs.copyFile(sourcePath, destPath);
 
-      // Copy hOCR file if exists
+      // Handle hOCR file
       const hocrFile = await this.findHocrFile(page, inputMediaPath);
       if (hocrFile) {
-        const hocrFileName = path.basename(hocrFile);
-        const ocflHocrPath = path.join(ocflContentPath, `pages/${index.toString().padStart(4, '0')}_${hocrFileName}`);
-        const iiifHocrPath = path.join(iiifPageDir, hocrFileName);
-        await fs.copyFile(ocflHocrPath, iiifHocrPath);
+        let hocrSource;
+        if (this.storageHandler.isOCFL()) {
+          const version = await this.getLatestOcflVersion(item.id);
+          const ocflContentPath = path.join(
+            process.env.outputDir,
+            'ocfl-files',
+            item.id,
+            version,
+            'content'
+          );
+          hocrSource = path.join(
+            ocflContentPath,
+            'pages',
+            `${index.toString().padStart(4, '0')}_${path.basename(hocrFile)}`
+          );
+        } else {
+          hocrSource = hocrFile;
+        }
+
+        const hocrDest = path.join(iiifPageDir, path.basename(hocrFile));
+        await fs.copyFile(hocrSource, hocrDest);
       }
     }
   }
 
   async getLatestOcflVersion(objectId) {
+    if (!this.storageHandler.isOCFL()) return 'v1'; // Dummy version for FS
+
     try {
       const object = this.storageHandler.storage.object(objectId);
       const inventory = await object.getInventory();
       return inventory.head;
     } catch (error) {
-      return 'v1'; // Fallback for new objects
+      return 'v1';
     }
   }
 
   async storeIIIFState(item, iiifPath) {
     if (this.storageHandler.isOCFL()) {
+      // Only write version file for OCFL
       try {
         const version = await this.getLatestOcflVersion(item.id);
         await fs.writeFile(path.join(iiifPath, '.ocfl-version'), version);
       } catch (error) {
         console.error('Error storing IIIF state:', error);
-        // Fallback to writing v1 if version can't be determined
-        await fs.writeFile(path.join(iiifPath, '.ocfl-version'), 'v1');
       }
     }
   }
