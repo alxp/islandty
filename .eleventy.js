@@ -82,6 +82,7 @@ module.exports = async config => {
     config.addPlugin(rssPlugin);
 
     config.addPlugin(miradorPlugin, {
+      miradorAppUrl: "/js/mirador.js",
         window: {
             textOverlay: {
                 enabled: true,

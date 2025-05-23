@@ -26,3 +26,6 @@ src/linked-agent
 
 # Compiled XSLT transforms
 *.sef.json
+
+# Mirador build directory
+mirador-integration-islandora

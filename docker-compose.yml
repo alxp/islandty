@@ -11,6 +11,7 @@ services:
       - ../islandora_demo_objects:/islandty/islandora_demo_objects
       - ./config:/islandty/config
       - ./src:/islandty/src
+      - ./scripts:/islandty/scripts
       - ./web:/islandty/web
     environment:
       inputMediaPath: ./islandora_demo_objects
