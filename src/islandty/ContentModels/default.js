@@ -1,12 +1,12 @@
 const path = require('path');
 const islandtyHelpers = require('../../_data/islandtyHelpers.js');
 const { createStorageHandler } = require('../storageHandler');
-require('dotenv').config();
+require('dotenv');
 
 class DefaultContentModel {
   async init() {
     this.storageHandler = await createStorageHandler(
-      process.env.storageConfig ? JSON.parse(process.env.storageConfig) : {}
+      process.env.ocfl
     );
     return this;
   }

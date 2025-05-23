@@ -246,12 +246,12 @@ class OCFLStorage extends StorageBase {
 module.exports = {
   FileSystemStorage,
   OCFLStorage,
-  createStorageHandler: async (config) => {
-    if (config?.ocfl === true) {
-      const handler = new OCFLStorage(config);
+  createStorageHandler: async (useOcfl) => {
+    if (useOcfl) {
+      const handler = new OCFLStorage({ "ocfl": true, "layout": "FlatDirectStorageLayout"});
       return handler.initialize();
     }
-    return new FileSystemStorage(config);
+    return new FileSystemStorage({"ocfl": false});
   }
 
 
