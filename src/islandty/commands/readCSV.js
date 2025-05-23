@@ -42,19 +42,21 @@ async function main() {
         item.id = item.node_id;
       }
       let contentModelName = item.field_model.split(':').pop().replace(/\s+/g, '');
-      let contentModel;
+      let ContentModelClass;
 
       try {
-        contentModel = require(`../../islandty/ContentModels/${contentModelName}`);
+        ContentModelClass = require(`../../islandty/ContentModels/${contentModelName}`);
       } catch (e) {
         if (e.code !== 'MODULE_NOT_FOUND') throw e;
-        contentModel = require('../../islandty/ContentModels/default');
+        ContentModelClass = require('../../islandty/ContentModels/default');
       }
 
-      // Ingest media files
-            const objectOutputDir = path.join(process.env.outputDir, process.env.contentPath, item.id);
-            await contentModel.ingest(item, inputMediaPath, objectOutputDir);
-      // Update file paths
+      const contentModel = new ContentModelClass();
+      await contentModel.init();
+
+      // Process files using content model
+      const objectOutputDir = path.join(process.env.outputDir, process.env.contentPath, item.id);
+      await contentModel.ingest(item, inputMediaPath, objectOutputDir);
       await contentModel.updateFilePaths(item);
 
       const transformedItem = islandtyHelpers.transformKeys(item, fieldInfo);

@@ -3,6 +3,26 @@ const path = require('path');
 
 module.exports = {
 
+  flattenTrackStructure(trackStructure) {
+      const files = {};
+      const processNode = (node, pathParts = []) => {
+        for (const [key, value] of Object.entries(node)) {
+          const newPath = [...pathParts, key];
+          if (this.isDirectoryNode(value)) {
+            processNode(value, newPath);
+          } else {
+            const destPath = path.posix.join(...newPath);
+            for (const filePath of value) {
+              const fileName = path.posix.basename(filePath);
+              files[filePath] = path.posix.join(destPath, fileName);
+            }
+          }
+        }
+      };
+      processNode(trackStructure);
+      return files;
+    },
+
   parseFieldTrack(fieldTrackStr, trackFieldName) {
     const result = {};
 

@@ -8,6 +8,7 @@ you can use the same input files to generate a static website.
 
 ## Features
 
+- OCFL - All objects are stored as single OCFL objects. Changing files automatically results in a new OCFL version being minted.
 - MODS support
 - Mirador viewer with embedded hOCR
 - Content-model based system that moves files into place and can be used to generate derivatives.
@@ -116,20 +117,35 @@ The value is an array that can contain the following elements:
 * `"type"`: Optional. It may be either
 	* `"typed_relation"`: parse the field using Workbench's Typed Relation protocols
  	* `"subject"`: parse the field as though it is a Workbench Taxonomy Term.
-	  In your data, a vocabulary may be prepended to the term with a colon 
-	  (e.g. `field_model:Image`) and Islandty will only display the term (e.g. "Image"). This type option will not work for terms that contain 
-	  colons. This type option also populates the metadata table with a 
+	  In your data, a vocabulary may be prepended to the term with a colon
+	  (e.g. `field_model:Image`) and Islandty will only display the term (e.g. "Image"). This type option will not work for terms that contain
+	  colons. This type option also populates the metadata table with a
 	  multi-row header if the field is multi-valued.
-  	* `"file"`: Required if intending to use this file in Islandty. By 
-	  default, it will render a downloadable file link in the metadata table. 
-	    See also: 
+  	* `"file"`: Required if intending to use this file in Islandty. By
+	  default, it will render a downloadable file link in the metadata table.
+	    See also:
 	  the `"metadata_display"` option and the `"downloadable"` option.
   	* If empty, fields will be treated as strings.
 * `"metadata_display"` Optional, defaults to `true`. If `false` (or if the column is not listed in
 this file), then the values will not be displayed in the metadata table.
-* `"downloadable"` Optional, defaults to `false`. Render a downloadable file 
+* `"downloadable"` Optional, defaults to `false`. Render a downloadable file
   link in a "File Downloads" section below the metadata.
 The metadata table will be populated in the order that fields appear in this file.
+
+#### Islandora Workbench Field Metadata
+
+If you used the export_csv Islandora Workbench command,
+then field data will have been exported at the top of the CSV file.
+
+Islandty uses this data instead if it exists.
+
+This is enabled by setting:
+
+```ini
+CSVOverrideFieldInfo=true
+```
+
+in your .env file.
 
 ### Generate and run the site locally.
 
@@ -147,7 +163,7 @@ Add a `mods` column to the CSV input data file
 to have Islandty include MODS data in the
 object's metadata section directly. This lets you avoid
 having to extract all of those fields
-to CSV columns if your source metadata is in MODS format. 
+to CSV columns if your source metadata is in MODS format.
 Islandty uses an XSLT to extract metadata for display.
 
 ## hOCR support

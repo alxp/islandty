@@ -16,6 +16,7 @@
   "dependencies": {
     "@11ty/eleventy-cache-assets": "^2.3.0",
     "@11ty/eleventy-plugin-rss": "^2.0.3",
+    "@ocfl/ocfl-fs": "^0.2.2",
     "biiif": "github:alxp/biiif#master-dist",
     "concurrently": "^9.1.2",
     "csv": "^6.3.8",
