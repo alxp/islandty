@@ -204,6 +204,8 @@ module.exports = {
 
 
   searchIndex(article) {
+const fullTextFileFields = ['extracted'];
+
     let isString = value => typeof value === 'string' || value instanceof String;
     let getIndexValue = function (value, result = '') {
       if (!(isString(value))) {
@@ -214,7 +216,12 @@ module.exports = {
         }
       }
       else {
-        result += value;
+        if (fullTextFileFields.includes(key) && value !== '') {
+          result += fs.readFileSync(path.join(process.env.outputDir, value), { encoding: 'utf8' });
+        }
+        else {
+          result += value;
+        }
         result += ' '
       }
       return result;

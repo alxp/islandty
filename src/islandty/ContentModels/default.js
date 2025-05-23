@@ -33,10 +33,7 @@ class DefaultContentModel {
 
   async updateFilePaths(item) {
     const fileFields = islandtyHelpers.getFileFields();
-    // Handle extracted text
-    if (item.extracted) {
-      //item.extractedText = await fs.readFile(path.join(process.env.outputDir, item['extracted']), { encoding: 'utf8' });
-    }
+
     for (const field of fileFields) {
       if (item[field]?.trim()) {
         const fileName = path.basename(item[field]);
