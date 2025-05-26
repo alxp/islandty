@@ -10,7 +10,7 @@
 			<th rowspan="{{ count }}">{{ islandtyFieldInfo[name]['label'] }}</th>
 		{% endif %}
 		<td>
-			<a href="/{{ contentPath }}/{{ targetItem.id | slugify }}">{{ targetItem.title }}</a>
+			<a href="/{{ contentPath }}/{{ targetItem.data.id | slugify }}">{{ targetItem.data.title }}</a>
 		</td>
 	</tr>
 {% endfor %}

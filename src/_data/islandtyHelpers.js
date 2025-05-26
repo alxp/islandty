@@ -49,6 +49,7 @@ module.exports = {
       return newRecord;
     });
   },
+
   generateIiifMetadata(book, bookPath) {
     const writeYamlFile = require('write-yaml-file');
     info = {
@@ -194,15 +195,17 @@ module.exports = {
     fieldInfo = require('../../config/islandtyFieldInfo.json');
     field = fieldInfo[fieldname]
     if (field.cardinality == "1") {
-      return items.filter(x => x[fieldname] == value);
+      return items.filter(x => x['data'][fieldname] == value);
     }
     else {
-      return items.filter(x => value in x[fieldname]);
+      return items.filter(x => value in x['data'][fieldname]);
     }
   },
 
 
   searchIndex(article) {
+const fullTextFileFields = ['extracted'];
+
     let isString = value => typeof value === 'string' || value instanceof String;
     let getIndexValue = function (value, result = '') {
       if (!(isString(value))) {
@@ -213,7 +216,12 @@ module.exports = {
         }
       }
       else {
-        result += value;
+        if (fullTextFileFields.includes(key) && value !== '') {
+          result += fs.readFileSync(path.join(process.env.outputDir, value), { encoding: 'utf8' });
+        }
+        else {
+          result += value;
+        }
         result += ' '
       }
       return result;
@@ -252,7 +260,6 @@ module.exports = {
    * Also gives content models a chance to modify the data.
    */
   objectIndexMetadata(items, object) {
-    console.log("lunr debug, object ID: " + object.data.id);
     if (object.data.field_model == 'Page') {
       const parent = this.getParentContent(items, object.data.parent_id);
       let page = object.data.field_weight;
