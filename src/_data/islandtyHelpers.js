@@ -71,6 +71,15 @@ module.exports = {
       (islandtyFieldInfo[field].metadata_display || islandtyFieldInfo[field].downloadable)
     );
   },
+
+  getMetadataFields() {
+    const islandtyFieldInfo = require('../../config/islandtyFieldInfo.json');
+    return Object.keys(islandtyFieldInfo).filter(field =>
+      !islandtyFieldInfo[field].metadata_display === false &&
+      islandtyFieldInfo[field].type !== 'file'
+    );
+  },
+
   /**
    * Returns the value of a property nested inside an array.
    *
