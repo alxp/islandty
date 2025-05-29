@@ -7,7 +7,7 @@ const slugifyWithCounter = require('@sindresorhus/slugify').slugifyWithCounter()
 
 module.exports = {
 
-  cleanInputData(data) {
+  cleanInputData: function (data, fieldInfo) {
     const fieldMappings = [
       { destination: 'id', source: 'node_id' },
       { destination: 'parent_id', source: 'field_member_of' }
@@ -304,8 +304,8 @@ const fullTextFileFields = ['extracted'];
       return null;
     }
   },
-  transformKeys(obj, csvFieldInfo = { labels: {}, cardinality: {} }) {
-    const jsonFieldInfo = require('../../config/islandtyFieldInfo.json');
+  transformKeys: function (obj, fieldInfo) {
+
 
     // Add permalink field.
     obj['permalink'] = '/' + process.env.contentPath + '/' + obj.id + '/index.html';
@@ -316,13 +316,7 @@ const fullTextFileFields = ['extracted'];
       const newKey = key.replace(/:/g, '_');
       let newValue = obj[key];
 
-      // Determine cardinality - prioritize CSV info over JSON
-      let cardinality = '1'; // default
-      if (csvFieldInfo.cardinality && csvFieldInfo.cardinality[key]) {
-        cardinality = csvFieldInfo.cardinality[key];
-      } else if (jsonFieldInfo[key] && jsonFieldInfo[key].cardinality) {
-        cardinality = jsonFieldInfo[key].cardinality;
-      }
+      const cardinality = csvFieldInfo.cardinality[key];
 
       // Split values if cardinality is not 1
       if (cardinality != '1' && typeof obj[key].split === 'function') {
@@ -338,10 +332,8 @@ const fullTextFileFields = ['extracted'];
       newObj['item'][newKey] = newValue;
 
       // Add label if available (prioritize CSV)
-      if (csvFieldInfo.labels && csvFieldInfo.labels[key]) {
-        newObj[`${newKey}_label`] = csvFieldInfo.labels[key];
-      } else if (jsonFieldInfo[key] && jsonFieldInfo[key].label) {
-        newObj[`${newKey}_label`] = jsonFieldInfo[key].label;
+      if (fieldInfo.labels && csvFieldInfo.labels[key]) {
+        newObj[`${newKey}_label`] = fieldInfo.labels[key];
       }
     }
     return newObj;

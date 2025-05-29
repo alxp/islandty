@@ -8,7 +8,7 @@ require('dotenv').config();
 
 
 class PagedContentModel extends DefaultContentModel {
-  async ingest(item, inputMediaPath, outputDir) {
+  async ingest(item, inputMediaPath, outputDir, fileFields) {
     console.log("Processing paged content model ingest");
 
     try {
@@ -17,7 +17,7 @@ class PagedContentModel extends DefaultContentModel {
       const pages = getChildContent(Object.values(allItems), item.id);
 
       // First copy files to OCFL
-      const filesMap = super.buildFilesList(item, inputMediaPath, outputDir);
+      const filesMap = super.buildFilesList(item, inputMediaPath, outputDir, fileFields);
       await this.addPageFiles(filesMap, pages, inputMediaPath);
       await this.storageHandler.copyFiles(filesMap, inputMediaPath, outputDir);
 

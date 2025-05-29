@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { promises: fs } = require("fs");
 const path = require('path');
+const generateMergedFieldConfig = require('../../islandty/generateFieldConfig');
 const islandtyHelpers = require('../../_data/islandtyHelpers.js');
 const readCSV = require('../../_data/readCSV.js');
 const slugify = require('slugify');
@@ -21,11 +22,22 @@ async function writePageTemplate(data, dir, fileName) {
   }
 }
 
+
+
 async function main() {
   console.log("Reading input CSV and generating template files for each repository object.");
 
   try {
-    const { items, fieldInfo } = await readCSV();
+    // Generate and save merged field config
+    const mergedConfig = await generateMergedFieldConfig();
+
+    // Load the merged config synchronously
+    const fieldInfo = require('../../config/mergedIslandtyFieldInfo.json');
+
+    // Read CSV with the merged config
+    const { items } = await readCSV(fieldInfo);
+
+
     const inputMediaPath = process.env.inputMediaPath;
     const outputDir = path.join("src", process.env.contentPath);
     const linkedAgentDir = "./src/islandty/staging/linked-agent";
@@ -55,9 +67,10 @@ async function main() {
       await contentModel.init();
 
       // Process files using content model
+      const fileFields = islandtyHelpers.getFileFields(fieldInfo);
       const objectOutputDir = path.join(process.env.outputDir, process.env.contentPath, item.id);
-      await contentModel.ingest(item, inputMediaPath, objectOutputDir);
-      await contentModel.updateFilePaths(item);
+      await contentModel.ingest(item, inputMediaPath, objectOutputDir, fileFields);
+      await contentModel.updateFilePaths(item, fileFields);
 
       const transformedItem = islandtyHelpers.transformKeys(item, fieldInfo);
 

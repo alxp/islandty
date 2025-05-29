@@ -8,7 +8,7 @@ class MediaWithTracksModel extends DefaultContentModel {
     this.trackField = trackField;
   }
 
-  buildFilesList(item, inputMediaPath, outputDir) {
+  buildFilesList(item, inputMediaPath, outputDir, fileFields) {
     const files = super.buildFilesList(item, inputMediaPath, outputDir);
 
     if (item[this.trackField]) {
@@ -24,8 +24,8 @@ class MediaWithTracksModel extends DefaultContentModel {
     return files;
   }
 
-  async updateFilePaths(item) {
-    await super.updateFilePaths(item);
+  async updateFilePaths(item, fileFields) {
+    await super.updateFilePaths(item, fileFields);
 
     if (item[this.trackField]) {
       const basePath = await this.storageHandler.getContentBasePath(item.id);

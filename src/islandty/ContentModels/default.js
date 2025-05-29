@@ -94,15 +94,15 @@ ${content}
 
 
 
-  async ingest(item, inputMediaPath, outputDir) {
+  async ingest(item, inputMediaPath, outputDir, fileFields) {
     const files = {
-      ...this.buildFilesList(item, inputMediaPath, outputDir),
-      ...await this.buildMetadataFiles(item)
+      ...this.buildFilesList(item, inputMediaPath, outputDir, fileFields),
+      ...this.buildMetadataFiles(item, fileFields)
     };
     await this.storageHandler.copyFiles(files, inputMediaPath, outputDir);
   }
 
-  buildFilesList(item, inputMediaPath, outputDir) {
+  buildFilesList(item, inputMediaPath, outputDir, fileFields) {
     const files = {};
     const fileFields = islandtyHelpers.getFileFields();
 
@@ -117,8 +117,8 @@ ${content}
     return files;
   }
 
-  async updateFilePaths(item) {
-    const fileFields = islandtyHelpers.getFileFields();
+  async updateFilePaths(item, fileFields) {
+
 
     for (const field of fileFields) {
       if (item[field]?.trim()) {
