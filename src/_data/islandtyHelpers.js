@@ -13,8 +13,8 @@ module.exports = {
       { destination: 'parent_id', source: 'field_member_of' }
     ];
 
-    return data.map(record => {
-      const newRecord = { ...record };
+
+      const newRecord = { ...data };
 
       for (const mapping of fieldMappings) {
         const dest = mapping.destination;
@@ -36,18 +36,18 @@ module.exports = {
       }
 
       for (const fieldName of ['field_model']) {
-        newRecord[fieldName] = record[fieldName].split(':').pop();
+        newRecord[fieldName] = data[fieldName].split(':').pop();
       }
 
       // The Islandora Workbench export feature sets missing file cells to "False".
       const fileFields = this.getFileFields();
       for (const fieldName of fileFields) {
-        if (record[fieldName] == 'False') {
+        if (data[fieldName] == 'False') {
           newRecord.fieldName = '';
         }
       }
       return newRecord;
-    });
+
   },
 
   generateIiifMetadata(book, bookPath) {
@@ -316,7 +316,7 @@ const fullTextFileFields = ['extracted'];
       const newKey = key.replace(/:/g, '_');
       let newValue = obj[key];
 
-      const cardinality = csvFieldInfo.cardinality[key];
+      const cardinality = fieldInfo.cardinality[key];
 
       // Split values if cardinality is not 1
       if (cardinality != '1' && typeof obj[key].split === 'function') {

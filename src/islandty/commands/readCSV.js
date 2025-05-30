@@ -32,7 +32,7 @@ async function main() {
     const mergedConfig = await generateMergedFieldConfig();
 
     // Load the merged config synchronously
-    const fieldInfo = require('../../config/mergedIslandtyFieldInfo.json');
+    const fieldInfo = require('../../../config/mergedIslandtyFieldInfo.json');
 
     // Read CSV with the merged config
     const { items } = await readCSV(fieldInfo);
