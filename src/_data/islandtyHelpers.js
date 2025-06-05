@@ -64,13 +64,22 @@ module.exports = {
   },
 
   getFileFields() {
-    const islandtyFieldInfo = require('../../config/islandtyFieldInfo.json');
+    const islandtyFieldInfo = require('../../config/mergedIslandtyFieldInfo.json');
 
     return Object.keys(islandtyFieldInfo).filter((field) =>
       islandtyFieldInfo[field].type === 'file' &&
       (islandtyFieldInfo[field].metadata_display || islandtyFieldInfo[field].downloadable)
     );
   },
+
+  getMetadataFields() {
+    const islandtyFieldInfo = require('../../config/mergedIslandtyFieldInfo.json');
+    return Object.keys(islandtyFieldInfo).filter(field =>
+      !islandtyFieldInfo[field].metadata_display === false &&
+      islandtyFieldInfo[field].type !== 'file'
+    );
+  },
+
   /**
    * Returns the value of a property nested inside an array.
    *
@@ -192,7 +201,7 @@ module.exports = {
    * @returns
    */
   itemsWithFieldValue(items, fieldname, value) {
-    fieldInfo = require('../../config/islandtyFieldInfo.json');
+    fieldInfo = require('../../config/mergedIslandtyFieldInfo.json');
     field = fieldInfo[fieldname]
     if (field.cardinality == "1") {
       return items.filter(x => x['data'][fieldname] == value);
@@ -296,7 +305,7 @@ const fullTextFileFields = ['extracted'];
     }
   },
   transformKeys(obj, csvFieldInfo = { labels: {}, cardinality: {} }) {
-    const jsonFieldInfo = require('../../config/islandtyFieldInfo.json');
+    const jsonFieldInfo = require('../../config/mergedIslandtyFieldInfo.json');
 
     // Add permalink field.
     obj['permalink'] = '/' + process.env.contentPath + '/' + obj.id + '/index.html';
