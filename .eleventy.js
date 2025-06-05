@@ -253,7 +253,7 @@ module.exports = async config => {
     config.addGlobalData('site', siteConfig);
 
     // Add field config to Eleventy
-    fieldConfig = require('./config/islandtyFieldInfo.json');
+    fieldConfig = require('./config/mergedIslandtyFieldInfo.json');
     config.addGlobalData('islandtyFieldInfo', fieldConfig);
 
 

@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { promises: fs } = require("fs");
 const path = require('path');
+const { getMergedFieldConfig } = require('../../_data/fieldConfigHelper.js');
 const islandtyHelpers = require('../../_data/islandtyHelpers.js');
 const readCSV = require('../../_data/readCSV.js');
 const slugify = require('slugify');
@@ -25,7 +26,13 @@ async function main() {
   console.log("Reading input CSV and generating template files for each repository object.");
 
   try {
-    const { items, fieldInfo } = await readCSV();
+    // Generate and save merged field config
+    const mergedConfig = await getMergedFieldConfig();
+
+    // Load the merged config synchronously
+    const fieldInfo = require('../../../config/mergedIslandtyFieldInfo.json');
+
+    const { items } = await readCSV();
     const inputMediaPath = process.env.inputMediaPath;
     const outputDir = path.join("src", process.env.contentPath);
     const linkedAgentDir = "./src/islandty/staging/linked-agent";
