@@ -1,4 +1,5 @@
 require('dotenv').config();
+const {writeFileSync } = require('fs');
 const { promises: fs } = require("fs");
 const path = require('path');
 const { getMergedFieldConfig } = require('../../_data/fieldConfigHelper.js');
@@ -27,12 +28,12 @@ async function main() {
 
   try {
     // Generate and save merged field config
-    const mergedConfig = await getMergedFieldConfig();
+    const fieldInfo = await getMergedFieldConfig();
+    writeFileSync('./config/mergedIslandtyFieldInfo.json', JSON.stringify(fieldInfo));
 
-    // Load the merged config synchronously
-    const fieldInfo = require('../../../config/mergedIslandtyFieldInfo.json');
 
-    const items = islandtyHelpers.cleanInputData(await readCSV()['items']);
+    const rawItems = await readCSV();
+    const items = islandtyHelpers.cleanInputData(rawItems.items);
     const inputMediaPath = process.env.inputMediaPath;
     const outputDir = path.join("src", process.env.contentPath);
     const linkedAgentDir = "./src/islandty/staging/linked-agent";

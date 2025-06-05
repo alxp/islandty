@@ -154,7 +154,7 @@ function transformGoogleSheetsUrl(url, sheetName) {
 module.exports = async function () {
   try {
     let { items, fieldInfo } = await readCSV();
-    items = islandtyHelpers.cleanInputData(items);
+
     return {
       items: items,
       fieldInfo: fieldInfo
