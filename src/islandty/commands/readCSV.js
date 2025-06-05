@@ -32,7 +32,7 @@ async function main() {
     // Load the merged config synchronously
     const fieldInfo = require('../../../config/mergedIslandtyFieldInfo.json');
 
-    const { items } = await readCSV();
+    const items = islandtyHelpers.cleanInputData(await readCSV()['items']);
     const inputMediaPath = process.env.inputMediaPath;
     const outputDir = path.join("src", process.env.contentPath);
     const linkedAgentDir = "./src/islandty/staging/linked-agent";
