@@ -26,7 +26,7 @@ class StorageBase {
     throw new Error('Not implemented');
   }
 
-  getFullContentPath(itemId, fileName) {
+  getFullContentPath(item, field) {
     throw new Error('Not implemented');
   }
 }
@@ -75,8 +75,8 @@ class FileSystemStorage extends StorageBase {
     return `/${path.join(process.env.contentPath, itemId)}`;
   }
 
-  getFullContentPath(itemId, fileName) {
-    return `/${path.join(process.env.contentPath, itemId, fileName)}`;
+  getFullContentPath(item, field) {
+    return `/${path.join(process.env.contentPath, item.id, fileName)}`;
   }
 }
 
@@ -223,9 +223,13 @@ class OCFLStorage extends StorageBase {
   }
 
 
-  async getFullContentPath(itemId, fileName) {
-    const base = await this.getContentBasePath(itemId);
-    return `${base}/${fileName}`;
+  async getFullContentPath(item, field) {
+
+    const object = this.storage.object(item.id);
+    const inventory = await object.getInventory();
+    const filePath = inventory.getContentPath(item[field + '_digest']);
+
+    return `/ocfl-files/${item['id']}/${filePath}`;
   }
 
   async objectExists(object) {

@@ -123,7 +123,8 @@ ${content}
     for (const field of fileFields) {
       if (item[field]?.trim()) {
         const fileName = path.basename(item[field]);
-        item[field] = await this.storageHandler.getFullContentPath(item.id, fileName);
+        item[field + '_digest'] = await this.storageHandler.calculateFileHash(path.join(process.env.inputMediaPath, item[field]));
+        item[field] = await this.storageHandler.getFullContentPath(item, field);
       }
     }
 
