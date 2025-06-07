@@ -3,6 +3,7 @@ const fs = require('fs');
 const axios = require('axios');
 const { PassThrough } = require('stream');
 const islandtyHelpers = require('./islandtyHelpers.js');
+const process = require('process');
 
 function readCSV() {
   return new Promise((resolve, reject) => {
@@ -17,6 +18,18 @@ function readCSV() {
     const parser = csv.parse({
       skip_empty_lines: true,
       on_record: (record, context) => {
+
+        // Validate that CSV file has required columns.
+        let mandatory_csv_columns = ['id', 'title', 'file', 'field_model']
+        function validateHeaders(headers) {
+          mandatory_csv_columns.forEach(function(item) {
+            if (!headers.includes(item)) {
+              console.log(`ERROR: Mandatory column "${item}" is missing from the input spreadsheet.`)
+              process.exit(1);
+            }
+          });
+        }
+
         // Detect if this is the alternate format (first column contains "REMOVE THIS COLUMN")
         if (!headerSkipped && record[0] === 'REMOVE THIS COLUMN (KEEP THIS ROW)') {
           isAlternateFormat = true;
@@ -27,12 +40,14 @@ function readCSV() {
         // For the header row in alternate format, remove first column
         if (isAlternateFormat && !headerSkipped && headers.length === 0) {
           headers = record.slice(columnToIgnore);
+          validateHeaders(headers);
           headerSkipped = true;
           return null; // Skip this record
         }
 
         if (!isAlternateFormat && !headerSkipped && headers.length === 0) {
           headers = record;
+          validateHeaders(headers);
           headerSkipped = true;
           return null; // Skip this record
         }
@@ -69,7 +84,6 @@ function readCSV() {
         if (isAlternateFormat && columnToIgnore > 0) {
           return record.slice(columnToIgnore);
         }
-
         return record;
       }
     });
@@ -81,6 +95,17 @@ function readCSV() {
       stream
         .pipe(parser)
         .on('data', (record) => {
+          // Validate that record has mandatory values.
+          let mandatory_record_values = ['id', 'title']
+          function validateRecord(record) {
+            mandatory_record_values.forEach(function (field) {
+              if (!record[field]) {
+                console.log(`ERROR: record is missing mandatory field ${field}.`)
+                console.log(JSON.stringify(record));
+                process.exit(1);
+              }
+            })
+          }
           // Only push data records (skip header and skipped rows)
           if (record && headerSkipped) {
             // Convert array to object using headers
@@ -91,6 +116,7 @@ function readCSV() {
                 obj[header] = record[i];
               }
             });
+            validateRecord(obj);
             records.push(obj);
           }
         })
