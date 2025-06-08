@@ -3,7 +3,7 @@
 Islandty builds a static web site from a CSV or Google Sheets document input file formatted for [Islandora Workbench](https://github.com/mjordan/islandora_workbench), built on the
 [Eleventy](https://www.11ty.dev) platform.
 
-So if you use Islandora Workbench to populate an Islandora site
+So if you use Islandora Workbench with Islandora,
 you can use the same input files to generate a static website.
 
 ## Features
@@ -79,6 +79,8 @@ Islandty requires a CSV data file listing your objects. We say that it must be "
 * it may include additional columns with values. See section below, "Configure your fields".
 
 If you use Islandora Workbench to export objects from Islandora using the `export_csv` or `get_data_from_view` tasks, you can use that CSV as-is as an input data file. See section below, "Configure your fields".
+
+The `id` column is special and should contain distinct values. If a spreadsheet contains duplicates of an `id` value, undefined behaviour will result.
 
 ### Point to your binaries' root folder in `.env`
 
