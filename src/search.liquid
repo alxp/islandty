@@ -7,7 +7,7 @@ layout: 'layouts/content-list.html'
 
     <input type="search" id="search" v-model="term">
     <button @click="search" id="search-submit">Search</button>
-	<h2 ref="searchResultHeader" aria-live="assertive">All Repository Content</h2>
+	<h2 ref="searchResultHeader" aria-live="assertive"></h2>
     <div v-if="results" v-cloak>
 		<ul>
 			<li v-for="result in results">
