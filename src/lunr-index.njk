@@ -4,14 +4,13 @@ permalink: /index-raw.json
 
 [
 {% for object in collections.all %}
-
-{% if object.data.id %}
 {
+   {% if object.data.id %}
    "id": {{ loop.index0 }},
    "title": "{{object.data.title}}",
    "url": "{{object.url}}",
    "content": {% searchIndex object %}
+   {% endif %}
 } {% if loop.last == false %},{% endif %}
-{% endif %}
 {% endfor %} 
 ]
