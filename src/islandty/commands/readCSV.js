@@ -36,7 +36,9 @@ async function main() {
     const items = islandtyHelpers.cleanInputData(rawItems.items);
     const inputMediaPath = process.env.inputMediaPath;
     const outputDir = path.join("src", process.env.contentPath);
-    const linkedAgentDir = "./src/islandty/staging/linked-agent";
+    const stagingDir = process.env.stagingDir || "src/islandty/staging";
+    const objectStagingDir = path.join(stagingDir, process.env.objectStagingPath || "object");
+    const linkedAgentDir = path.join(stagingDir, process.env.linkedAgentStagingPath || "linked-agent");
 
     console.log('Using input media path:', inputMediaPath);
     console.log('Using output staging path:', outputDir);
@@ -97,7 +99,7 @@ async function main() {
 
       // Write page template
       transformedItem.layout = 'layouts/content-item.html';
-      await writePageTemplate(transformedItem, "./src/islandty/staging/object", `${item.id}.md`);
+      await writePageTemplate(transformedItem, objectStagingDir, `${item.id}.md`);
 
 
     }
