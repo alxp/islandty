@@ -18,7 +18,7 @@
     background: #f7f7f7;
 }
 .bg-primary {
-    background: #f80d67;
+    background: #aaae7f;
 }
 .bg-primary-shade {
     background: #aaae7f;
@@ -81,7 +81,7 @@
     color: #f7f7f7;
 }
 .color-primary {
-    color: #f80d67;
+    color: #aaae7f;
 }
 .color-primary-shade {
     color: #aaae7f;
@@ -473,7 +473,7 @@ a:not([class]) {
     font-decoration-color: #513aa6;
 }
 :focus {
-    outline: 2px dashed #f80d67;
+    outline: 2px dashed #aaae7f;
     outline-offset: 0.25rem;
 }
 main:focus {
@@ -504,14 +504,14 @@ h4 {
     border-radius: 0.25rem;
 }
 #search {
-    border: 1px solid #f80d67;
+    border: 1px solid #aaae7f;
     padding: 6px 12px;
     margin-bottom: 2em;
     width: 70%;
     font: inherit;
 }
 #search-submit {
-    border: 1px solid #f80d67;
+    border: 1px solid #aaae7f;
     background-color: #f7f7f7;
     padding: 6px 12px;
 }
@@ -715,7 +715,7 @@ th {
     }
 }
 .frame[data-frame="primary"]::before {
-    border-color: #f80d67;
+    border-color: #aaae7f;
 }
 .frame[data-frame="secondary"]::before {
     border-color: #d0d6b3;
@@ -786,7 +786,7 @@ th {
     color: #143109;
 }
 .headline[data-highlight="primary"]::after {
-    color: #f80d67;
+    color: #aaae7f;
 }
 .headline[data-highlight="secondary"]::after {
     color: #d0d6b3;
