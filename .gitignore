@@ -15,7 +15,6 @@ node_modules
 dist
 web
 config/mergedIslandtyFieldInfo.json
-src/_includes/css
 src/islandty/staging/*
 !src/islandty/staging/README.txt
 
