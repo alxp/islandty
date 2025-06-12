@@ -9,7 +9,7 @@ require('dotenv');
 class DefaultContentModel {
   async init() {
     this.storageHandler = await createStorageHandler(
-      process.env.ocfl
+      process.env.ocfl.toLocaleLowerCase() == 'true'
     );
     return this;
   }

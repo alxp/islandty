@@ -1,5 +1,7 @@
 const { isTest } = require('../../testUtils');
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'test') {
+  require('dotenv').config();
+}
 const {writeFileSync } = require('fs');
 const { promises: fs } = require("fs");
 const path = require('path');
@@ -139,7 +141,7 @@ async function main() {
       layout: 'layouts/linked-agent-type.html',
       permalink: '/linked-agent/{{ relator.slug }}/index.html'
     };
-    await writePageTemplate(linkedAgentsData, './src/islandty/staging/linked-agent', 'linked-agent.md');
+    await writePageTemplate(linkedAgentsData, linkedAgentDir, 'linked-agent.md');
 
     // Process all linked agent types
     for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLinkedAgents)) {
@@ -160,7 +162,7 @@ async function main() {
       };
       await writePageTemplate(
         linkedAgentNamespacePageData,
-        './src/islandty/staging/linked-agent',
+        linkedAgentDir,
         `${linkedAgentDatabaseName}.md`
       );
 
