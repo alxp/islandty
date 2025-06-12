@@ -29,3 +29,6 @@ src/linked-agent
 
 # Mirador build directory
 mirador-integration-islandora
+
+# Test output
+tests/output
