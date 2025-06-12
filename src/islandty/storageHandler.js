@@ -81,7 +81,7 @@ class FileSystemStorage extends StorageBase {
   }
 
   getFullContentPath(item, field) {
-    return `/${path.join(process.env.contentPath, item.id, item[field])}`;
+    return `/${path.join(process.env.contentPath, item.id, path.basename(item[field]))}`;
   }
 }
 
