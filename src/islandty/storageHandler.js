@@ -10,6 +10,11 @@ class StorageBase {
     this.config = config;
   }
 
+  async calculateFileHash(filePath) {
+    const fileBuffer = await fs.readFile(filePath);
+    return crypto.createHash('sha512').update(fileBuffer).digest('hex');
+  }
+
   async copyFiles(filesMap, inputMediaPath, outputDir) {
     throw new Error('Not implemented');
   }
@@ -76,7 +81,7 @@ class FileSystemStorage extends StorageBase {
   }
 
   getFullContentPath(item, field) {
-    return `/${path.join(process.env.contentPath, item.id, fileName)}`;
+    return `/${path.join(process.env.contentPath, item.id, item[field])}`;
   }
 }
 
@@ -85,7 +90,11 @@ class OCFLStorage extends StorageBase {
     super(config); // Call parent constructor first
     this.ocfl = require('@ocfl/ocfl-fs');
     this.storage = null;
-    this.ocflWebRoot = path.join(process.env.outputDir, 'ocfl-files');
+        // Use environment variable for OCFL root
+    this.ocflWebRoot = process.env.ocflRoot ||
+      path.join(process.env.outputDir, 'ocfl-files');    // Use environment variable for OCFL root
+    this.ocflWebRoot = process.env.ocflRoot ||
+      path.join(process.env.outputDir, 'ocfl-files');
   }
 
   async initialize() {
@@ -107,11 +116,6 @@ class OCFLStorage extends StorageBase {
       }
     }
     return this;
-  }
-
-  async calculateFileHash(filePath) {
-    const fileBuffer = await fs.readFile(filePath);
-    return crypto.createHash('sha512').update(fileBuffer).digest('hex');
   }
 
   async filesChanged(object, importItems) {
