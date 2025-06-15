@@ -1,18 +1,28 @@
 <div class="content-file-downloads">
+
+{% set filesList = [] %}
+{% for name, field in islandtyFieldInfo %}
+    {% if 'downloadable' in field and field['downloadable'] %}
+        {% if item[name] %}
+            {% set count = filesList.push({
+                'label': field['label'],
+                'displayText': item[name].split('/').pop(),
+                'url': item[name]
+            }) %}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+{% if filesList.length > 0 %}
     <h2>File Downloads</h2>
     <table>
-        {% for name, field in islandtyFieldInfo %}
-        {% if 'downloadable' in field and field['downloadable'] %}
-        {% if item[name] %}
+        {% for fileItem in filesList %}
         <tr>
-        <th>{{ field['label'] }}</th>
-        <td> <a href="{{ item[name] }}">{{ item[name].split('/').pop() }}</a></td>
+        <th>{{ fileItem.label }}</th>
+        <td><a href="{{ fileItem.url }}">{{ fileItem.displayText }}</a> </a></td>
         </tr>
-        {% endif %}
-        {% endif %}
         {% endfor %}
     </table>
-
-
+{% endif %}
 
 </div>
