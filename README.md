@@ -75,7 +75,6 @@ Islandty requires a CSV data file listing your objects. We say that it must be "
 * it must include an `id` column, and that column must be populated for every row,
 * it must include a `title` column, and that column must be populated for every row,
 * it must include a `file` column, though values in that column are optional,
-* it must include a `field_model` column, though values in that column are optional.
 * it may include additional columns with values. See section below, "Configure your fields".
 
 If you use Islandora Workbench to export objects from Islandora using the `export_csv` or `get_data_from_view` tasks, you can use that CSV as-is as an input data file. See section below, "Configure your fields".
