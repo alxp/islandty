@@ -49,8 +49,12 @@ async function main() {
       if (!item.id && item.node_id) {
         item.id = item.node_id;
       }
-      let contentModelName = item.field_model.split(':').pop().replace(/\s+/g, '');
+      let contentModelName;
       let ContentModelClass;
+
+      if ('field_model' in item) {
+        contentModelName = item.field_model.split(':').pop().replace(/\s+/g, '');
+      }
 
       try {
         ContentModelClass = require(`../../islandty/ContentModels/${contentModelName}`);
