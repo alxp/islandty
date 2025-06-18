@@ -1,4 +1,7 @@
-require('dotenv').config();
+const { isTest } = require('../../testUtils');
+if (process.env.NODE_ENV !== 'test') {
+  require('dotenv').config();
+}
 const {writeFileSync } = require('fs');
 const { promises: fs } = require("fs");
 const path = require('path');
@@ -17,6 +20,7 @@ async function writePageTemplate(data, dir, fileName) {
     const filePath = path.join(dir, fileName);
     await fs.writeFile(filePath, content);
     console.log('Islandty wrote ' + fileName);
+
   } catch (err) {
     console.error('Error writing template:', err);
     throw err;
@@ -25,6 +29,7 @@ async function writePageTemplate(data, dir, fileName) {
 
 async function main() {
   console.log("Reading input CSV and generating template files for each repository object.");
+
 
   try {
     // Generate and save merged field config
@@ -36,16 +41,25 @@ async function main() {
     const items = islandtyHelpers.cleanInputData(rawItems.items);
     const inputMediaPath = process.env.inputMediaPath;
     const outputDir = path.join("src", process.env.contentPath);
-    const linkedAgentDir = "./src/islandty/staging/linked-agent";
+    const stagingDir = process.env.stagingDir || "src/islandty/staging";
+    const objectStagingDir = path.join(stagingDir, process.env.objectStagingPath || "object");
+    const linkedAgentDir = path.join(stagingDir, process.env.linkedAgentStagingPath || "linked-agent");
 
     console.log('Using input media path:', inputMediaPath);
-    console.log('Using output staging path:', outputDir);
+
     console.log('Using Linked Agent staging path:', linkedAgentDir);
+
+    console.log('Staging directory:', path.resolve(process.env.stagingDir));
+    console.log('Object staging path:', path.resolve(process.env.objectStagingPath));
+    console.log('Output directory:', path.resolve(process.env.outputDir));
+
+
 
     const allLinkedAgents = {};
 
     // Process all items
     for (const item of Object.values(items)) {
+
       if (!item.id && item.node_id) {
         item.id = item.node_id;
       }
@@ -53,10 +67,19 @@ async function main() {
       let ContentModelClass;
 
       try {
-        ContentModelClass = require(`../../islandty/ContentModels/${contentModelName}`);
+        // Use different path resolution in test environment
+        //if (isTest()) {
+//          ContentModelClass = require(`../../src/islandty/ContentModels/${contentModelName}`);
+        //} else {
+          ContentModelClass = require(`../../islandty/ContentModels/${contentModelName}`);
+        //}
       } catch (e) {
         if (e.code !== 'MODULE_NOT_FOUND') throw e;
-        ContentModelClass = require('../../islandty/ContentModels/default');
+        //if (isTest()) {
+//          ContentModelClass = require(`../../src/islandty/ContentModels/default`);
+        //} else {
+          ContentModelClass = require(`../../islandty/ContentModels/default`);
+        //}
       }
 
       const contentModel = new ContentModelClass();
@@ -64,6 +87,9 @@ async function main() {
 
       // Process files using content model
       const objectOutputDir = path.join(process.env.outputDir, process.env.contentPath, item.id);
+      console.log(`Processing item ${item.id}`);
+      console.log(`Source file: ${path.join(inputMediaPath, item.file)}`);
+
       await contentModel.ingest(item, inputMediaPath, objectOutputDir);
       await contentModel.updateFilePaths(item);
 
@@ -97,7 +123,7 @@ async function main() {
 
       // Write page template
       transformedItem.layout = 'layouts/content-item.html';
-      await writePageTemplate(transformedItem, "./src/islandty/staging/object", `${item.id}.md`);
+      await writePageTemplate(transformedItem, objectStagingDir, `${item.id}.md`);
 
 
     }
@@ -115,7 +141,7 @@ async function main() {
       layout: 'layouts/linked-agent-type.html',
       permalink: '/linked-agent/{{ relator.slug }}/index.html'
     };
-    await writePageTemplate(linkedAgentsData, './src/islandty/staging/linked-agent', 'linked-agent.md');
+    await writePageTemplate(linkedAgentsData, linkedAgentDir, 'linked-agent.md');
 
     // Process all linked agent types
     for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLinkedAgents)) {
@@ -136,7 +162,7 @@ async function main() {
       };
       await writePageTemplate(
         linkedAgentNamespacePageData,
-        './src/islandty/staging/linked-agent',
+        linkedAgentDir,
         `${linkedAgentDatabaseName}.md`
       );
 
@@ -172,8 +198,15 @@ async function main() {
   }
 }
 
-// Execute main function
-main().catch(error => {
-  console.error('Unhandled error:', error);
-  process.exit(1);
-});
+// Export the main function for calling by tests.
+module.exports = {
+  main
+};
+
+// When the command is run directly.
+if (require.main === module) {
+  main().catch(error => {
+    console.error('Unhandled error:', error);
+    process.exit(1);
+  });
+}

@@ -8,7 +8,9 @@
     "readcsv": "node src/islandty/commands/readCSV.js",
     "compileLocalMirador": "node scripts/compile-mirador.js",
     "start": "npm run compileLocalMirador && node src/islandty/commands/readCSV.js && npx gulp && concurrently \"npx gulp watch\" \"npx eleventy --serve\"",
-    "production": "npm run compileLocalMirador && node src/islandty/commands/readCSV.js && NODE_ENV=production npx gulp && NODE_ENV=production npx eleventy"
+    "production": "npm run compileLocalMirador && node src/islandty/commands/readCSV.js && NODE_ENV=production npx gulp && NODE_ENV=production npx eleventy",
+    "test": "NODE_ENV=test jest --config=jest.config.js",
+    "test:watch": "NODE_ENV=test jest --watch"
   },
   "keywords": [],
   "author": "",
@@ -41,6 +43,10 @@
     "xslt3": "^2.6.0"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^3.0.0"
+    "@11ty/eleventy": "^3.0.0",
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "babel-jest": "^30.0.0-beta.3",
+    "jest": "^29.7.0"
   }
 }

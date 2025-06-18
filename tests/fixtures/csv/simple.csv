@@ -1,0 +1,3 @@
+id,field_model,title,file,field_linked_agent
+1,default,Test Item,file1.txt,"relators:crt:person:Test Creator"
+2,image,Test Image,image.jpg,"relators:pht:person:Test Photographer"
