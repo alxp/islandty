@@ -49,10 +49,6 @@ async function main() {
 
     console.log('Using Linked Agent staging path:', linkedAgentDir);
 
-    console.log('Staging directory:', path.resolve(process.env.stagingDir));
-    console.log('Object staging path:', path.resolve(process.env.objectStagingPath));
-    console.log('Output directory:', path.resolve(process.env.outputDir));
-
 
 
     const allLinkedAgents = {};
