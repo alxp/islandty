@@ -35,8 +35,11 @@ module.exports = {
         }
       }
 
+
       for (const fieldName of ['field_model']) {
-        newRecord[fieldName] = record[fieldName].split(':').pop();
+        if (fieldName in record) {
+          newRecord[fieldName] = record[fieldName].split(':').pop();
+        }
       }
 
       // The Islandora Workbench export feature sets missing file cells to "False".
@@ -156,6 +159,9 @@ module.exports = {
    * @returns {String} Name of the layout file.
    */
   getLayoutForContentModel(value) {
+    if (!value) {
+      return "partials/default-item.html";
+    }
     var slugify = require('slugify');
     let fileSlug = slugify(value);
     var layoutFile = `partials/${fileSlug}.html`;

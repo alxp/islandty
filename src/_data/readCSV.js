@@ -20,7 +20,7 @@ function readCSV() {
       on_record: (record, context) => {
 
         // Validate that CSV file has required columns.
-        let mandatory_csv_columns = ['id', 'title', 'file', 'field_model']
+        let mandatory_csv_columns = ['id', 'title', 'file']
         function validateHeaders(headers) {
           mandatory_csv_columns.forEach(function(item) {
             if (!headers.includes(item)) {
