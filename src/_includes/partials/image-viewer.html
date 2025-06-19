@@ -1,5 +1,9 @@
 {% set imageUrl = service %}
 
 <div class="content-image">
-    <img src="{{ ['/images/', imageUrl] | join }}"/>
+    <img src="{{  imageUrl }}"
+{% if image_alt_text | length %}
+alt="{{ image_alt_text }}"
+{% endif %}
+    />
 </div>

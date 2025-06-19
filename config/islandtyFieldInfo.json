@@ -129,6 +129,11 @@
         "label": "Display Hints",
         "cardinality": "-1"
     },
+    "image_alt_text": {
+        "label": "Image Alt Text",
+        "cardinality": "1",
+        "metadata_display": false
+    },
     "hocr": {
         "label": "hOCR",
         "cardinality": "1",
