@@ -19,7 +19,9 @@ async function getMergedFieldConfig() {
   if (csvOverrideEnabled) {
     try {
       const result = await readCSVModule();
-      if (result.fieldInfo) {
+      if (result.fieldInfo
+        && Object.keys(csvFieldInfo['labels']).length > 0
+      ) {
         csvFieldInfo = result.fieldInfo;
         console.log('CSV field info override is enabled - merging with JSON config');
       }
