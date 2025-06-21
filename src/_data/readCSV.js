@@ -21,9 +21,15 @@ function readCSV() {
 
         // Validate that CSV file has required columns.
         let mandatory_csv_columns = ['id', 'title', 'file']
+        let backup_csv_columns = {'id': 'node_id'}
         function validateHeaders(headers) {
           mandatory_csv_columns.forEach(function(item) {
             if (!headers.includes(item)) {
+              if (item in backup_csv_columns) {
+                if (headers.includes(backup_csv_columns[item])) {
+                  return;
+                }
+              }
               console.log(`ERROR: Mandatory column "${item}" is missing from the input spreadsheet.`)
               process.exit(1);
             }
@@ -97,9 +103,15 @@ function readCSV() {
         .on('data', (record) => {
           // Validate that record has mandatory values.
           let mandatory_record_values = ['id', 'title']
+          let backup_mandatory_fields = {'id': 'node_id'}
           function validateRecord(record) {
             mandatory_record_values.forEach(function (field) {
               if (!record[field]) {
+                if (field in backup_mandatory_fields) {
+                  if (record[backup_mandatory_fields[field]]) {
+                    return;
+                  }
+                }
                 console.log(`ERROR: record is missing mandatory field ${field}.`)
                 console.log(JSON.stringify(record));
                 process.exit(1);
