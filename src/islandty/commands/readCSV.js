@@ -1,15 +1,84 @@
+const axios = require('axios');
+const os = require('os');
+const https = require('https');
+const { promises: fs } = require('fs');
+const { createWriteStream } = require('fs');
 const { isTest } = require('../../testUtils');
 if (process.env.NODE_ENV !== 'test') {
   require('dotenv').config();
 }
-const {writeFileSync } = require('fs');
-const { promises: fs } = require("fs");
+const { writeFileSync } = require('fs');
+
 const path = require('path');
 const { getMergedFieldConfig } = require('../../_data/fieldConfigHelper.js');
 const islandtyHelpers = require('../../_data/islandtyHelpers.js');
 const readCSV = require('../../_data/readCSV.js');
 const slugify = require('slugify');
 const yaml = require('js-yaml');
+
+async function downloadFilesForItem(item) {
+  if (process.env.FILE_FIELDS_ARE_URLS.toLocaleLowerCase() !== 'true') return null;
+
+  const fileFields = islandtyHelpers.getFileFields();
+  const tempDir = path.join(os.tmpdir(), 'islandty-downloads', item.id);
+  await fs.mkdir(tempDir, { recursive: true });
+
+  let downloadedFiles = [];
+
+  for (const field of fileFields) {
+    if (!item[field]?.trim()) continue;
+
+    const url = item[field].trim();
+    if (!url.startsWith('http')) continue;
+
+    try {
+      const fileName = path.basename(new URL(url).pathname);
+      const tempPath = path.join(tempDir, fileName);
+
+      console.log(`Downloading ${url} to ${tempPath}`);
+      const response = await axios({
+        url,
+        method: 'GET',
+        responseType: 'stream',
+        httpsAgent: new https.Agent({ rejectUnauthorized: false }) // For self-signed certs
+      });
+
+      const writer = createWriteStream(tempPath);
+      response.data.pipe(writer);
+
+      await new Promise((resolve, reject) => {
+        writer.on('finish', resolve);
+        writer.on('error', reject);
+      });
+
+      // Keep track of downloaded files
+      downloadedFiles.push({
+        originalField: field,
+        originalUrl: url,
+        tempPath: tempPath
+      });
+
+      item[field] = tempPath; // Update to local path
+    } catch (error) {
+      console.error(`Failed to download ${url}: ${error.message}`);
+      throw error;
+    }
+  }
+
+  return { tempDir, downloadedFiles };
+}
+
+async function cleanupTempFilesForItem(tempDir) {
+  try {
+    if (tempDir) {
+      console.log(`Cleaning up temporary files for ${path.basename(tempDir)}`);
+      await fs.rm(tempDir, { recursive: true, force: true });
+    }
+  } catch (error) {
+    console.error('Error cleaning temp files:', error);
+  }
+}
+
 
 async function writePageTemplate(data, dir, fileName) {
   const yamlString = yaml.dump(data);
@@ -30,6 +99,7 @@ async function writePageTemplate(data, dir, fileName) {
 async function main() {
   console.log("Reading input CSV and generating template files for each repository object.");
 
+  const tempDirs = []; // Track temp directories for cleanup
 
   try {
     // Generate and save merged field config
@@ -39,6 +109,7 @@ async function main() {
 
     const rawItems = await readCSV();
     const items = islandtyHelpers.cleanInputData(rawItems.items);
+
     const inputMediaPath = process.env.inputMediaPath;
     const outputDir = path.join("src", process.env.contentPath);
     const stagingDir = process.env.stagingDir || "src/islandty/staging";
@@ -55,147 +126,160 @@ async function main() {
 
     // Process all items
     for (const item of Object.values(items)) {
-
-      if (!item.id && item.node_id) {
-        item.id = item.node_id;
-      }
-      let contentModelName;
-      let ContentModelClass;
-
-      if ('field_model' in item) {
-        contentModelName = item.field_model.split(':').pop().replace(/\s+/g, '');
-      }
+      let tempData = null;
 
       try {
-        // Use different path resolution in test environment
-        //if (isTest()) {
-//          ContentModelClass = require(`../../src/islandty/ContentModels/${contentModelName}`);
-        //} else {
+        // Download files if needed
+        tempData = await downloadFilesForItem(item);
+
+        if (!item.id && item.node_id) {
+          item.id = item.node_id;
+        }
+        let contentModelName;
+        let ContentModelClass;
+
+        if ('field_model' in item) {
+          contentModelName = item.field_model.split(':').pop().replace(/\s+/g, '');
+        }
+
+        try {
+          // Use different path resolution in test environment
+          //if (isTest()) {
+          //          ContentModelClass = require(`../../src/islandty/ContentModels/${contentModelName}`);
+          //} else {
           ContentModelClass = require(`../../islandty/ContentModels/${contentModelName}`);
-        //}
-      } catch (e) {
-        if (e.code !== 'MODULE_NOT_FOUND') throw e;
-        //if (isTest()) {
-//          ContentModelClass = require(`../../src/islandty/ContentModels/default`);
-        //} else {
+          //}
+        } catch (e) {
+          if (e.code !== 'MODULE_NOT_FOUND') throw e;
+          //if (isTest()) {
+          //          ContentModelClass = require(`../../src/islandty/ContentModels/default`);
+          //} else {
           ContentModelClass = require(`../../islandty/ContentModels/default`);
-        //}
-      }
+          //}
+        }
 
-      const contentModel = new ContentModelClass();
-      await contentModel.init();
+        const contentModel = new ContentModelClass();
+        await contentModel.init();
 
-      // Process files using content model
-      const objectOutputDir = path.join(process.env.outputDir, process.env.contentPath, item.id);
-      console.log(`Processing item ${item.id}`);
-      console.log(`Source file: ${path.join(inputMediaPath, item.file)}`);
+        // Process files using content model
+        const objectOutputDir = path.join(process.env.outputDir, process.env.contentPath, item.id);
+        console.log(`Processing item ${item.id}`);
+        console.log(`Source file: ${path.join(inputMediaPath, item.file)}`);
 
-      await contentModel.ingest(item, inputMediaPath, objectOutputDir);
-      await contentModel.updateFilePaths(item);
+        await contentModel.ingest(item, inputMediaPath, objectOutputDir);
+        await contentModel.updateFilePaths(item);
 
-      const transformedItem = islandtyHelpers.transformKeys(item, fieldInfo);
+        const transformedItem = islandtyHelpers.transformKeys(item, fieldInfo);
 
-      // Process linked agents
-      if (transformedItem.field_linked_agent) {
-        for (const [linkedAgentType, linkedAgents] of Object.entries(transformedItem.field_linked_agent)) {
-          if (!allLinkedAgents[linkedAgentType]) {
-            allLinkedAgents[linkedAgentType] = {};
-          }
+        // Process linked agents
+        if (transformedItem.field_linked_agent) {
+          for (const [linkedAgentType, linkedAgents] of Object.entries(transformedItem.field_linked_agent)) {
+            if (!allLinkedAgents[linkedAgentType]) {
+              allLinkedAgents[linkedAgentType] = {};
+            }
 
-          for (const [linkedAgentName, linkedAgentValues] of Object.entries(linkedAgents)) {
-            for (const linkedAgentValue of linkedAgentValues) {
-              if (!allLinkedAgents[linkedAgentType][linkedAgentName]) {
-                allLinkedAgents[linkedAgentType][linkedAgentName] = {};
+            for (const [linkedAgentName, linkedAgentValues] of Object.entries(linkedAgents)) {
+              for (const linkedAgentValue of linkedAgentValues) {
+                if (!allLinkedAgents[linkedAgentType][linkedAgentName]) {
+                  allLinkedAgents[linkedAgentType][linkedAgentName] = {};
+                }
+
+                if (!allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue]) {
+                  allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue] = {
+                    nameSlug: islandtyHelpers.strToSlugWithCounter(linkedAgentValue),
+                    values: []
+                  };
+                }
+
+                allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue]['values'].push(transformedItem.id);
               }
-
-              if (!allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue]) {
-                allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue] = {
-                  nameSlug: islandtyHelpers.strToSlugWithCounter(linkedAgentValue),
-                  values: []
-                };
-              }
-
-              allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue]['values'].push(transformedItem.id);
             }
           }
         }
-      }
 
-      // Write page template
-      transformedItem.layout = 'layouts/content-item.html';
-      await writePageTemplate(transformedItem, objectStagingDir, `${item.id}.md`);
+        // Write page template
+        transformedItem.layout = 'layouts/content-item.html';
+        await writePageTemplate(transformedItem, objectStagingDir, `${item.id}.md`);
 
 
-    }
 
-    // Create linked agent directory structure
-    await fs.mkdir(linkedAgentDir, { recursive: true });
 
-    // Write main linked agent file
-    const linkedAgentsData = {
-      pagination: {
-        data: 'collections.linkedAgent',
-        size: 1,
-        alias: 'relator'
-      },
-      layout: 'layouts/linked-agent-type.html',
-      permalink: '/linked-agent/{{ relator.slug }}/index.html'
-    };
-    await writePageTemplate(linkedAgentsData, linkedAgentDir, 'linked-agent.md');
+        // Create linked agent directory structure
+        await fs.mkdir(linkedAgentDir, { recursive: true });
 
-    // Process all linked agent types
-    for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLinkedAgents)) {
-      // Write JSON file
-      const agentFilePath = path.join(linkedAgentDir, `${linkedAgentDatabaseName}.json`);
-      await fs.writeFile(agentFilePath, JSON.stringify(linkedAgentTypes, null, 2));
-
-      // Create namespace page data
-      const linkedAgentNamespacePageData = {
-        pagination: {
-          data: `collections.linkedAgent_${linkedAgentDatabaseName}`,
-          size: 1,
-          alias: "relator",
-        },
-        layout: "layouts/linked-agent-type.html",
-        linkedAgentNamespace: linkedAgentDatabaseName,
-        permalink: `/${process.env.linkedAgentPath}/${linkedAgentDatabaseName}/{{ relator.slug }}/index.html`
-      };
-      await writePageTemplate(
-        linkedAgentNamespacePageData,
-        linkedAgentDir,
-        `${linkedAgentDatabaseName}.md`
-      );
-
-      // Create templates for each linked agent type
-      for (const linkedAgentTypeName of Object.keys(linkedAgentTypes)) {
-        const linkedAgentData = {
+        // Write main linked agent file
+        const linkedAgentsData = {
           pagination: {
-            data: `collections.linkedAgent_${linkedAgentDatabaseName}_${islandtyHelpers.strToSlug(linkedAgentTypeName)
-              }`,
+            data: 'collections.linkedAgent',
             size: 1,
-            alias: "relator",
+            alias: 'relator'
           },
-          layout: "layouts/linked-agent.html",
-          linkedAgentNamespace: linkedAgentDatabaseName,
-          permalink: `/${process.env.linkedAgentPath}/${linkedAgentDatabaseName}/${islandtyHelpers.strToSlug(linkedAgentTypeName)
-            }/{{ relator.slug }}/index.html`
+          layout: 'layouts/linked-agent-type.html',
+          permalink: '/linked-agent/{{ relator.slug }}/index.html'
         };
+        await writePageTemplate(linkedAgentsData, linkedAgentDir, 'linked-agent.md');
 
-        const linkedAgentPath = path.join(linkedAgentDir, linkedAgentDatabaseName);
-        const outputFile = `${islandtyHelpers.strToSlug(linkedAgentTypeName)}.md`;
+        // Process all linked agent types
+        for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLinkedAgents)) {
+          // Write JSON file
+          const agentFilePath = path.join(linkedAgentDir, `${linkedAgentDatabaseName}.json`);
+          await fs.writeFile(agentFilePath, JSON.stringify(linkedAgentTypes, null, 2));
 
-        await writePageTemplate(
-          linkedAgentData,
-          linkedAgentPath,
-          outputFile
-        );
+          // Create namespace page data
+          const linkedAgentNamespacePageData = {
+            pagination: {
+              data: `collections.linkedAgent_${linkedAgentDatabaseName}`,
+              size: 1,
+              alias: "relator",
+            },
+            layout: "layouts/linked-agent-type.html",
+            linkedAgentNamespace: linkedAgentDatabaseName,
+            permalink: `/${process.env.linkedAgentPath}/${linkedAgentDatabaseName}/{{ relator.slug }}/index.html`
+          };
+          await writePageTemplate(
+            linkedAgentNamespacePageData,
+            linkedAgentDir,
+            `${linkedAgentDatabaseName}.md`
+          );
+
+          // Create templates for each linked agent type
+          for (const linkedAgentTypeName of Object.keys(linkedAgentTypes)) {
+            const linkedAgentData = {
+              pagination: {
+                data: `collections.linkedAgent_${linkedAgentDatabaseName}_${islandtyHelpers.strToSlug(linkedAgentTypeName)
+                  }`,
+                size: 1,
+                alias: "relator",
+              },
+              layout: "layouts/linked-agent.html",
+              linkedAgentNamespace: linkedAgentDatabaseName,
+              permalink: `/${process.env.linkedAgentPath}/${linkedAgentDatabaseName}/${islandtyHelpers.strToSlug(linkedAgentTypeName)
+                }/{{ relator.slug }}/index.html`
+            };
+
+            const linkedAgentPath = path.join(linkedAgentDir, linkedAgentDatabaseName);
+            const outputFile = `${islandtyHelpers.strToSlug(linkedAgentTypeName)}.md`;
+
+            await writePageTemplate(
+              linkedAgentData,
+              linkedAgentPath,
+              outputFile
+            );
+          }
+        }
+
+      } finally {
+        // Cleanup temp files immediately after processing item
+        if (tempData) {
+          await cleanupTempFilesForItem(tempData.tempDir);
+        }
       }
     }
-
   } catch (error) {
     console.error('Error in main process:', error);
     process.exit(1);
   }
+
 }
 
 // Export the main function for calling by tests.

@@ -23,10 +23,6 @@ class StorageBase {
     return false;
   }
 
-  async updateFilePaths(item) {
-    throw new Error('Not implemented');
-  }
-
   getContentBasePath(itemId) {
     throw new Error('Not implemented');
   }
@@ -42,7 +38,7 @@ class FileSystemStorage extends StorageBase {
     // FileSystem-specific initialization
   }
 
-  async copyFiles(filesMap, inputMediaPath, outputDir) {
+  async copyFiles(item, filesMap, inputMediaPath, outputDir) {
     await fs.mkdir(outputDir, { recursive: true });
 
     await Promise.all(Object.entries(filesMap).map(async ([srcPath, destPath]) => {
@@ -54,26 +50,12 @@ class FileSystemStorage extends StorageBase {
         await fs.mkdir(destDir, { recursive: true });
         await fs.copyFile(srcPath, fullDestPath);
         console.log(`Copied ${srcPath} to ${fullDestPath}`);
+        item[fileField] = `/${path.join(process.env.contentPath, destPath)}`;
       } catch (err) {
         console.error(`Error copying ${srcPath}:`, err);
         throw err;
       }
     }));
-  }
-
-  async updateFilePaths(item) {
-    const fileFields = islandtyHelpers.getFileFields();
-    fileFields.forEach((fileField) => {
-      if (item[fileField] && item[fileField] !== "" && item[fileField] !== 'False') {
-        const fileName = path.basename(item[fileField]);
-        item[fileField] = `/${path.join(process.env.contentPath, item.id, fileName)}`;
-      }
-    });
-
-    if (item['extracted']) {
-      const extractedText = await fs.readFile(path.join(process.env.outputDir, item['extracted']), { encoding: 'utf8' });
-      item['extractedText'] = extractedText;
-    }
   }
 
   getContentBasePath(itemId) {
@@ -178,39 +160,6 @@ class OCFLStorage extends StorageBase {
           await transaction.import(src, dest);
         }
       });
-    }
-  }
-
-  async updateFilePaths(item) {
-    const fileFields = islandtyHelpers.getFileFields();
-
-    try {
-      const object = this.storage.object(item.id);
-      const inventory = await object.getInventory();
-      const latestVersion = inventory.head;
-
-      fileFields.forEach((fileField) => {
-        if (item[fileField] && item[fileField] !== "" && item[fileField] !== 'False') {
-          const fileName = path.basename(item[fileField]);
-          // Use latest version path
-          item[fileField] = `/ocfl-files/${item.id}/${latestVersion}/content/${fileName}`;
-        }
-      });
-
-      if (item['extracted']) {
-        try {
-          const extractedPath = path.basename(item['extracted']);
-          const extractedText = await object.read(extractedPath);
-          item['extractedText'] = extractedText.toString('utf8');
-          item['extracted'] = `/ocfl-files/${item.id}/${latestVersion}/content/${extractedPath}`;
-        } catch (error) {
-          console.error(`Error reading extracted text from OCFL object ${item.id}:`, error);
-          item['extractedText'] = '';
-        }
-      }
-    } catch (error) {
-      console.error(`Error updating paths for object ${item.id}:`, error);
-      throw error;
     }
   }
 
