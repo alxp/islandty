@@ -108,9 +108,9 @@ ${content}
 
     fileFields.forEach(field => {
       if (item[field]?.trim()) {
-        const srcPath = path.join(inputMediaPath, item[field]);
+
         const fileName = path.basename(item[field]);
-        files[srcPath] = fileName;
+        files[item[field]] = fileName;
       }
     });
 
@@ -123,8 +123,9 @@ ${content}
     for (const field of fileFields) {
       if (item[field]?.trim()) {
         const fileName = path.basename(item[field]);
-        item[field + '_digest'] = await this.storageHandler.calculateFileHash(path.join(process.env.inputMediaPath, item[field]));
+
         item[field] = await this.storageHandler.getFullContentPath(item, field);
+        item[field + '_digest'] = await this.storageHandler.calculateFileHash(path.join(process.env.outputDir, item[field]));
       }
     }
 
