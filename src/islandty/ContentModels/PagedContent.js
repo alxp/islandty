@@ -16,12 +16,11 @@ class PagedContentModel extends DefaultContentModel {
       const { items: allItems } = await readCSV();
       const pages = getChildContent(Object.values(allItems), item.id);
 
-      // First copy files to OCFL
       const filesMap = super.buildFilesList(item, inputMediaPath, outputDir);
       await this.addPageFiles(filesMap, pages, inputMediaPath);
-      const resultMap = await this.storageHandler.copyFiles(filesMap, inputMediaPath, outputDir);
+      const resultMap = await this.storageHandler.copyFiles(item, filesMap, inputMediaPath, outputDir);
 
-      // Then process IIIF after OCFL commit
+
       const iiifPath = path.join(
         process.env.outputDir,
         process.env.contentPath,
@@ -38,9 +37,14 @@ class PagedContentModel extends DefaultContentModel {
           await this.storeIIIFState(item, iiifPath);
         }
       }
+      await this.updateFilePaths(item, resultMap);
     } catch (err) {
       throw new Error(`Paged content ingestion failed: ${err.message}`);
     }
+    finally {
+      this.storageHandler.cleanup();
+    }
+
   }
 
   async addPageFiles(filesMap, pages, inputMediaPath) {
@@ -202,8 +206,8 @@ console.log('DEBUG filesMap: ' + JSON.stringify(filesMap));
   }
 }
 
-  async updateFilePaths(item) {
-    await super.updateFilePaths(item);
+  async updateFilePaths(item, filesMap) {
+    await super.updateFilePaths(item, filesMap);
 
     if (item.iiifManifest) {
       item.iiifManifest = path.join(
@@ -216,7 +220,7 @@ console.log('DEBUG filesMap: ' + JSON.stringify(filesMap));
 
     // Add direct link to IIIF manifest
     item.iiif_manifest_url = `${process.env.serverHost}/${item.iiifManifest}`;
-  }
+  item.extracted}
 }
 
 module.exports = PagedContentModel;

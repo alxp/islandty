@@ -12,6 +12,7 @@ class StorageBase {
 
   constructor(config = {}) {
     this.config = config;
+    this.tempDirs = []; // Track temp directories for cleanup
   }
 
   async calculateFileHash(filePath) {
@@ -19,7 +20,7 @@ class StorageBase {
     return crypto.createHash('sha512').update(fileBuffer).digest('hex');
   }
 
-  async copyFiles(filesMap, inputMediaPath, outputDir) {
+  async copyFiles(item, filesMap, inputMediaPath, outputDir) {
     throw new Error('Not implemented');
   }
 
@@ -27,9 +28,12 @@ class StorageBase {
     try {
       const tempDir = path.join(os.tmpdir(), 'islandty-downloads', destDir);
       await fs.mkdir(tempDir, { recursive: true });
+      this.tempDirs.push(tempDir); // Track for cleanup
+
       const fileName = path.basename(new URL(url).pathname);
       const tempPath = path.join(tempDir, fileName);
       console.log(`Downloading ${url} to ${tempPath}`);
+
       const response = await axios({
         url,
         method: 'GET',
@@ -48,16 +52,26 @@ class StorageBase {
       return tempPath;
     } catch (e) {
       console.log('Error downloading file at ' + url + '. ' + e);
-      await fs.rm(tempDir, { recursive: true, force: true });
+      await this.cleanup(); // Cleanup on error
       throw e;
     }
+  }
 
+  async cleanup() {
+    for (const dir of this.tempDirs) {
+      try {
+        await fs.rm(dir, { recursive: true, force: true });
+        console.log(`Cleaned up temporary directory: ${dir}`);
+      } catch (e) {
+        console.error(`Error cleaning up temporary directory ${dir}:`, e);
+      }
+    }
+    this.tempDirs = []; // Reset array
   }
 
   isOCFL() {
     return false;
   }
-
 
   async fetchHeaders(url) {
     try {
@@ -65,7 +79,7 @@ class StorageBase {
       if (response.status == 200) {
         return response.headers;
       }
-      else return false;
+      return false;
     } catch (er) {
       return er.message;
     }
@@ -78,16 +92,14 @@ class StorageBase {
   getFullContentPath(item, field) {
     throw new Error('Not implemented');
   }
-
 }
 
 class FileSystemStorage extends StorageBase {
   constructor(config = {}) {
-    super(config); // Call parent constructor
-    // FileSystem-specific initialization
+    super(config);
   }
 
-  async copyFiles(filesMap, inputMediaPath, outputDir) {
+  async copyFiles(item, filesMap, inputMediaPath, outputDir) {
     await fs.mkdir(outputDir, { recursive: true });
 
     // Create result map to store web paths
@@ -106,37 +118,33 @@ class FileSystemStorage extends StorageBase {
       try {
         // Create directory structure if needed
         await fs.mkdir(destDir, { recursive: true });
-        let remote = false;
         let canSkip = false;
-        if (srcPath.startsWith('http')) {
-          remote = true;
 
+        if (srcPath.startsWith('http')) {
           fullSrcPath = srcPath;
-          // Check modified date to determine if we need to re-download.
+          // Check modified date to determine if we need to re-download
           try {
             const destStats = await fs.stat(fullDestPath);
             const srcStats = await this.fetchHeaders(fullSrcPath);
-            canSkip = srcStats['content-length'] == destStats.size
-              && Date.parse(srcStats['last-modified']) <= Date.parse(destStats.mtime);
+            canSkip = srcStats['content-length'] == destStats.size &&
+              Date.parse(srcStats['last-modified']) <= Date.parse(destStats.mtime);
           } catch (e) {
             console.log('Error checking file stats: ' + e);
           }
+
           if (!canSkip) {
             fullSrcPath = await this.downloadFileFromUrl(fullSrcPath, destDir);
           }
-
-        }
-        else {
+        } else {
           fullSrcPath = path.join(process.env.inputMediaPath, srcPath);
         }
+
         if (!canSkip) {
           await fs.copyFile(fullSrcPath, fullDestPath);
           console.log(`Copied ${srcPath} to ${fullDestPath}`);
-        }
-        else {
+        } else {
           console.log(`Skipping ${srcPath} as it is unmodified.`);
         }
-
       } catch (err) {
         console.error(`Error copying ${srcPath}:`, err);
         throw err;
@@ -157,12 +165,9 @@ class FileSystemStorage extends StorageBase {
 
 class OCFLStorage extends StorageBase {
   constructor(config = {}) {
-    super(config); // Call parent constructor first
+    super(config);
     this.ocfl = require('@ocfl/ocfl-fs');
     this.storage = null;
-    // Use environment variable for OCFL root
-    this.ocflWebRoot = process.env.ocflRoot ||
-      path.join(process.env.outputDir, 'ocfl-files');    // Use environment variable for OCFL root
     this.ocflWebRoot = process.env.ocflRoot ||
       path.join(process.env.outputDir, 'ocfl-files');
   }
@@ -195,14 +200,12 @@ class OCFLStorage extends StorageBase {
       if (!exists) return true; // New object needs first version
 
       const currentFiles = new Map();
-
       const files = await object.files();
 
       // Get current files from latest version
       for (const file of files) {
-
         const hash = file.digest;
-        currentFiles.set(file, hash);
+        currentFiles.set(file.path, hash);
       }
 
       // Check if any files are different
@@ -232,21 +235,32 @@ class OCFLStorage extends StorageBase {
     }
   }
 
-  async copyFiles(filesMap, inputMediaPath, outputDir) {
+  async copyFiles(item, filesMap, inputMediaPath, outputDir) {
     if (!this.storage) await this.initialize();
-    const objectId = path.basename(outputDir);
+    const objectId = item.id;
     const object = this.storage.object(objectId);
 
-    const importItems = Object.entries(filesMap).map(([src, dest]) => [src, dest]);
-    const changesExist = await this.filesChanged(object, importItems);
-
-    // Create result map to store web paths
+    // Build result map to store web paths
     const resultMap = {};
     const baseContentPath = await this.getContentBasePath(objectId);
 
+    // Process files and download remote files
+    const importItems = [];
     for (const [srcPath, destPath] of Object.entries(filesMap)) {
+      let actualSrc = srcPath;
+
+      // Handle remote files
+      if (srcPath.startsWith('http')) {
+        actualSrc = await this.downloadFileFromUrl(srcPath, objectId);
+      } else {
+        actualSrc = path.join(process.env.inputMediaPath, srcPath);
+      }
+
+      importItems.push([actualSrc, destPath]);
       resultMap[srcPath] = `${baseContentPath}/${destPath}`;
     }
+
+    const changesExist = await this.filesChanged(object, importItems);
 
     if (changesExist) {
       await object.update(async (transaction) => {
@@ -254,13 +268,15 @@ class OCFLStorage extends StorageBase {
           await transaction.import(src, dest);
         }
       });
+      console.log(`Updated OCFL object ${objectId} with changes`);
+    } else {
+      console.log(`No changes detected for OCFL object ${objectId}, skipping update`);
     }
 
     return resultMap;
   }
 
   async getContentBasePath(itemId) {
-
     try {
       const object = this.storage.object(itemId);
       const inventory = await object.getInventory();
@@ -271,9 +287,7 @@ class OCFLStorage extends StorageBase {
     }
   }
 
-
   async getFullContentPath(item, field) {
-
     const object = this.storage.object(item.id);
     const inventory = await object.getInventory();
     const filePath = inventory.getContentPath(item[field + '_digest']);
@@ -284,7 +298,7 @@ class OCFLStorage extends StorageBase {
   async objectExists(object) {
     try {
       const inventory = await object.getInventory();
-      return !(!inventory);
+      return !!inventory;
     } catch (error) {
       return false;
     }
@@ -295,13 +309,15 @@ class OCFLStorage extends StorageBase {
   }
 }
 
-
 module.exports = {
   FileSystemStorage,
   OCFLStorage,
   createStorageHandler: async (useOcfl) => {
     if (useOcfl) {
-      const handler = new OCFLStorage({ "ocfl": true, "layout": "FlatDirectStorageLayout" });
+      const handler = new OCFLStorage({
+        "ocfl": true,
+        "layout": "FlatDirectStorageLayout"
+      });
       return handler.initialize();
     }
     return new FileSystemStorage({ "ocfl": false });

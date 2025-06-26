@@ -99,8 +99,9 @@ ${content}
       ...this.buildFilesList(item, inputMediaPath, outputDir),
       ...await this.buildMetadataFiles(item)
     };
-    const resultMap = await this.storageHandler.copyFiles(files, inputMediaPath, outputDir);
-    this.updateFilePaths(item, resultMap);
+    const resultMap = await this.storageHandler.copyFiles(item, files, inputMediaPath, outputDir);
+    await this.updateFilePaths(item, resultMap);
+    await this.storageHandler.cleanup();
   }
 
   buildFilesList(item, inputMediaPath, outputDir) {
@@ -123,9 +124,10 @@ ${content}
 
     for (const field of fileFields) {
       if (item[field]?.trim()) {
+        const newFilePath = filesMap[item[field]];
         const fileName = path.basename(item[field]);
 
-        item[field] = await this.storageHandler.getFullContentPath(item, field);
+        item[field] = newFilePath;
         item[field + '_digest'] = await this.storageHandler.calculateFileHash(path.join(process.env.outputDir, item[field]));
       }
     }
