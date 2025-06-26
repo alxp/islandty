@@ -1,4 +1,8 @@
+const axios = require('axios');
 const fs = require('fs').promises;
+const { createWriteStream } = require('fs');
+const https = require('https');
+const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
 const islandtyHelpers = require('../_data/islandtyHelpers.js');
@@ -19,8 +23,52 @@ class StorageBase {
     throw new Error('Not implemented');
   }
 
+  async downloadFileFromUrl(url, destDir) {
+    try {
+      const tempDir = path.join(os.tmpdir(), 'islandty-downloads', destDir);
+      await fs.mkdir(tempDir, { recursive: true });
+      const fileName = path.basename(new URL(url).pathname);
+      const tempPath = path.join(tempDir, fileName);
+      console.log(`Downloading ${url} to ${tempPath}`);
+      const response = await axios({
+        url,
+        method: 'GET',
+        responseType: 'stream',
+        httpsAgent: new https.Agent({ rejectUnauthorized: false }) // For self-signed certs
+      });
+
+      const writer = createWriteStream(tempPath);
+      response.data.pipe(writer);
+
+      await new Promise((resolve, reject) => {
+        writer.on('finish', resolve);
+        writer.on('error', reject);
+      });
+
+      return tempPath;
+    } catch (e) {
+      console.log('Error downloading file at ' + url + '. ' + e);
+      await fs.rm(tempDir, { recursive: true, force: true });
+      throw e;
+    }
+
+  }
+
   isOCFL() {
     return false;
+  }
+
+
+  async fetchHeaders(url) {
+    try {
+      const response = await axios.head(url);
+      if (response.status == 200) {
+        return response.headers;
+      }
+      else return false;
+    } catch (er) {
+      return er.message;
+    }
   }
 
   getContentBasePath(itemId) {
@@ -30,6 +78,7 @@ class StorageBase {
   getFullContentPath(item, field) {
     throw new Error('Not implemented');
   }
+
 }
 
 class FileSystemStorage extends StorageBase {
@@ -38,19 +87,48 @@ class FileSystemStorage extends StorageBase {
     // FileSystem-specific initialization
   }
 
-  async copyFiles(item, filesMap, inputMediaPath, outputDir) {
+  async copyFiles(filesMap, inputMediaPath, outputDir) {
     await fs.mkdir(outputDir, { recursive: true });
 
     await Promise.all(Object.entries(filesMap).map(async ([srcPath, destPath]) => {
       const fullDestPath = path.join(outputDir, destPath);
       const destDir = path.dirname(fullDestPath);
+      let fullSrcPath = false;
 
       try {
         // Create directory structure if needed
         await fs.mkdir(destDir, { recursive: true });
-        await fs.copyFile(srcPath, fullDestPath);
-        console.log(`Copied ${srcPath} to ${fullDestPath}`);
-        item[fileField] = `/${path.join(process.env.contentPath, destPath)}`;
+        let remote = false;
+        let canSkip = false;
+        if (srcPath.startsWith('http')) {
+          remote = true;
+
+          fullSrcPath = srcPath;
+          // Check modified date to determine if we need to re-download.
+          try {
+            const destStats = await fs.stat(fullDestPath);
+            const srcStats = await this.fetchHeaders(fullSrcPath);
+            canSkip = srcStats['content-length'] == destStats.size
+            && Date.parse(srcStats['last-modified']) <= Date.parse(destStats.mtime);
+          } catch (e) {
+            console.log('Error checking file stats: ' + e);
+          }
+          if (!canSkip) {
+            fullSrcPath = await this.downloadFileFromUrl(fullSrcPath, destDir);
+          }
+
+        }
+        else {
+          fullSrcPath = path.join(process.env.inputMediaPath, srcPath);
+        }
+        if (!canSkip) {
+          await fs.copyFile(fullSrcPath, fullDestPath);
+          console.log(`Copied ${srcPath} to ${fullDestPath}`);
+        }
+        else {
+          console.log(`Skipping ${srcPath} as it is unmodified.`);
+        }
+
       } catch (err) {
         console.error(`Error copying ${srcPath}:`, err);
         throw err;
@@ -72,7 +150,7 @@ class OCFLStorage extends StorageBase {
     super(config); // Call parent constructor first
     this.ocfl = require('@ocfl/ocfl-fs');
     this.storage = null;
-        // Use environment variable for OCFL root
+    // Use environment variable for OCFL root
     this.ocflWebRoot = process.env.ocflRoot ||
       path.join(process.env.outputDir, 'ocfl-files');    // Use environment variable for OCFL root
     this.ocflWebRoot = process.env.ocflRoot ||
@@ -112,9 +190,7 @@ class OCFLStorage extends StorageBase {
 
       // Get current files from latest version
       for (const file of files) {
-        //const content = await object.readFile(file);
 
-        //const hash = crypto.createHash('sha256').update(content).digest('hex');
         const hash = file.digest;
         currentFiles.set(file, hash);
       }
@@ -205,10 +281,10 @@ module.exports = {
   OCFLStorage,
   createStorageHandler: async (useOcfl) => {
     if (useOcfl) {
-      const handler = new OCFLStorage({ "ocfl": true, "layout": "FlatDirectStorageLayout"});
+      const handler = new OCFLStorage({ "ocfl": true, "layout": "FlatDirectStorageLayout" });
       return handler.initialize();
     }
-    return new FileSystemStorage({"ocfl": false});
+    return new FileSystemStorage({ "ocfl": false });
   }
 
 
