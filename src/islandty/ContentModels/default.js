@@ -99,7 +99,8 @@ ${content}
       ...this.buildFilesList(item, inputMediaPath, outputDir),
       ...await this.buildMetadataFiles(item)
     };
-    await this.storageHandler.copyFiles(files, inputMediaPath, outputDir);
+    const resultMap = await this.storageHandler.copyFiles(files, inputMediaPath, outputDir);
+    this.updateFilePaths(item, resultMap);
   }
 
   buildFilesList(item, inputMediaPath, outputDir) {
@@ -117,7 +118,7 @@ ${content}
     return files;
   }
 
-  async updateFilePaths(item) {
+  async updateFilePaths(item, filesMap) {
     const fileFields = islandtyHelpers.getFileFields();
 
     for (const field of fileFields) {

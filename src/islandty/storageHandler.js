@@ -90,10 +90,18 @@ class FileSystemStorage extends StorageBase {
   async copyFiles(filesMap, inputMediaPath, outputDir) {
     await fs.mkdir(outputDir, { recursive: true });
 
+    // Create result map to store web paths
+    const resultMap = {};
+
     await Promise.all(Object.entries(filesMap).map(async ([srcPath, destPath]) => {
       const fullDestPath = path.join(outputDir, destPath);
       const destDir = path.dirname(fullDestPath);
       let fullSrcPath = false;
+
+      // Compute web path relative to site root
+      const relativePath = path.relative(process.env.outputDir, fullDestPath);
+      const webPath = '/' + relativePath.split(path.sep).join('/');
+      resultMap[srcPath] = webPath;
 
       try {
         // Create directory structure if needed
@@ -109,7 +117,7 @@ class FileSystemStorage extends StorageBase {
             const destStats = await fs.stat(fullDestPath);
             const srcStats = await this.fetchHeaders(fullSrcPath);
             canSkip = srcStats['content-length'] == destStats.size
-            && Date.parse(srcStats['last-modified']) <= Date.parse(destStats.mtime);
+              && Date.parse(srcStats['last-modified']) <= Date.parse(destStats.mtime);
           } catch (e) {
             console.log('Error checking file stats: ' + e);
           }
@@ -134,6 +142,8 @@ class FileSystemStorage extends StorageBase {
         throw err;
       }
     }));
+
+    return resultMap;
   }
 
   getContentBasePath(itemId) {
@@ -230,6 +240,14 @@ class OCFLStorage extends StorageBase {
     const importItems = Object.entries(filesMap).map(([src, dest]) => [src, dest]);
     const changesExist = await this.filesChanged(object, importItems);
 
+    // Create result map to store web paths
+    const resultMap = {};
+    const baseContentPath = await this.getContentBasePath(objectId);
+
+    for (const [srcPath, destPath] of Object.entries(filesMap)) {
+      resultMap[srcPath] = `${baseContentPath}/${destPath}`;
+    }
+
     if (changesExist) {
       await object.update(async (transaction) => {
         for (const [src, dest] of importItems) {
@@ -237,6 +255,8 @@ class OCFLStorage extends StorageBase {
         }
       });
     }
+
+    return resultMap;
   }
 
   async getContentBasePath(itemId) {
@@ -286,6 +306,4 @@ module.exports = {
     }
     return new FileSystemStorage({ "ocfl": false });
   }
-
-
 };

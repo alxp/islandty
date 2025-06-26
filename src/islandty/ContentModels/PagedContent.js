@@ -19,7 +19,7 @@ class PagedContentModel extends DefaultContentModel {
       // First copy files to OCFL
       const filesMap = super.buildFilesList(item, inputMediaPath, outputDir);
       await this.addPageFiles(filesMap, pages, inputMediaPath);
-      await this.storageHandler.copyFiles(filesMap, inputMediaPath, outputDir);
+      const resultMap = await this.storageHandler.copyFiles(filesMap, inputMediaPath, outputDir);
 
       // Then process IIIF after OCFL commit
       const iiifPath = path.join(
@@ -33,7 +33,7 @@ class PagedContentModel extends DefaultContentModel {
         const needsIIIF = await this.checkIIIFNeeds(item, pages, iiifPath);
 
         if (needsIIIF) {
-           await this.createIIIFStructure(item, pages, filesMap, inputMediaPath, iiifPath);
+           await this.createIIIFStructure(item, pages, resultMap, inputMediaPath, iiifPath);
           await this.processIIIFDerivatives(item, iiifPath);
           await this.storeIIIFState(item, iiifPath);
         }
@@ -104,10 +104,10 @@ console.log('DEBUG filesMap: ' + JSON.stringify(filesMap));
       await fs.mkdir(iiifPageDir, { recursive: true });
 
       // Handle main image file
-      let sourcePath;
+      const sourcePath = path.join(process.env.outputDir, filesMap[page.file]);;
 
       const destPath = path.join(iiifPageDir, path.basename(page.file));
-      await fs.copyFile(filesMap[page.file], destPath);
+      await fs.copyFile(sourcePath, destPath);
 
       // Handle hOCR file
       const hocrFile = await this.findHocrFile(page, inputMediaPath);
