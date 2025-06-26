@@ -33,7 +33,7 @@ class PagedContentModel extends DefaultContentModel {
         const needsIIIF = await this.checkIIIFNeeds(item, pages, iiifPath);
 
         if (needsIIIF) {
-          await this.createIIIFStructure(item, pages, inputMediaPath, iiifPath);
+           await this.createIIIFStructure(item, pages, filesMap, inputMediaPath, iiifPath);
           await this.processIIIFDerivatives(item, iiifPath);
           await this.storeIIIFState(item, iiifPath);
         }
@@ -44,15 +44,15 @@ class PagedContentModel extends DefaultContentModel {
   }
 
   async addPageFiles(filesMap, pages, inputMediaPath) {
-    console.log('Adding page files to OCFL preservation:');
+
 
     for (const [index, page] of pages.entries()) {
       if (page.file) {
-        const srcPath = path.join(inputMediaPath, page.file);
+
         const fileName = `pages/${index.toString().padStart(4, '0')}_${path.basename(page.file)}`;
 
-        console.log(`- Preserving ${srcPath} => ${fileName}`);
-        filesMap[srcPath] = fileName;
+
+        filesMap[page.file] = fileName;
         // Add hOCR file if exists
         const hocrFile = await this.findHocrFile(page, inputMediaPath);
         if (hocrFile) {
@@ -93,10 +93,10 @@ class PagedContentModel extends DefaultContentModel {
 
 
 
-  async createIIIFStructure(item, pages, inputMediaPath, iiifPath) {
+  async createIIIFStructure(item, pages, filesMap, inputMediaPath, iiifPath) {
     for (const [index, page] of pages.entries()) {
       if (!page.file) continue;
-
+console.log('DEBUG filesMap: ' + JSON.stringify(filesMap));
       const baseName = path.basename(page.file, path.extname(page.file));
       const underscoredDir = `_${baseName}`;
       const iiifPageDir = path.join(iiifPath, underscoredDir);
@@ -105,26 +105,9 @@ class PagedContentModel extends DefaultContentModel {
 
       // Handle main image file
       let sourcePath;
-      if (this.storageHandler.isOCFL()) {
-        const version = await this.getLatestOcflVersion(item.id);
-        const ocflContentPath = path.join(
-          process.env.outputDir,
-          'ocfl-files',
-          item.id,
-          version,
-          'content'
-        );
-        sourcePath = path.join(
-          ocflContentPath,
-          'pages',
-          `${index.toString().padStart(4, '0')}_${path.basename(page.file)}`
-        );
-      } else {
-        sourcePath = path.join(inputMediaPath, page.file);
-      }
 
       const destPath = path.join(iiifPageDir, path.basename(page.file));
-      await fs.copyFile(sourcePath, destPath);
+      await fs.copyFile(filesMap[page.file], destPath);
 
       // Handle hOCR file
       const hocrFile = await this.findHocrFile(page, inputMediaPath);
