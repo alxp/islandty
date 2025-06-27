@@ -6,7 +6,7 @@ async function getMergedFieldConfig() {
   // Load JSON config
   let jsonConfig;
   try {
-    jsonConfig = require('../../config/islandtyFieldInfo.json');
+    jsonConfig = require('../../config/fieldConfig.json');
   } catch (error) {
     console.error('Error loading JSON field config:', error.message);
     jsonConfig = {};

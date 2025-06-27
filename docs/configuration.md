@@ -56,9 +56,9 @@ files will be written to on disck.
 
 ## ```CSVOverrideFieldInfo```
 
-The Islandora Workbench 'export_csv' task will autment the CSV with metadata about each field, specifically a Label and the Cardinality.  If this setting is set to 'true', these values in the CSV will supercede the values in config/islandtyFieldInfo.json.
+The Islandora Workbench 'export_csv' task will autment the CSV with metadata about each field, specifically a Label and the Cardinality.  If this setting is set to 'true', these values in the CSV will supercede the values in config/fieldConfig.json.
 
-If set to 'false', or if no field metadata is present in the CSV, islandtyFieldINfo.json will be used.
+If set to 'false', or if no field metadata is present in the CSV, fieldConfig.json will be used.
 
 ## ```ocfl=true```
 
