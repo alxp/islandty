@@ -67,7 +67,8 @@ module.exports = {
   },
 
   getFileFields() {
-    const islandtyFieldInfo = require('../../config/mergedIslandtyFieldInfo.json');
+    const stagingDir = process.env.stagingDir || "src/islandty/staging";
+    const islandtyFieldInfo = require(path.join('..', '..', stagingDir, 'mergedFieldConfig.json'));
 
     return Object.keys(islandtyFieldInfo).filter((field) =>
       islandtyFieldInfo[field].type === 'file' &&
@@ -76,7 +77,8 @@ module.exports = {
   },
 
   getMetadataFields() {
-    const islandtyFieldInfo = require('../../config/mergedIslandtyFieldInfo.json');
+    const stagingDir = process.env.stagingDir || "src/islandty/staging";
+    const islandtyFieldInfo = require(path.join('..', '..', stagingDir, 'mergedFieldConfig.json'));
     return Object.keys(islandtyFieldInfo).filter(field =>
       !islandtyFieldInfo[field].metadata_display === false &&
       islandtyFieldInfo[field].type !== 'file'
@@ -207,7 +209,8 @@ module.exports = {
    * @returns
    */
   itemsWithFieldValue(items, fieldname, value) {
-    fieldInfo = require('../../config/mergedIslandtyFieldInfo.json');
+    const stagingDir = process.env.stagingDir || "src/islandty/staging";
+    fieldInfo = require(path.join('..', '..', stagingDir, 'mergedFieldConfig.json'));
     field = fieldInfo[fieldname]
     if (field.cardinality == "1") {
       return items.filter(x => x['data'][fieldname] == value);
@@ -311,8 +314,8 @@ const fullTextFileFields = ['extracted'];
     }
   },
   transformKeys(obj, csvFieldInfo = { labels: {}, cardinality: {} }) {
-    const jsonFieldInfo = require('../../config/mergedIslandtyFieldInfo.json');
-
+    const stagingDir = process.env.stagingDir || "src/islandty/staging";
+    const jsonFieldInfo = require(path.join('..', '..', stagingDir, 'mergedFieldConfig.json'));
     // Add permalink field.
     obj['permalink'] = '/' + process.env.contentPath + '/' + obj.id + '/index.html';
 

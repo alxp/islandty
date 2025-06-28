@@ -34,14 +34,14 @@ async function main() {
   try {
     // Generate and save merged field config
     const fieldInfo = await getMergedFieldConfig();
-    writeFileSync('./config/mergedIslandtyFieldInfo.json', JSON.stringify(fieldInfo));
+    const stagingDir = process.env.stagingDir || "src/islandty/staging";
+    writeFileSync(path.join(stagingDir,'mergedFieldConfig.json'), JSON.stringify(fieldInfo));
 
 
     const rawItems = await readCSV();
     const items = islandtyHelpers.cleanInputData(rawItems.items);
     const inputMediaPath = process.env.inputMediaPath;
     const outputDir = path.join("src", process.env.contentPath);
-    const stagingDir = process.env.stagingDir || "src/islandty/staging";
     const objectStagingDir = path.join(stagingDir, process.env.objectStagingPath || "object");
     const linkedAgentDir = path.join(stagingDir, process.env.linkedAgentStagingPath || "linked-agent");
 
