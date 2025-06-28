@@ -135,6 +135,8 @@ class FileSystemStorage extends StorageBase {
           if (!canSkip) {
             fullSrcPath = await this.downloadFileFromUrl(fullSrcPath, destDir);
           }
+        } else if (srcPath.startsWith('/')) {
+          fullSrcPath = srcPath;
         } else {
           fullSrcPath = path.join(process.env.inputMediaPath, srcPath);
         }
@@ -252,6 +254,8 @@ class OCFLStorage extends StorageBase {
       // Handle remote files
       if (srcPath.startsWith('http')) {
         actualSrc = await this.downloadFileFromUrl(srcPath, objectId);
+      } else if (srcPath.startsWith('/')) {
+        actualSrc = srcPath;
       } else {
         actualSrc = path.join(process.env.inputMediaPath, srcPath);
       }
