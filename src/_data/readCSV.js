@@ -179,11 +179,11 @@ function transformGoogleSheetsUrl(url, sheetName) {
 
 module.exports = async function () {
   try {
-    let { items, fieldInfo } = await readCSV();
+    let { items, fieldConfig } = await readCSV();
 
     return {
       items: items,
-      fieldInfo: fieldInfo
+      fieldConfig: fieldConfig
     };
   } catch (err) {
     console.error('CSV processing error:', err);

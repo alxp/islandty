@@ -313,9 +313,9 @@ const fullTextFileFields = ['extracted'];
       return null;
     }
   },
-  transformKeys(obj, csvFieldInfo = { labels: {}, cardinality: {} }) {
+  transformKeys(obj, csvFieldConfig = { labels: {}, cardinality: {} }) {
     const stagingDir = process.env.stagingDir || "src/islandty/staging";
-    const jsonFieldInfo = require(path.join('..', '..', stagingDir, 'mergedFieldConfig.json'));
+    const jsonFieldConfig = require(path.join('..', '..', stagingDir, 'mergedFieldConfig.json'));
     // Add permalink field.
     obj['permalink'] = '/' + process.env.contentPath + '/' + obj.id + '/index.html';
 
@@ -327,10 +327,10 @@ const fullTextFileFields = ['extracted'];
 
       // Determine cardinality - prioritize CSV info over JSON
       let cardinality = '1'; // default
-      if (csvFieldInfo.cardinality && csvFieldInfo.cardinality[key]) {
-        cardinality = csvFieldInfo.cardinality[key];
-      } else if (jsonFieldInfo[key] && jsonFieldInfo[key].cardinality) {
-        cardinality = jsonFieldInfo[key].cardinality;
+      if (csvFieldConfig.cardinality && csvFieldConfig.cardinality[key]) {
+        cardinality = csvFieldConfig.cardinality[key];
+      } else if (jsonFieldConfig[key] && jsonFieldConfig[key].cardinality) {
+        cardinality = jsonFieldConfig[key].cardinality;
       }
 
       // Split values if cardinality is not 1
@@ -347,10 +347,10 @@ const fullTextFileFields = ['extracted'];
       newObj['item'][newKey] = newValue;
 
       // Add label if available (prioritize CSV)
-      if (csvFieldInfo.labels && csvFieldInfo.labels[key]) {
-        newObj[`${newKey}_label`] = csvFieldInfo.labels[key];
-      } else if (jsonFieldInfo[key] && jsonFieldInfo[key].label) {
-        newObj[`${newKey}_label`] = jsonFieldInfo[key].label;
+      if (csvFieldConfig.labels && csvFieldConfig.labels[key]) {
+        newObj[`${newKey}_label`] = csvFieldConfig.labels[key];
+      } else if (jsonFieldConfig[key] && jsonFieldConfig[key].label) {
+        newObj[`${newKey}_label`] = jsonFieldConfig[key].label;
       }
     }
     return newObj;

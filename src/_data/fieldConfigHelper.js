@@ -15,14 +15,14 @@ async function getMergedFieldConfig() {
   const csvOverrideEnabled = process.env.CSVOverrideFieldInfo === 'true';
 
   // Only proceed with CSV processing if override is enabled
-  let csvFieldInfo = { labels: {}, cardinality: {} };
+  let csvFieldConfig = { labels: {}, cardinality: {} };
   if (csvOverrideEnabled) {
     try {
       const result = await readCSVModule();
-      if (result.fieldInfo
-        && Object.keys(csvFieldInfo['labels']).length > 0
+      if (result.fieldConfig
+        && Object.keys(csvFieldConfig['labels']).length > 0
       ) {
-        csvFieldInfo = result.fieldInfo;
+        csvFieldConfig = result.fieldConfig;
         console.log('CSV field info override is enabled - merging with JSON config');
       }
     } catch (error) {
@@ -36,20 +36,20 @@ async function getMergedFieldConfig() {
 
   // Update existing fields with CSV data
   for (const [fieldName, fieldData] of Object.entries(mergedConfig)) {
-    if (csvFieldInfo.labels[fieldName]) {
-      fieldData.label = csvFieldInfo.labels[fieldName];
+    if (csvFieldConfig.labels[fieldName]) {
+      fieldData.label = csvFieldConfig.labels[fieldName];
     }
-    if (csvFieldInfo.cardinality[fieldName]) {
-      fieldData.cardinality = csvFieldInfo.cardinality[fieldName];
+    if (csvFieldConfig.cardinality[fieldName]) {
+      fieldData.cardinality = csvFieldConfig.cardinality[fieldName];
     }
   }
 
   // Add new fields from CSV
-  for (const fieldName in csvFieldInfo.labels) {
+  for (const fieldName in csvFieldConfig.labels) {
     if (!mergedConfig[fieldName]) {
       mergedConfig[fieldName] = {
-        label: csvFieldInfo.labels[fieldName],
-        cardinality: csvFieldInfo.cardinality[fieldName] || '1'
+        label: csvFieldConfig.labels[fieldName],
+        cardinality: csvFieldConfig.cardinality[fieldName] || '1'
       };
     }
   }

@@ -33,9 +33,9 @@ async function main() {
 
   try {
     // Generate and save merged field config
-    const fieldInfo = await getMergedFieldConfig();
+    const fieldConfig = await getMergedFieldConfig();
     const stagingDir = process.env.stagingDir || "src/islandty/staging";
-    writeFileSync(path.join(stagingDir,'mergedFieldConfig.json'), JSON.stringify(fieldInfo));
+    writeFileSync(path.join(stagingDir,'mergedFieldConfig.json'), JSON.stringify(fieldConfig));
 
 
     const rawItems = await readCSV();
@@ -93,7 +93,7 @@ async function main() {
       await contentModel.ingest(item, inputMediaPath, objectOutputDir);
       await contentModel.updateFilePaths(item);
 
-      const transformedItem = islandtyHelpers.transformKeys(item, fieldInfo);
+      const transformedItem = islandtyHelpers.transformKeys(item, fieldConfig);
 
       // Process linked agents
       if (transformedItem.field_linked_agent) {
