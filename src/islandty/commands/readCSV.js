@@ -88,7 +88,10 @@ async function main() {
       // Process files using content model
       const objectOutputDir = path.join(process.env.outputDir, process.env.contentPath, item.id);
       console.log(`Processing item ${item.id}`);
-      console.log(`Source file: ${path.join(inputMediaPath, item.file)}`);
+
+      if ('file' in item) {
+        console.log(`Source file: ${path.join(inputMediaPath, item.file)}`);
+      }
 
       await contentModel.ingest(item, inputMediaPath, objectOutputDir);
       await contentModel.updateFilePaths(item);
