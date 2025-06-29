@@ -68,20 +68,20 @@ module.exports = {
 
   getFileFields() {
     const stagingDir = process.env.stagingDir || "src/islandty/staging";
-    const islandtyFieldInfo = require(path.join('..', '..', stagingDir, 'mergedFieldConfig.json'));
+    const fieldConfig = require(path.join('..', '..', stagingDir, 'mergedFieldConfig.json'));
 
-    return Object.keys(islandtyFieldInfo).filter((field) =>
-      islandtyFieldInfo[field].type === 'file' &&
-      (islandtyFieldInfo[field].metadata_display || islandtyFieldInfo[field].downloadable)
+    return Object.keys(fieldConfig).filter((field) =>
+      fieldConfig[field].type === 'file' &&
+      (fieldConfig[field].metadata_display || fieldConfig[field].downloadable)
     );
   },
 
   getMetadataFields() {
     const stagingDir = process.env.stagingDir || "src/islandty/staging";
-    const islandtyFieldInfo = require(path.join('..', '..', stagingDir, 'mergedFieldConfig.json'));
-    return Object.keys(islandtyFieldInfo).filter(field =>
-      !islandtyFieldInfo[field].metadata_display === false &&
-      islandtyFieldInfo[field].type !== 'file'
+    const fieldConfig = require(path.join('..', '..', stagingDir, 'mergedFieldConfig.json'));
+    return Object.keys(fieldConfig).filter(field =>
+      !fieldConfig[field].metadata_display === false &&
+      fieldConfig[field].type !== 'file'
     );
   },
 
@@ -210,8 +210,8 @@ module.exports = {
    */
   itemsWithFieldValue(items, fieldname, value) {
     const stagingDir = process.env.stagingDir || "src/islandty/staging";
-    fieldInfo = require(path.join('..', '..', stagingDir, 'mergedFieldConfig.json'));
-    field = fieldInfo[fieldname]
+    fieldConfig = require(path.join('..', '..', stagingDir, 'mergedFieldConfig.json'));
+    field = fieldConfig[fieldname]
     if (field.cardinality == "1") {
       return items.filter(x => x['data'][fieldname] == value);
     }

@@ -10,7 +10,7 @@
 <h3><a href="/{{ contentPath }}/{{ parent.id | slugify }}">{{ parent.title }}</a></h3>
 <table>
 
-    {% for name, field in islandtyFieldInfo %}
+    {% for name, field in fieldConfig %}
     {% if parent[name] %}
     <tr>
         <th> {{ field.label }}</th>

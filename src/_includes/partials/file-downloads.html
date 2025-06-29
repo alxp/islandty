@@ -1,7 +1,7 @@
 <div class="content-file-downloads">
 
 {% set filesList = [] %}
-{% for name, field in islandtyFieldInfo %}
+{% for name, field in fieldConfig %}
     {% if 'downloadable' in field and field['downloadable'] %}
         {% if item[name] %}
             {% set count = filesList.push({

@@ -123,7 +123,7 @@ function readCSV() {
         .on('end', () => {
           resolve({
             items: records,
-            fieldInfo: {
+            fieldConfig: {
               labels: fieldLabels,
               cardinality: fieldCardinality
             }

@@ -256,7 +256,7 @@ module.exports = async config => {
   config.addGlobalData('contentPath', process.env.contentPath);
   config.addGlobalData('linkedAgentPath', process.env.linkedAgentPath);
   config.addGlobalData('pathPrefix', process.env.pathPrefix);
-  config.addGlobalData('islandtyFieldInfo', await fieldConfigHelper.getMergedFieldConfig());
+  config.addGlobalData('fieldConfig', await fieldConfigHelper.getMergedFieldConfig());
 
   // Add configurations at the top-level into Eleventy.
   siteConfig = require('./config/site.json');
@@ -264,7 +264,7 @@ module.exports = async config => {
 
   // Add field config to Eleventy
   fieldConfig = require('./' + path.join(stagingDir, 'mergedFieldConfig.json'));
-  config.addGlobalData('islandtyFieldInfo', fieldConfig);
+  config.addGlobalData('fieldConfig', fieldConfig);
 
 
   // https://nodejs.org/api/util.html#util_util_inspect_object_options

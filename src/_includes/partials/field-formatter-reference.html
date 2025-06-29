@@ -7,7 +7,7 @@
 
 	<tr>
 		{% if loop.first %}
-			<th rowspan="{{ count }}">{{ islandtyFieldInfo[name]['label'] }}</th>
+			<th rowspan="{{ count }}">{{ fieldConfig[name]['label'] }}</th>
 		{% endif %}
 		<td>
 			<a href="/{{ contentPath }}/{{ targetItem.data.id | slugify }}">{{ targetItem.data.title }}</a>

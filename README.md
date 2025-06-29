@@ -154,7 +154,7 @@ Islandty uses this data instead if it exists.
 This is enabled by setting:
 
 ```ini
-CSVOverrideFieldInfo=true
+CSVOverrideFieldConfig=true
 ```
 
 in your .env file.

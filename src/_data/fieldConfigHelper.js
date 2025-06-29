@@ -12,7 +12,7 @@ async function getMergedFieldConfig() {
     jsonConfig = {};
   }
 
-  const csvOverrideEnabled = process.env.CSVOverrideFieldInfo === 'true';
+  const csvOverrideEnabled = process.env.CSVOverrideFieldConfig === 'true';
 
   // Only proceed with CSV processing if override is enabled
   let csvFieldConfig = { labels: {}, cardinality: {} };

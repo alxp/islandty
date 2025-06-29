@@ -1,6 +1,6 @@
 <div class="content-metadata">
     <table>
-        {% for name, field in islandtyFieldInfo %}
+        {% for name, field in fieldConfig %}
           {% if 'metadata_display' not in field or field['metadata_display'] %}
             {% if item[name] and item[name] != '' %}
                 {% if 'type' in field and field['type'] == 'file' %}
