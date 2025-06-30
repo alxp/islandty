@@ -122,7 +122,7 @@ class FileSystemStorage extends StorageBase {
 
         if (srcPath.startsWith('http')) {
           fullSrcPath = srcPath;
-          // Check modified date to determine if we need to re-download
+          // Check file size and modified date to determine if we need to re-download
           try {
             const destStats = await fs.stat(fullDestPath);
             const srcStats = await this.fetchHeaders(fullSrcPath);
