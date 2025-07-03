@@ -99,8 +99,7 @@ class PagedContentModel extends DefaultContentModel {
 
   async createIIIFStructure(item, pages, filesMap, inputMediaPath, iiifPath) {
     for (const [index, page] of pages.entries()) {
-      if (!page.file) continue;
-console.log('DEBUG filesMap: ' + JSON.stringify(filesMap));
+      if (!page.file) continue
       const baseName = path.basename(page.file, path.extname(page.file));
       const underscoredDir = `_${baseName}`;
       const iiifPageDir = path.join(iiifPath, underscoredDir);
@@ -108,7 +107,8 @@ console.log('DEBUG filesMap: ' + JSON.stringify(filesMap));
       await fs.mkdir(iiifPageDir, { recursive: true });
 
       // Handle main image file
-      const sourcePath = path.join(process.env.outputDir, filesMap[page.file]);;
+      const sourcePath = filesMap[page.file]['actualSrc'];
+
 
       const destPath = path.join(iiifPageDir, path.basename(page.file));
       await fs.copyFile(sourcePath, destPath);
@@ -207,7 +207,6 @@ console.log('DEBUG filesMap: ' + JSON.stringify(filesMap));
 }
 
   async updateFilePaths(item, filesMap) {
-    await super.updateFilePaths(item, filesMap);
 
     if (item.iiifManifest) {
       item.iiifManifest = path.join(

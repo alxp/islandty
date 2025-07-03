@@ -14,12 +14,6 @@ class ImageContentModel extends DefaultContentModel {
     }
   }
 
-  async updateFilePaths(item, filesMap) {
-    // Call parent implementation first
-    await super.updateFilePaths(item, filesMap);
-
-    // Add any image-specific path updates here
-  }
 }
 
 module.exports = ImageContentModel;

@@ -100,7 +100,7 @@ ${content}
       ...await this.buildMetadataFiles(item)
     };
     const resultMap = await this.storageHandler.copyFiles(item, files, inputMediaPath, outputDir);
-    await this.updateFilePaths(item, resultMap);
+
     await this.storageHandler.cleanup();
   }
 
@@ -119,20 +119,6 @@ ${content}
     return files;
   }
 
-  async updateFilePaths(item, filesMap) {
-    const fileFields = islandtyHelpers.getFileFields();
-
-    for (const field of fileFields) {
-      if (item[field]?.trim()) {
-        const newFilePath = filesMap[item[field]];
-        const fileName = path.basename(item[field]);
-
-        item[field] = newFilePath;
-        item[field + '_digest'] = await this.storageHandler.calculateFileHash(path.join(process.env.outputDir, item[field]));
-      }
-    }
-
-  }
 }
 
 module.exports = DefaultContentModel;

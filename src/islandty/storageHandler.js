@@ -6,6 +6,7 @@ const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
 const islandtyHelpers = require('../_data/islandtyHelpers.js');
+const { src } = require('gulp');
 require('dotenv').config();
 
 class StorageBase {
@@ -261,13 +262,16 @@ class OCFLStorage extends StorageBase {
       }
 
       importItems.push([actualSrc, destPath]);
-      resultMap[srcPath] = `${baseContentPath}/${destPath}`;
+      resultMap[srcPath] = {};
+      resultMap[srcPath]['actualSrc'] = actualSrc;
+      resultMap[srcPath]['destPath'] = destPath;
+      resultMap[srcPath]['digest'] = await this.calculateFileHash(actualSrc);
     }
 
     const changesExist = await this.filesChanged(object, importItems);
 
     if (changesExist) {
-      await object.update(async (transaction) => {
+await object.update(async (transaction) => {
         for (const [src, dest] of importItems) {
           await transaction.import(src, dest);
         }
@@ -277,6 +281,18 @@ class OCFLStorage extends StorageBase {
       console.log(`No changes detected for OCFL object ${objectId}, skipping update`);
     }
 
+    let newInventory = await object.getInventory();
+    for (const updatedFile of newInventory.files()) {
+      const fileUrlPath = '/' + path.join('ocfl-files', object.id, updatedFile.contentPath);
+      const resultMapKey = Object.keys(resultMap).filter(x => resultMap[x].digest == updatedFile.digest).pop();
+      resultMap[resultMapKey]['webPath'] = fileUrlPath;
+      for (const fileField of islandtyHelpers.getFileFields()) {
+        if (filesMap[item[fileField]] == updatedFile.logicalPath) {
+          item[fileField] = fileUrlPath;
+          item[fileField + '_digest'] = updatedFile.digest;
+        }
+      }
+    }
     return resultMap;
   }
 
