@@ -96,15 +96,15 @@ function readCSV() {
 
     const records = [];
     let dataSource = process.env.dataFileName;
-
+    const ids = [];
     const processData = (stream) => {
       stream
         .pipe(parser)
         .on('data', (record) => {
-          // Validate that record has mandatory values.
           let mandatory_record_values = ['id', 'title']
           let backup_mandatory_fields = {'id': 'node_id'}
           function validateRecord(record) {
+            // Validate that record has mandatory values.
             mandatory_record_values.forEach(function (field) {
               if (!record[field]) {
                 if (field in backup_mandatory_fields) {
@@ -116,7 +116,15 @@ function readCSV() {
                 console.log(JSON.stringify(record));
                 process.exit(1);
               }
-            })
+            });
+            // Validate that the ID is unique
+            if (record['id'] in ids) {
+              console.log(`ERROR: Duplicate ID at record: `)
+              console.log(JSON.stringify(record));
+              process.exit(1);
+            } else {
+              ids.push((record['id']));
+            }
           }
           // Only push data records (skip header and skipped rows)
           if (record && headerSkipped) {
