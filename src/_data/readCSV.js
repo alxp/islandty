@@ -97,6 +97,7 @@ function readCSV() {
     const records = [];
     let dataSource = process.env.dataFileName;
     const ids = [];
+    const node_ids = [];
     const processData = (stream) => {
       stream
         .pipe(parser)
@@ -118,12 +119,22 @@ function readCSV() {
               }
             });
             // Validate that the ID is unique
-            if (record['id'] in ids) {
-              console.log(`ERROR: Duplicate ID at record: `)
-              console.log(JSON.stringify(record));
-              process.exit(1);
-            } else {
-              ids.push((record['id']));
+            if (record.id) {
+              if (ids.find(id => id == record['id'])) {
+                console.log(`ERROR: Duplicate ID at record: `)
+                console.log(JSON.stringify(record));
+                process.exit(1);
+              } else {
+                ids.push((record['id']));
+              }
+            } else if (record.node_id) {
+              if (node_ids.find(id => id == record['node_id'])) {
+                console.log(`ERROR: Duplicate node_id at record: `)
+                console.log(JSON.stringify(record));
+                process.exit(1);
+              } else {
+                node_ids.push((record['node_id']));
+              }
             }
           }
           // Only push data records (skip header and skipped rows)
