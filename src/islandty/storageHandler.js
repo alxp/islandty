@@ -114,7 +114,10 @@ class FileSystemStorage extends StorageBase {
       // Compute web path relative to site root
       const relativePath = path.relative(process.env.outputDir, fullDestPath);
       const webPath = '/' + relativePath.split(path.sep).join('/');
-      resultMap[srcPath] = webPath;
+
+      resultMap[srcPath] = {};
+
+      resultMap[srcPath]['destPath'] = destPath;
 
       try {
         // Create directory structure if needed
@@ -148,11 +151,25 @@ class FileSystemStorage extends StorageBase {
         } else {
           console.log(`Skipping ${srcPath} as it is unmodified.`);
         }
+
+        resultMap[srcPath]['actualSrc'] = fullSrcPath;
+        resultMap[srcPath]['digest'] = await this.calculateFileHash(fullDestPath);
+        resultMap[srcPath]['webPath'] = webPath;
+        for (const fileField of islandtyHelpers.getFileFields()) {
+          if (item[fileField] == srcPath) {
+            item[fileField] = webPath;
+            item[fileField + '_digest'] = resultMap[srcPath]['digest'];
+          }
+        }
       } catch (err) {
         console.error(`Error copying ${srcPath}:`, err);
         throw err;
       }
     }));
+
+
+
+
 
     return resultMap;
   }
