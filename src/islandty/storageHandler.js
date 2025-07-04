@@ -1,13 +1,19 @@
+const axios = require('axios');
 const fs = require('fs').promises;
+const { createWriteStream } = require('fs');
+const https = require('https');
+const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
 const islandtyHelpers = require('../_data/islandtyHelpers.js');
+const { src } = require('gulp');
 require('dotenv').config();
 
 class StorageBase {
 
   constructor(config = {}) {
     this.config = config;
+    this.tempDirs = []; // Track temp directories for cleanup
   }
 
   async calculateFileHash(filePath) {
@@ -15,16 +21,69 @@ class StorageBase {
     return crypto.createHash('sha512').update(fileBuffer).digest('hex');
   }
 
-  async copyFiles(filesMap, inputMediaPath, outputDir) {
+  async copyFiles(item, filesMap, inputMediaPath, outputDir) {
     throw new Error('Not implemented');
+  }
+
+  async downloadFileFromUrl(url, destDir) {
+    try {
+      const tempDir = path.join(os.tmpdir(), 'islandty-downloads', destDir);
+      await fs.mkdir(tempDir, { recursive: true });
+      this.tempDirs.push(tempDir); // Track for cleanup
+
+      const fileName = path.basename(new URL(url).pathname);
+      const tempPath = path.join(tempDir, fileName);
+      console.log(`Downloading ${url} to ${tempPath}`);
+
+      const response = await axios({
+        url,
+        method: 'GET',
+        responseType: 'stream',
+        httpsAgent: new https.Agent({ rejectUnauthorized: false }) // For self-signed certs
+      });
+
+      const writer = createWriteStream(tempPath);
+      response.data.pipe(writer);
+
+      await new Promise((resolve, reject) => {
+        writer.on('finish', resolve);
+        writer.on('error', reject);
+      });
+
+      return tempPath;
+    } catch (e) {
+      console.log('Error downloading file at ' + url + '. ' + e);
+      await this.cleanup(); // Cleanup on error
+      throw e;
+    }
+  }
+
+  async cleanup() {
+    for (const dir of this.tempDirs) {
+      try {
+        await fs.rm(dir, { recursive: true, force: true });
+        console.log(`Cleaned up temporary directory: ${dir}`);
+      } catch (e) {
+        console.error(`Error cleaning up temporary directory ${dir}:`, e);
+      }
+    }
+    this.tempDirs = []; // Reset array
   }
 
   isOCFL() {
     return false;
   }
 
-  async updateFilePaths(item) {
-    throw new Error('Not implemented');
+  async fetchHeaders(url) {
+    try {
+      const response = await axios.head(url);
+      if (response.status == 200) {
+        return response.headers;
+      }
+      return false;
+    } catch (er) {
+      return er.message;
+    }
   }
 
   getContentBasePath(itemId) {
@@ -38,42 +97,81 @@ class StorageBase {
 
 class FileSystemStorage extends StorageBase {
   constructor(config = {}) {
-    super(config); // Call parent constructor
-    // FileSystem-specific initialization
+    super(config);
   }
 
-  async copyFiles(filesMap, inputMediaPath, outputDir) {
+  async copyFiles(item, filesMap, inputMediaPath, outputDir) {
     await fs.mkdir(outputDir, { recursive: true });
+
+    // Create result map to store web paths
+    const resultMap = {};
 
     await Promise.all(Object.entries(filesMap).map(async ([srcPath, destPath]) => {
       const fullDestPath = path.join(outputDir, destPath);
       const destDir = path.dirname(fullDestPath);
+      let fullSrcPath = false;
+
+      // Compute web path relative to site root
+      const relativePath = path.relative(process.env.outputDir, fullDestPath);
+      const webPath = '/' + relativePath.split(path.sep).join('/');
+
+      resultMap[srcPath] = {};
+
+      resultMap[srcPath]['destPath'] = destPath;
 
       try {
         // Create directory structure if needed
         await fs.mkdir(destDir, { recursive: true });
-        await fs.copyFile(srcPath, fullDestPath);
-        console.log(`Copied ${srcPath} to ${fullDestPath}`);
+        let canSkip = false;
+
+        if (srcPath.startsWith('http')) {
+          fullSrcPath = srcPath;
+          // Check file size and modified date to determine if we need to re-download
+          try {
+            const destStats = await fs.stat(fullDestPath);
+            const srcStats = await this.fetchHeaders(fullSrcPath);
+            canSkip = srcStats['content-length'] == destStats.size &&
+              Date.parse(srcStats['last-modified']) <= Date.parse(destStats.mtime);
+          } catch (e) {
+            console.log('Error checking file stats: ' + e);
+          }
+
+          if (!canSkip) {
+            fullSrcPath = await this.downloadFileFromUrl(fullSrcPath, destDir);
+          }
+        } else if (srcPath.startsWith('/')) {
+          fullSrcPath = srcPath;
+        } else {
+          fullSrcPath = path.join(process.env.inputMediaPath, srcPath);
+        }
+
+        if (!canSkip) {
+          await fs.copyFile(fullSrcPath, fullDestPath);
+          console.log(`Copied ${srcPath} to ${fullDestPath}`);
+        } else {
+          console.log(`Skipping ${srcPath} as it is unmodified.`);
+        }
+
+        resultMap[srcPath]['actualSrc'] = fullSrcPath;
+        resultMap[srcPath]['digest'] = await this.calculateFileHash(fullDestPath);
+        resultMap[srcPath]['webPath'] = webPath;
+        for (const fileField of islandtyHelpers.getFileFields()) {
+          if (item[fileField] == srcPath) {
+            item[fileField] = webPath;
+            item[fileField + '_digest'] = resultMap[srcPath]['digest'];
+          }
+        }
       } catch (err) {
         console.error(`Error copying ${srcPath}:`, err);
         throw err;
       }
     }));
-  }
 
-  async updateFilePaths(item) {
-    const fileFields = islandtyHelpers.getFileFields();
-    fileFields.forEach((fileField) => {
-      if (item[fileField] && item[fileField] !== "" && item[fileField] !== 'False') {
-        const fileName = path.basename(item[fileField]);
-        item[fileField] = `/${path.join(process.env.contentPath, item.id, fileName)}`;
-      }
-    });
 
-    if (item['extracted']) {
-      const extractedText = await fs.readFile(path.join(process.env.outputDir, item['extracted']), { encoding: 'utf8' });
-      item['extractedText'] = extractedText;
-    }
+
+
+
+    return resultMap;
   }
 
   getContentBasePath(itemId) {
@@ -87,12 +185,9 @@ class FileSystemStorage extends StorageBase {
 
 class OCFLStorage extends StorageBase {
   constructor(config = {}) {
-    super(config); // Call parent constructor first
+    super(config);
     this.ocfl = require('@ocfl/ocfl-fs');
     this.storage = null;
-        // Use environment variable for OCFL root
-    this.ocflWebRoot = process.env.ocflRoot ||
-      path.join(process.env.outputDir, 'ocfl-files');    // Use environment variable for OCFL root
     this.ocflWebRoot = process.env.ocflRoot ||
       path.join(process.env.outputDir, 'ocfl-files');
   }
@@ -125,16 +220,12 @@ class OCFLStorage extends StorageBase {
       if (!exists) return true; // New object needs first version
 
       const currentFiles = new Map();
-
       const files = await object.files();
 
       // Get current files from latest version
       for (const file of files) {
-        //const content = await object.readFile(file);
-
-        //const hash = crypto.createHash('sha256').update(content).digest('hex');
         const hash = file.digest;
-        currentFiles.set(file, hash);
+        currentFiles.set(file.path, hash);
       }
 
       // Check if any files are different
@@ -164,58 +255,65 @@ class OCFLStorage extends StorageBase {
     }
   }
 
-  async copyFiles(filesMap, inputMediaPath, outputDir) {
+  async copyFiles(item, filesMap, inputMediaPath, outputDir) {
     if (!this.storage) await this.initialize();
-    const objectId = path.basename(outputDir);
+    const objectId = item.id;
     const object = this.storage.object(objectId);
 
-    const importItems = Object.entries(filesMap).map(([src, dest]) => [src, dest]);
+    // Build result map to store web paths
+    const resultMap = {};
+    const baseContentPath = await this.getContentBasePath(objectId);
+
+    // Process files and download remote files
+    const importItems = [];
+    for (const [srcPath, destPath] of Object.entries(filesMap)) {
+      let actualSrc = srcPath;
+
+      // Handle remote files
+      if (srcPath.startsWith('http')) {
+        actualSrc = await this.downloadFileFromUrl(srcPath, objectId);
+      } else if (srcPath.startsWith('/')) {
+        actualSrc = srcPath;
+      } else {
+        actualSrc = path.join(process.env.inputMediaPath, srcPath);
+      }
+
+      importItems.push([actualSrc, destPath]);
+      resultMap[srcPath] = {};
+      resultMap[srcPath]['actualSrc'] = actualSrc;
+      resultMap[srcPath]['destPath'] = destPath;
+      resultMap[srcPath]['digest'] = await this.calculateFileHash(actualSrc);
+    }
+
     const changesExist = await this.filesChanged(object, importItems);
 
     if (changesExist) {
-      await object.update(async (transaction) => {
+await object.update(async (transaction) => {
         for (const [src, dest] of importItems) {
           await transaction.import(src, dest);
         }
       });
+      console.log(`Updated OCFL object ${objectId} with changes`);
+    } else {
+      console.log(`No changes detected for OCFL object ${objectId}, skipping update`);
     }
-  }
 
-  async updateFilePaths(item) {
-    const fileFields = islandtyHelpers.getFileFields();
-
-    try {
-      const object = this.storage.object(item.id);
-      const inventory = await object.getInventory();
-      const latestVersion = inventory.head;
-
-      fileFields.forEach((fileField) => {
-        if (item[fileField] && item[fileField] !== "" && item[fileField] !== 'False') {
-          const fileName = path.basename(item[fileField]);
-          // Use latest version path
-          item[fileField] = `/ocfl-files/${item.id}/${latestVersion}/content/${fileName}`;
-        }
-      });
-
-      if (item['extracted']) {
-        try {
-          const extractedPath = path.basename(item['extracted']);
-          const extractedText = await object.read(extractedPath);
-          item['extractedText'] = extractedText.toString('utf8');
-          item['extracted'] = `/ocfl-files/${item.id}/${latestVersion}/content/${extractedPath}`;
-        } catch (error) {
-          console.error(`Error reading extracted text from OCFL object ${item.id}:`, error);
-          item['extractedText'] = '';
+    let newInventory = await object.getInventory();
+    for (const updatedFile of newInventory.files()) {
+      const fileUrlPath = '/' + path.join('ocfl-files', object.id, updatedFile.contentPath);
+      const resultMapKey = Object.keys(resultMap).filter(x => resultMap[x].digest == updatedFile.digest).pop();
+      resultMap[resultMapKey]['webPath'] = fileUrlPath;
+      for (const fileField of islandtyHelpers.getFileFields()) {
+        if (filesMap[item[fileField]] == updatedFile.logicalPath) {
+          item[fileField] = fileUrlPath;
+          item[fileField + '_digest'] = updatedFile.digest;
         }
       }
-    } catch (error) {
-      console.error(`Error updating paths for object ${item.id}:`, error);
-      throw error;
     }
+    return resultMap;
   }
 
   async getContentBasePath(itemId) {
-
     try {
       const object = this.storage.object(itemId);
       const inventory = await object.getInventory();
@@ -226,9 +324,7 @@ class OCFLStorage extends StorageBase {
     }
   }
 
-
   async getFullContentPath(item, field) {
-
     const object = this.storage.object(item.id);
     const inventory = await object.getInventory();
     const filePath = inventory.getContentPath(item[field + '_digest']);
@@ -239,7 +335,7 @@ class OCFLStorage extends StorageBase {
   async objectExists(object) {
     try {
       const inventory = await object.getInventory();
-      return !(!inventory);
+      return !!inventory;
     } catch (error) {
       return false;
     }
@@ -250,17 +346,17 @@ class OCFLStorage extends StorageBase {
   }
 }
 
-
 module.exports = {
   FileSystemStorage,
   OCFLStorage,
   createStorageHandler: async (useOcfl) => {
     if (useOcfl) {
-      const handler = new OCFLStorage({ "ocfl": true, "layout": "FlatDirectStorageLayout"});
+      const handler = new OCFLStorage({
+        "ocfl": true,
+        "layout": "FlatDirectStorageLayout"
+      });
       return handler.initialize();
     }
-    return new FileSystemStorage({"ocfl": false});
+    return new FileSystemStorage({ "ocfl": false });
   }
-
-
 };

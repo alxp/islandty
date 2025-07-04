@@ -14,12 +14,13 @@ you can use the same input files to generate a static website.
 - Content-model based system that moves files into place and can be used to generate derivatives.
 - Uses a [fork of biiif](https://github.com/alxp/biiif) to generate image files, embed hOCR, and support JP2 files.
 - [Lunr](https://lunrjs.com)-based search
+- Supports both local and remote locations for object files.
 
 ![Screenshot of a book in Mirador with metadata and file downloads](/docs/images/demo-book-object.png)
 
 ## Requirements
 
-- Node.js (Tested on version 22. currently incompatible with Node.js v. 23.x. See [issue](https://github.com/11ty/eleventy/issues/3625).)
+- Node.js (Tested on version 22.x and 23.x.
 - VIPS (for JP2 support - see below)
 
 ### Installing VIPS for JP2 support
@@ -74,12 +75,14 @@ These instructions use the [Islandora Demo Objects](https://github.com/Islandora
 Islandty requires a CSV data file listing your objects. We say that it must be "formatted as though for Islandora Workbench" and in practice this means:
 * it must include an `id` or `node_id` column, and that column must be populated for every row,
 * it must include a `title` column, and that column must be populated for every row,
-* it must include a `file` column, though values in that column are optional,
+* it should include a `file` column, though values in that column are optional,
 * it may include additional columns with values. See section below, "Configure your fields".
 
 If you use Islandora Workbench to export objects from Islandora using the `export_csv` or `get_data_from_view` tasks, you can use that CSV as-is as an input data file. See section below, "Configure your fields".
 
 The `id` column is special and should contain distinct values. If a spreadsheet contains duplicates of an `id` value, undefined behaviour will result.
+
+If a CSV from exported Islandora content has 'node_id' rather than 'id', that column will be used as the id.of 'id'
 
 ### Point to your binaries' root folder in `.env`
 
@@ -102,6 +105,12 @@ inputMediaPath=../islandora_demo_objects
 ```
 
 If using a relative path, it is relative to the Islandty folder.
+
+### Remote media
+
+Islandora Workbench now supports exporting files'URLs rather than downloading them via the ```export_file_url_instead_of_download``` option in the job YAML file.
+
+Islandty will download these files and import them if it finds a URL in a file field column.
 
 ### Point to the metadata CSV file in `.env`
 

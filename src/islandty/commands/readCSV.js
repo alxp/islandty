@@ -91,7 +91,7 @@ async function main() {
       console.log(`Source file: ${path.join(inputMediaPath, item.file)}`);
 
       await contentModel.ingest(item, inputMediaPath, objectOutputDir);
-      await contentModel.updateFilePaths(item);
+
 
       const transformedItem = islandtyHelpers.transformKeys(item, fieldInfo);
 

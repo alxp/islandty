@@ -24,17 +24,6 @@ class MediaWithTracksModel extends DefaultContentModel {
     return files;
   }
 
-  async updateFilePaths(item) {
-    await super.updateFilePaths(item);
-
-    if (item[this.trackField]) {
-      const basePath = await this.storageHandler.getContentBasePath(item.id);
-      item[this.trackField] = mediaHelpers.updateTrackField(
-        item[this.trackField],
-        basePath
-      );
-    }
-  }
 }
 
 module.exports = MediaWithTracksModel;

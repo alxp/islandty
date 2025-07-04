@@ -16,12 +16,11 @@ class PagedContentModel extends DefaultContentModel {
       const { items: allItems } = await readCSV();
       const pages = getChildContent(Object.values(allItems), item.id);
 
-      // First copy files to OCFL
       const filesMap = super.buildFilesList(item, inputMediaPath, outputDir);
       await this.addPageFiles(filesMap, pages, inputMediaPath);
-      await this.storageHandler.copyFiles(filesMap, inputMediaPath, outputDir);
+      const resultMap = await this.storageHandler.copyFiles(item, filesMap, inputMediaPath, outputDir);
 
-      // Then process IIIF after OCFL commit
+
       const iiifPath = path.join(
         process.env.outputDir,
         process.env.contentPath,
@@ -33,26 +32,31 @@ class PagedContentModel extends DefaultContentModel {
         const needsIIIF = await this.checkIIIFNeeds(item, pages, iiifPath);
 
         if (needsIIIF) {
-          await this.createIIIFStructure(item, pages, inputMediaPath, iiifPath);
+           await this.createIIIFStructure(item, pages, resultMap, inputMediaPath, iiifPath);
           await this.processIIIFDerivatives(item, iiifPath);
           await this.storeIIIFState(item, iiifPath);
         }
       }
+      await this.updateFilePaths(item, resultMap);
     } catch (err) {
       throw new Error(`Paged content ingestion failed: ${err.message}`);
     }
+    finally {
+      this.storageHandler.cleanup();
+    }
+
   }
 
   async addPageFiles(filesMap, pages, inputMediaPath) {
-    console.log('Adding page files to OCFL preservation:');
+
 
     for (const [index, page] of pages.entries()) {
       if (page.file) {
-        const srcPath = path.join(inputMediaPath, page.file);
+
         const fileName = `pages/${index.toString().padStart(4, '0')}_${path.basename(page.file)}`;
 
-        console.log(`- Preserving ${srcPath} => ${fileName}`);
-        filesMap[srcPath] = fileName;
+
+        filesMap[page.file] = fileName;
         // Add hOCR file if exists
         const hocrFile = await this.findHocrFile(page, inputMediaPath);
         if (hocrFile) {
@@ -93,10 +97,9 @@ class PagedContentModel extends DefaultContentModel {
 
 
 
-  async createIIIFStructure(item, pages, inputMediaPath, iiifPath) {
+  async createIIIFStructure(item, pages, filesMap, inputMediaPath, iiifPath) {
     for (const [index, page] of pages.entries()) {
-      if (!page.file) continue;
-
+      if (!page.file) continue
       const baseName = path.basename(page.file, path.extname(page.file));
       const underscoredDir = `_${baseName}`;
       const iiifPageDir = path.join(iiifPath, underscoredDir);
@@ -104,24 +107,8 @@ class PagedContentModel extends DefaultContentModel {
       await fs.mkdir(iiifPageDir, { recursive: true });
 
       // Handle main image file
-      let sourcePath;
-      if (this.storageHandler.isOCFL()) {
-        const version = await this.getLatestOcflVersion(item.id);
-        const ocflContentPath = path.join(
-          process.env.outputDir,
-          'ocfl-files',
-          item.id,
-          version,
-          'content'
-        );
-        sourcePath = path.join(
-          ocflContentPath,
-          'pages',
-          `${index.toString().padStart(4, '0')}_${path.basename(page.file)}`
-        );
-      } else {
-        sourcePath = path.join(inputMediaPath, page.file);
-      }
+      const sourcePath = filesMap[page.file]['actualSrc'];
+
 
       const destPath = path.join(iiifPageDir, path.basename(page.file));
       await fs.copyFile(sourcePath, destPath);
@@ -219,8 +206,7 @@ class PagedContentModel extends DefaultContentModel {
   }
 }
 
-  async updateFilePaths(item) {
-    await super.updateFilePaths(item);
+  async updateFilePaths(item, filesMap) {
 
     if (item.iiifManifest) {
       item.iiifManifest = path.join(
@@ -233,7 +219,7 @@ class PagedContentModel extends DefaultContentModel {
 
     // Add direct link to IIIF manifest
     item.iiif_manifest_url = `${process.env.serverHost}/${item.iiifManifest}`;
-  }
+  item.extracted}
 }
 
 module.exports = PagedContentModel;

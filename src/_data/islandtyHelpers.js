@@ -139,12 +139,18 @@ module.exports = {
     const parentId1 = x.parent_id;
     const parentId1Valid = parentId1 && typeof parentId1 === 'string' && parentId1.split('|').includes(item_id);
 
+    const memberOf1 = x.field_member_of;
+    const memberOf1Valid = memberOf1 && typeof memberOf1 === 'string' && memberOf1.split('|').includes(item_id);
+
     // Check x.data.parent_id if it exists
     const parentId2 = x.data?.parent_id;
     const parentId2Valid = parentId2 && typeof parentId2 === 'object' && parentId2.includes(item_id);
 
-    // Return true if either condition is met
-    return parentId1Valid || parentId2Valid;
+    const memberOf2 = x.data?.field_member_of;
+    const memberOf2Valid = memberOf2 && typeof memberOf2 === 'object' && memberOf2.includes(item_id);
+
+    // Return true if any condition is met
+    return parentId1Valid || parentId2Valid || memberOf1Valid || memberOf2Valid;
   });
 
   return filteredItems;
