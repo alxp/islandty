@@ -38,10 +38,10 @@ const app = createApp({
     }
   },
   async mounted() {
-    let resultLookup = await fetch('/index-lookup.json');
+    let resultLookup = await fetch("{{ '/index-lookup.json' | url }}");
     this.docs = await resultLookup.json();
 
-    let resultIndex = await fetch('/index.json');
+    let resultIndex = await fetch("{{ '/index.json' | url }}");
     const indexstring = await resultIndex.json();
     this.idx = lunr.Index.load(indexstring);
   },
