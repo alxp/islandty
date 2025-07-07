@@ -3,13 +3,13 @@ permalink: /index-lookup.json
 ---
 
 [
-{% for object in collections.all %}
+{% for object in collections.allIslandtyObjects %}
 
 {
-  {% set newData = islandtyHelpers.objectIndexMetadata(collections.all, object) %}
+  {% set newData = islandtyHelpers.objectIndexMetadata(collections.allIslandtyObjects, object) %}
    "id": {{ loop.index0 }},
    "title": "{{ newData.data.title }}",
-   "url": "{{ newData.url }}",
+   "url": "{{ newData.url | url }}",
    "description": "{{ newData.data.field_description | truncate(300) }}"
 } {% if loop.last == false %},{% endif %}
 {% endfor %}

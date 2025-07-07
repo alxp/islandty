@@ -104,6 +104,7 @@ module.exports = async config => {
   });
 
   const stagingDir = process.env.stagingDir || "src/islandty/staging";
+  const objectStagingDir = path.join(stagingDir, process.env.objectStagingPath || "object");
   const linkedAgentStagingPath = process.env.linkedAgentStagingPath || "linked-agent";
   const linkedAgentDir = path.join(stagingDir, linkedAgentStagingPath);
   const linkedAgentDatabases = glob.sync(path.join(linkedAgentDir, "*.json"));
@@ -190,6 +191,12 @@ module.exports = async config => {
 
     return linkedAgentNamespaceCollection;
   });
+
+  // Add Islandty Objects collection
+  config.addCollection('allIslandtyObjects', collection => {
+    return [...collection.getFilteredByGlob(path.join(objectStagingDir, '*.md'))];
+  });
+
 
   // ROSIE: Ignore sef files
   config.watchIgnores.add('**/*.sef.json');
