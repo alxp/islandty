@@ -1,6 +1,7 @@
 const fs = require('fs');
 const rssPlugin = require('@11ty/eleventy-plugin-rss');
 const { EleventyHtmlBasePlugin } = require("@11ty/eleventy");
+const linkedAgentHelper = require('./src/islandty/linkedAgentHelper');
 const miradorPlugin = require('eleventy-plugin-mirador');
 // Filters
 const dateFilter = require('./src/filters/date-filter.js');
@@ -105,92 +106,11 @@ module.exports = async config => {
 
   const stagingDir = process.env.stagingDir || "src/islandty/staging";
   const objectStagingDir = path.join(stagingDir, process.env.objectStagingPath || "object");
+
   const linkedAgentStagingPath = process.env.linkedAgentStagingPath || "linked-agent";
   const linkedAgentDir = path.join(stagingDir, linkedAgentStagingPath);
-  const linkedAgentDatabases = glob.sync(path.join(linkedAgentDir, "*.json"));
-  var linkedAgentNamespaces = [];
-  for (const linkedAgentDatabasePath of linkedAgentDatabases) {
-    const linkedAgentDatabaseName = path.parse(linkedAgentDatabasePath).name;
-    linkedAgentNamespaces.push(linkedAgentDatabaseName);
-
-    const rawData = fs.readFileSync(linkedAgentDatabasePath, 'utf8');
-
-    const linkedAgentDatabase = JSON.parse(rawData);
-
-
-    const linkedAgentTypeNames = Object.keys(linkedAgentDatabase);
-
-    config.addCollection("linkedAgent_" + linkedAgentDatabaseName, function (collection) {
-      return linkedAgentTypeNames.sort(function (a, b) {
-        return a.localeCompare(b, "en", { sensitivity: "base" });
-      })
-        .map((linkedAgentTypeName) => ({
-          title: linkedAgentTypeName,
-          slug: strToSlug(linkedAgentTypeName),
-          link: "/" + process.env.linkedAgentPath + "/" + strToSlug(linkedAgentDatabaseName + "/" + strToSlug(linkedAgentTypeName)) + "/index.html",
-          collectionName: "linkedAgent_" + strToSlug(linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName))
-        }));
-    });
-
-    // Loop through the linked agent types and create collections of all of its members.
-    for (const linkedAgentTypeName of linkedAgentTypeNames) {
-
-      config.addCollection("linkedAgent_" + linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName), function (collection) {
-        var linkedAgentNames = Object.keys(linkedAgentDatabase[linkedAgentTypeName])
-
-          .map((name) => {
-            nameSlug = linkedAgentDatabase[linkedAgentTypeName][name]['nameSlug'];
-            return {
-              title: name,
-              linkedAgentNamespace: linkedAgentDatabaseName,
-              linkedAgentType: linkedAgentTypeName,
-              linkedAgentTypeSlug: strToSlug(linkedAgentTypeName),
-              link: "/" + process.env.linkedAgentPath + "/" + strToSlug(linkedAgentDatabaseName + "/" + strToSlug(linkedAgentTypeName)) + "/" + nameSlug + "/index.html",
-              slug: nameSlug
-            }
-          })
-          .sort(function (a, b) {
-            return a['title'].localeCompare(b['title'], "en", { sensitivity: "base" });
-          });
-
-        return linkedAgentNames;
-      });
-
-      // Create collections for each linked agent.
-      for (const linkedAgentName of Object.keys(linkedAgentDatabase[linkedAgentTypeName])) {
-        const linkedAgent = linkedAgentDatabase[linkedAgentTypeName][linkedAgentName];
-        const linkedAgentNameSlug = linkedAgentDatabase[linkedAgentTypeName][linkedAgentName]['nameSlug']
-        config.addCollection("linkedAgent_" + linkedAgentDatabaseName + "_" + strToSlug(linkedAgentTypeName) + "_" + linkedAgentNameSlug, function (collection) {
-          const linkedAgentCollection = collection.getAll().filter(function (item) {
-            const target = getNested(item, 'data', 'field_linked_agent', linkedAgentDatabaseName, linkedAgentTypeName);
-            if (target) {
-              return target.includes(linkedAgentName);
-            }
-            return false;
-          })
-            .sort(function (a, b) {
-              return a['data']['title'].localeCompare(b['data']['title'], "en", { sensitivity: "base" });
-            });
-          return linkedAgentCollection;
-        });
-
-      }
-    }
-  }
-
-  // Add the top-level Linked Agent collection.
-  config.addCollection("linkedAgent", function (collection) {
-
-    var linkedAgentNamespaceCollection = linkedAgentNamespaces.map((linkedAgentNamespace) => ({
-      title: linkedAgentNamespace,
-      link: "/" + process.env.linkedAgentPath + "/" + strToSlug(linkedAgentNamespace) + "/index.html",
-      slug: strToSlug(linkedAgentNamespace),
-      collectionName: "linkedAgent_" + strToSlug(linkedAgentNamespace),
-      permalinkBase: path.join(process.env.linkedAgentPath, strToSlug(linkedAgentNamespace))
-    }));
-
-    return linkedAgentNamespaceCollection;
-  });
+  const linkedAgentPath = process.env.linkedAgentPath;
+  linkedAgentHelper.configureLinkedAgentCollections(config, linkedAgentDir, linkedAgentPath);
 
   // Add Islandty Objects collection
   config.addCollection('allIslandtyObjects', collection => {

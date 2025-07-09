@@ -2,6 +2,7 @@ const { isTest } = require('../../testUtils');
 if (process.env.NODE_ENV !== 'test') {
   require('dotenv').config();
 }
+const linkedAgentHelper = require('../linkedAgentHelper');
 const {writeFileSync } = require('fs');
 const { promises: fs } = require("fs");
 const path = require('path');
@@ -51,7 +52,7 @@ async function main() {
 
 
 
-    const allLinkedAgents = {};
+    const allLinkedAgents = linkedAgentHelper.initLinkedAgentsData();
 
     // Process all items
     for (const item of Object.values(items)) {
@@ -98,31 +99,8 @@ async function main() {
 
       const transformedItem = islandtyHelpers.transformKeys(item, fieldInfo);
 
-      // Process linked agents
-      if (transformedItem.field_linked_agent) {
-        for (const [linkedAgentType, linkedAgents] of Object.entries(transformedItem.field_linked_agent)) {
-          if (!allLinkedAgents[linkedAgentType]) {
-            allLinkedAgents[linkedAgentType] = {};
-          }
-
-          for (const [linkedAgentName, linkedAgentValues] of Object.entries(linkedAgents)) {
-            for (const linkedAgentValue of linkedAgentValues) {
-              if (!allLinkedAgents[linkedAgentType][linkedAgentName]) {
-                allLinkedAgents[linkedAgentType][linkedAgentName] = {};
-              }
-
-              if (!allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue]) {
-                allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue] = {
-                  nameSlug: islandtyHelpers.strToSlugWithCounter(linkedAgentValue),
-                  values: []
-                };
-              }
-
-              allLinkedAgents[linkedAgentType][linkedAgentName][linkedAgentValue]['values'].push(transformedItem.id);
-            }
-          }
-        }
-      }
+      // Process linked agents for this item
+      linkedAgentHelper.processItemForLinkedAgents(transformedItem, allLinkedAgents);
 
       // Write page template
       transformedItem.layout = 'layouts/content-item.html';
@@ -131,69 +109,12 @@ async function main() {
 
     }
 
-    // Create linked agent directory structure
-    await fs.mkdir(linkedAgentDir, { recursive: true });
-
-    // Write main linked agent file
-    const linkedAgentsData = {
-      pagination: {
-        data: 'collections.linkedAgent',
-        size: 1,
-        alias: 'relator'
-      },
-      layout: 'layouts/linked-agent-type.html',
-      permalink: '/linked-agent/{{ relator.slug }}/index.html'
-    };
-    await writePageTemplate(linkedAgentsData, linkedAgentDir, 'linked-agent.md');
-
-    // Process all linked agent types
-    for (const [linkedAgentDatabaseName, linkedAgentTypes] of Object.entries(allLinkedAgents)) {
-      // Write JSON file
-      const agentFilePath = path.join(linkedAgentDir, `${linkedAgentDatabaseName}.json`);
-      await fs.writeFile(agentFilePath, JSON.stringify(linkedAgentTypes, null, 2));
-
-      // Create namespace page data
-      const linkedAgentNamespacePageData = {
-        pagination: {
-          data: `collections.linkedAgent_${linkedAgentDatabaseName}`,
-          size: 1,
-          alias: "relator",
-        },
-        layout: "layouts/linked-agent-type.html",
-        linkedAgentNamespace: linkedAgentDatabaseName,
-        permalink: `/${process.env.linkedAgentPath}/${linkedAgentDatabaseName}/{{ relator.slug }}/index.html`
-      };
-      await writePageTemplate(
-        linkedAgentNamespacePageData,
-        linkedAgentDir,
-        `${linkedAgentDatabaseName}.md`
-      );
-
-      // Create templates for each linked agent type
-      for (const linkedAgentTypeName of Object.keys(linkedAgentTypes)) {
-        const linkedAgentData = {
-          pagination: {
-            data: `collections.linkedAgent_${linkedAgentDatabaseName}_${islandtyHelpers.strToSlug(linkedAgentTypeName)
-              }`,
-            size: 1,
-            alias: "relator",
-          },
-          layout: "layouts/linked-agent.html",
-          linkedAgentNamespace: linkedAgentDatabaseName,
-          permalink: `/${process.env.linkedAgentPath}/${linkedAgentDatabaseName}/${islandtyHelpers.strToSlug(linkedAgentTypeName)
-            }/{{ relator.slug }}/index.html`
-        };
-
-        const linkedAgentPath = path.join(linkedAgentDir, linkedAgentDatabaseName);
-        const outputFile = `${islandtyHelpers.strToSlug(linkedAgentTypeName)}.md`;
-
-        await writePageTemplate(
-          linkedAgentData,
-          linkedAgentPath,
-          outputFile
-        );
-      }
-    }
+    // Write linked agent files
+    await linkedAgentHelper.writeLinkedAgentFiles(
+      allLinkedAgents,
+      linkedAgentDir,
+      process.env.linkedAgentPath
+    );
 
   } catch (error) {
     console.error('Error in main process:', error);
