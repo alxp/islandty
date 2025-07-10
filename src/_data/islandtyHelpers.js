@@ -4,6 +4,7 @@ const SaxonJS = require('saxon-js');
 require('dotenv').config();
 const slugify = require('slugify');
 const slugifyWithCounter = require('@sindresorhus/slugify').slugifyWithCounter();
+const { stripHtml } = require("string-strip-html");
 
 module.exports = {
 
@@ -225,7 +226,7 @@ module.exports = {
 
 
   searchIndex(article) {
-const fullTextFileFields = ['extracted'];
+const fullTextFileFields = ['extracted', 'hocr'];
 
     let isString = value => typeof value === 'string' || value instanceof String;
     let getIndexValue = function (value, result = '') {
@@ -238,7 +239,7 @@ const fullTextFileFields = ['extracted'];
       }
       else {
         if (fullTextFileFields.includes(key) && value !== '') {
-          result += fs.readFileSync(path.join(process.env.outputDir, value), { encoding: 'utf8' });
+          result += stripHtml(fs.readFileSync(path.join(process.env.outputDir, value), { encoding: 'utf8' })).result;
         }
         else {
           result += value;
