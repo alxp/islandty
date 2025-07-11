@@ -4,7 +4,7 @@
   "description": "A static site generator for Islandora Workbench data.",
   "main": ".eleventy.js",
   "scripts": {
-    "clean": "rm -rf src/islandty/staging/object/* src/islandty/staging/linked-agent/* web",
+    "clean": "node src/islandty/commands/clean.js",
     "readcsv": "node src/islandty/commands/readCSV.js",
     "compileLocalMirador": "node src/islandty/commands/compileMirador.js",
     "start": "npm run compileLocalMirador && node src/islandty/commands/readCSV.js && npx gulp && concurrently \"npx gulp watch\" \"npx eleventy --serve\"",
