@@ -9,8 +9,10 @@
 {% block content %}
 
   <article>
-    {% include "partials/page-header.html" %}
-    {% include "partials/linked-agent-list.html" %}
+      {% include "partials/page-header.html" %}
+      <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
+        {% include "partials/linked-agent-list.html" %}
+      </div>
   </article>
 
 {% include "partials/cta.html" %}

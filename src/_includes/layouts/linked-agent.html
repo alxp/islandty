@@ -10,23 +10,24 @@
 {% block content %}
   <article>
     {% include "partials/page-header.html" %}
+      <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
 
-{% for item in items %}
-	{% if loop.first %}
-		<ul>
+        {% for item in items %}
+            {% if loop.first %}
+                <ul>
 
-		{% endif %}
+                {% endif %}
 
-		<li>
-			<a href="/{{ contentPath }}/{{ item.data.id }}">{{ item.data.title }}</a>
-		</li>
+                <li>
+                    <a href="/{{ contentPath }}/{{ item.data.id }}">{{ item.data.title }}</a>
+                </li>
 
-		{% if loop.last %}
-		</ul>
-	{% endif %}
-{% endfor %}
+                {% if loop.last %}
+                </ul>
+            {% endif %}
+        {% endfor %}
 
-
+      </div>
   </article>
 
   {% include "partials/cta.html" %}
