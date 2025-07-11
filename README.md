@@ -9,7 +9,6 @@ you can use the same input files to generate a static website.
 ## Features
 
 - OCFL - All objects are stored as single OCFL objects. Changing files automatically results in a new OCFL version being minted.
-- MODS support
 - Mirador viewer with embedded hOCR
 - Content-model based system that moves files into place and can be used to generate derivatives.
 - Uses a [fork of biiif](https://github.com/alxp/biiif) to generate image files, embed hOCR, and support JP2 files.
@@ -83,6 +82,10 @@ If you use Islandora Workbench to export objects from Islandora using the `expor
 The `id` column is special and should contain distinct values. If a spreadsheet contains duplicates of an `id` value, undefined behaviour will result.
 
 If a CSV from exported Islandora content has 'node_id' rather than 'id', that column will be used as the id.of 'id'
+
+### Create a .env file
+
+You can copy sample.env to .env and change the value of dataFIleName to your CSV or Google Sheets share URL.
 
 ### Point to your binaries' root folder in `.env`
 
