@@ -96,6 +96,11 @@ function readCSV() {
 
     const records = [];
     let dataSource = process.env.dataFileName;
+    if (!dataSource) {
+      console.log('ERROR: dataFileName is not defined. Ensure that dataFileName and other required config variables are' +
+          ' set in a .env file or in environment variables. See README for more details.');
+      process.exit(1)
+    }
     const ids = [];
     const node_ids = [];
     const processData = (stream) => {
