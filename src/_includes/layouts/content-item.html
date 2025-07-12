@@ -10,7 +10,7 @@
     {% set display = islandtyHelpers.getLayoutForContentModel(field_model) %}
 
     <div class="[ page-content ] [ flow wrapper ] [ flow-space-700 ]">
-        {{ content }}
+        {{ content | safe }}
 
         {% include display %}
 
