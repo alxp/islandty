@@ -1,0 +1,12 @@
+<div class="[ cta__inner ][ flow ]">
+<h2 class="[ cta__heading ][ headline ]" data-highlight="quinary">
+<a href="{{ item.permalink | url }}">{{ item.title }}</a>
+</h2>
+{% if item.thumbnail %}
+<div class="[ cta__summary measure-compact]">
+<a href="{{ item.permalink | url }}">
+<img src="{{ item.thumbnail | url }}"/>
+</a>
+</a>
+{% endif %}
+</div>

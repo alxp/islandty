@@ -135,7 +135,7 @@ module.exports = {
      * @returns {Array} The resulting children items.
      */
   getChildContent(items, item_id) {
-  let filteredItems = items.filter(x => {
+    let filteredItems = items.filter(x => {
     // Check x.parent_id if it exists
     const parentId1 = x.parent_id;
     const parentId1Valid = parentId1 && typeof parentId1 === 'string' && parentId1.split('|').includes(item_id);
@@ -157,6 +157,33 @@ module.exports = {
   return filteredItems;
 },
 
+/**
+ * Get content by ID.
+ * 
+ * @param {Array} items A list of islandty items
+ * @param {String} id The ID of the content we want to get
+ * @returns {Object} The resulting content item.
+ */
+getObjectById(items, target_id) {
+  let filteredItems = items.filter(x => {
+    // Check x if it exists
+    const id1 = String(x.data.id);
+    const id1Valid = id1 && (id1 == target_id);
+
+    const id2 = String(x.data.node_id);
+    const id2Valid = id2 && (id2 == target_id);
+
+    return id1Valid || id2Valid;
+  });
+  if ((filteredItems === undefined || filteredItems.length == 0)) {
+    return;
+  }
+  else {
+    return filteredItems.pop().data;
+  }
+  
+},
+
   /**
    * Finds the normalized content model associated with a string
    * which may be the natural language or URI version of an
@@ -176,6 +203,34 @@ module.exports = {
       return layoutFile;
     } else {
       return "partials/default-item.html";
+    }
+
+  },
+
+  /**
+   * Finds the normalized content model associated with a string
+   * which may be the natural language or URI version of an
+   * Islandora 2 Model.
+   *
+   * @param {String} item An islandty object
+   * @returns {String} Name of the embed file.
+   */
+  getEmbedPartial(item) {
+    var value = item.field_model;
+
+    if (!value) {
+      value = item.data.field_model;
+      if (!value) {
+        return "src/_includes/partials/default-embed.html";
+      }
+    }
+    var slugify = require('slugify');
+    let fileSlug = slugify(value);
+    var layoutFile = `src/_includes/partials/${fileSlug}-embed.html`;
+    if (fs.existsSync(layoutFile)) {
+      return layoutFile;
+    } else {
+      return "src/_includes/partials/default-embed.html";
     }
 
   },
@@ -226,7 +281,7 @@ module.exports = {
 
 
   searchIndex(article) {
-const fullTextFileFields = ['extracted', 'hocr'];
+    const fullTextFileFields = ['extracted', 'hocr'];
 
     let isString = value => typeof value === 'string' || value instanceof String;
     let getIndexValue = function (value, result = '') {

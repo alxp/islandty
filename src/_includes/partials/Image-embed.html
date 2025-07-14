@@ -1,0 +1,6 @@
+<div class="content-image [ inline-image ]">
+    <a href = "{{ item.permalink }}">
+        <img src="{{  item.service }}"{% if item.image_alt_text | length %}alt="{{ item.image_alt_text }}"{% endif %}/>
+    </a>
+    <div class="content-image-caption [ gap-top-600 ] ">{{ caption }}</div>
+</div>

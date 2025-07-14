@@ -1,9 +1,5 @@
 {% set imageUrl = service %}
 
 <div class="content-image">
-    <img src="{{  imageUrl }}"
-{% if image_alt_text | length %}
-alt="{{ image_alt_text }}"
-{% endif %}
-    />
+    <img src="{{  imageUrl }}"{% if image_alt_text | length %}alt="{{ image_alt_text }}"{% endif %}/>
 </div>

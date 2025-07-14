@@ -3,6 +3,7 @@ const rssPlugin = require('@11ty/eleventy-plugin-rss');
 const { EleventyHtmlBasePlugin } = require("@11ty/eleventy");
 const linkedAgentHelper = require('./src/islandty/linkedAgentHelper');
 const miradorPlugin = require('eleventy-plugin-mirador');
+
 // Filters
 const dateFilter = require('./src/filters/date-filter.js');
 const w3DateFilter = require('./src/filters/w3-date-filter.js');
@@ -17,7 +18,6 @@ const { execSync } = require('node:child_process');
 const { glob } = require('glob')
 const path = require('path');
 const fieldConfigHelper = require('./src/_data/fieldConfigHelper.js');
-const islandtyHelpers = require('./src/_data/islandtyHelpers.js');
 const inspect = require("util").inspect;
 
 // Create a helpful production flag

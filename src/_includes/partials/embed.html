@@ -1,0 +1,9 @@
+{% set item = islandtyHelpers.getObjectById(collections.allIslandtyObjects, embed_id) %}
+
+{% set template = islandtyHelpers.getEmbedPartial(item) %}
+
+<div class="[ dot-shadow panel ][ bg-dark color-quaternary ]">
+    <div class="[ wrapper ]">
+        {% include template %}
+    </div>
+</div>
