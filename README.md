@@ -65,6 +65,44 @@ If you're having trouble running node.js locally,
 see the instructions for running Islandty inside
 a docker container at[ docs/docker.md](docs/docker.md).
 
+## Quick Start with Islandora Demo Objects
+
+To get up and running with a populated repository you can download the Islandora Demo Objects.
+
+```shell
+git clone git@github.com:alxp/islandora_demo_objects.git
+```
+
+Do this in the same enclosing folder as where you cloned Islandty.
+
+Then copy the file 'sample.env' to '.env':
+
+```shell
+cp sample.env .env
+```
+
+The inputDataFile and inputMediaPath locations in .env should then point to the Demo Objects input CSV and media directory.
+
+Then install dependencies:
+
+```shell
+npm install
+```
+
+And finally run Islandty with the build-in web server:
+
+```shell
+npm start
+```
+
+This will take less than a minute and you should see the local web address that the server is running on, which will be:
+
+http://localhost:8080
+
+Unless that port is in use by another server, in which case the port number will increment.
+
+
+
 ## Setup
 
 These instructions use the [Islandora Demo Objects](https://github.com/Islandora-Devops/islandora_demo_objects) content as a working example, but can also work with custom data.
