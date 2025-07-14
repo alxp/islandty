@@ -104,6 +104,18 @@ module.exports = async config => {
 
   });
 
+  config.addShortcode("teaser", async function (itemId) {
+    const yaml = require('js-yaml');
+    const stagingPath = process.env.stagingDir || 'src/islandty/staging';
+    const objectStagingPath = path.join(stagingPath, process.env.objectStagingDir || 'object');
+    const objectFileContents = fs.readFileSync(path.join(objectStagingPath, itemId + '.md'), { encoding: "utf-8" });
+    const item = yaml.load(objectFileContents);
+    return `Teaser squeezer ${itemId}`;
+
+  });
+
+
+
   const stagingDir = process.env.stagingDir || "src/islandty/staging";
   const objectStagingDir = path.join(stagingDir, process.env.objectStagingPath || "object");
 
