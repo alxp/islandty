@@ -1,5 +1,6 @@
 const fs = require('fs');
 const rssPlugin = require('@11ty/eleventy-plugin-rss');
+const { EleventyRenderPlugin } = require('@11ty/eleventy');
 const { EleventyHtmlBasePlugin } = require("@11ty/eleventy");
 const linkedAgentHelper = require('./src/islandty/linkedAgentHelper');
 const miradorPlugin = require('eleventy-plugin-mirador');
@@ -80,7 +81,7 @@ module.exports = async config => {
 
   // Plugins
   config.addPlugin(EleventyHtmlBasePlugin);
-
+  config.addPlugin(EleventyRenderPlugin);
   config.addPlugin(rssPlugin);
 
   config.addPlugin(miradorPlugin, {
@@ -104,14 +105,11 @@ module.exports = async config => {
 
   });
 
-  config.addShortcode("teaser", async function (itemId) {
-    const yaml = require('js-yaml');
-    const stagingPath = process.env.stagingDir || 'src/islandty/staging';
-    const objectStagingPath = path.join(stagingPath, process.env.objectStagingDir || 'object');
-    const objectFileContents = fs.readFileSync(path.join(objectStagingPath, itemId + '.md'), { encoding: "utf-8" });
-    const item = yaml.load(objectFileContents);
-    return `Teaser squeezer ${itemId}`;
-
+  config.addShortcode("islandtyEmbed", async function (itemId, viewMode = 'teaser') {
+    const embedCode = `{%set embed_id = '${itemId}' %}\n`
+      + `{% include 'src/_includes/partials/embed.html'  %}`;
+    const { renderFile, renderTemplate } = config.javascript.functions;
+return await renderTemplate(embedCode);
   });
 
 
