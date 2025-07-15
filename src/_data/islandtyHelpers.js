@@ -216,21 +216,31 @@ getObjectById(items, target_id) {
    * @returns {String} Name of the embed file.
    */
   getEmbedPartial(item) {
-    var value = item.field_model;
-
-    if (!value) {
-      value = item.data.field_model;
-      if (!value) {
-        return "src/_includes/partials/default-embed.html";
+    var default_template = "src/_includes/partials/default-embed.html";
+    if (!item) {
+      return;
+    }
+    if (!('field_model' in item)) {
+      if ('data' in item) {
+        if ('field_model' in item.data) {
+          value = item.data.field_model;
+        }
+        else {
+          return default_template;
+        }
+      }
+      else {
+        return default_template;
       }
     }
+    var value = item.field_model;
     var slugify = require('slugify');
     let fileSlug = slugify(value);
     var layoutFile = `src/_includes/partials/${fileSlug}-embed.html`;
     if (fs.existsSync(layoutFile)) {
       return layoutFile;
     } else {
-      return "src/_includes/partials/default-embed.html";
+      return default_template;
     }
 
   },
