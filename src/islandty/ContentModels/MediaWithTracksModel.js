@@ -16,12 +16,33 @@ class MediaWithTracksModel extends DefaultContentModel {
       const trackFiles = mediaHelpers.flattenTrackStructure(trackStructure);
 
       Object.entries(trackFiles).forEach(([relPath, destPath]) => {
-        const srcPath = path.join(inputMediaPath, relPath);
-        files[srcPath] = destPath;
+        files[relPath] = destPath;
       });
     }
+Object.entries(files)
 
     return files;
+  }
+
+  async ingest(item, inputMediaPath, outputDir) {
+    const files = {
+      ...this.buildFilesList(item, inputMediaPath, outputDir),
+      ...await this.buildMetadataFiles(item)
+    };
+    const resultMap = await this.storageHandler.copyFiles(item, files, inputMediaPath, outputDir);
+
+    await this.storageHandler.cleanup();
+
+    if (item[this.trackField]
+      && item[this.trackField] !== ''
+    ) {
+      const trackStructure = mediaHelpers.parseFieldTrack(item[this.trackField]);
+      const trackFiles = mediaHelpers.flattenTrackStructure(trackStructure);
+      item[this.trackField] = [];
+      for (const trackFile of Object.entries(trackFiles)) {
+        item[this.trackField].push(resultMap[trackFile]);
+      }
+    }
   }
 
 }
