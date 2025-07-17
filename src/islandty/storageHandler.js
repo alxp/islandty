@@ -302,11 +302,13 @@ await object.update(async (transaction) => {
     for (const updatedFile of newInventory.files()) {
       const fileUrlPath = '/' + path.join('ocfl-files', object.id, updatedFile.contentPath);
       const resultMapKey = Object.keys(resultMap).filter(x => resultMap[x].digest == updatedFile.digest).pop();
-      resultMap[resultMapKey]['webPath'] = fileUrlPath;
-      for (const fileField of islandtyHelpers.getFileFields()) {
-        if (filesMap[item[fileField]] == updatedFile.logicalPath) {
-          item[fileField] = fileUrlPath;
-          item[fileField + '_digest'] = updatedFile.digest;
+      if (resultMapKey) {
+        resultMap[resultMapKey]['webPath'] = fileUrlPath;
+        for (const fileField of islandtyHelpers.getFileFields()) {
+          if (filesMap[item[fileField]] == updatedFile.logicalPath) {
+            item[fileField] = fileUrlPath;
+            item[fileField + '_digest'] = updatedFile.digest;
+          }
         }
       }
     }
