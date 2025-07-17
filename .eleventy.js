@@ -95,13 +95,10 @@ module.exports = async config => {
   });
 
   // Short codes
-  config.addShortcode("mediaTrackLabel", async function (type, langCode) {
-
+  config.addShortcode("mediaTrackLabel", async function (topLabel, kind, langCode) {
     const languageNames = new Intl.DisplayNames(['en'], { type: 'language' });
     const langLabel = languageNames.of(langCode);
-
-    return (type + ' ' + langLabel);
-
+    return `${topLabel} ${kind} ${langLabel}`;
   });
 
   const stagingDir = process.env.stagingDir || "src/islandty/staging";

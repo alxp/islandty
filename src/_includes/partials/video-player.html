@@ -1,15 +1,18 @@
-
-{% if media_video_field_track %}
-	{% set trackData = media_video_field_track.split(':') %}
-{% endif %}
-
 <div class="video">
-    <video height="500" width="800" controls>
-        <source src="{{ file }}" type="video/mp4">
-        {% if trackData %}
-          <track default kind="{{ trackData[1] }}" srclang="{{ trackData[2] }}" src="{{ trackData[3] }}"
-          label="{% mediaTrackLabel trackData[1],trackData[2] %}">
-        {% endif %}
-
-    </video>
-</div>
+	<video height="500" width="800" controls>
+		<source src="{{ file }}" type="video/mp4">
+		{% if media_video_field_track and media_video_field_track is not string %}
+			{% set firstTrack = true %}
+			{% for topLabel, kinds in media_video_field_track %}
+				{% for kind, languages in kinds %}
+					{% for lang, urls in languages %}
+						{% for url in urls %}
+							<track {% if firstTrack %} default {% endif %} kind="{{ kind }}" srclang="{{ lang }}" src="{{ url }}" label="{% mediaTrackLabel topLabel, kind, lang %}">
+								{% set firstTrack = false %}
+							{% endfor %}
+						{% endfor %}
+					{% endfor %}
+				{% endfor %}
+			{% endif %}
+		</video>
+	</div>
