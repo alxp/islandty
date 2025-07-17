@@ -16,14 +16,46 @@ class MediaWithTracksModel extends DefaultContentModel {
       const trackFiles = mediaHelpers.flattenTrackStructure(trackStructure);
 
       Object.entries(trackFiles).forEach(([relPath, destPath]) => {
-        const srcPath = path.join(inputMediaPath, relPath);
-        files[srcPath] = destPath;
+        files[relPath] = destPath;
       });
     }
 
     return files;
   }
 
+  async ingest(item, inputMediaPath, outputDir) {
+    const files = {
+      ...this.buildFilesList(item, inputMediaPath, outputDir),
+      ...await this.buildMetadataFiles(item)
+    };
+    const resultMap = await this.storageHandler.copyFiles(item, files, inputMediaPath, outputDir);
+
+    await this.storageHandler.cleanup();
+
+    if (item[this.trackField] && item[this.trackField] !== '') {
+      const trackStructure = mediaHelpers.parseFieldTrack(item[this.trackField]);
+
+      // Update track paths using resultMap
+      for (const topLabel of Object.keys(trackStructure)) {
+        for (const kind of Object.keys(trackStructure[topLabel])) {
+          for (const lang of Object.keys(trackStructure[topLabel][kind])) {
+            const paths = trackStructure[topLabel][kind][lang];
+            trackStructure[topLabel][kind][lang] = paths.map(origPath => {
+              // Find matching entry in resultMap
+              const match = Object.entries(resultMap).find(
+                ([key, value]) => key === origPath
+              );
+
+              // Return webPath if found, otherwise original path
+              return match ? match[1].webPath : origPath;
+            });
+          }
+        }
+      }
+
+      item[this.trackField] = trackStructure;
+    }
+  }
 }
 
 module.exports = MediaWithTracksModel;

@@ -1,16 +1,21 @@
 {% set audioUrl = service %}
 
-{% if media_audio_field_track %}
-  {% set trackData = media_audio_field_track.split(':') %}
-{% endif %}
-
 <figure>
-    <figcaption>Listen</figcaption>
-    <audio controls>
-        <source src="{{ audioUrl }}" />
-        {% if trackData %}
-          <track default kind="{{ trackData[1] }}" srclang="{{ trackData[2] }}"
-        {% endif %}
-            src="{{ trackData[3] }}" />
-    </audio>
-</figure>
+	<figcaption>Listen</figcaption>
+	<audio controls>
+		<source src="{{ audioUrl }}"/>
+		{% if media_audio_field_track and media_audio_field_track is not string %}
+			{% set firstTrack = true %}
+			{% for topLabel, kinds in media_audio_field_track %}
+				{% for kind, languages in kinds %}
+					{% for lang, urls in languages %}
+						{% for url in urls %}
+							<track {% if firstTrack %} default {% endif %} kind="{{ kind }}" srclang="{{ lang }}" src="{{ url }}" label="{% mediaTrackLabel topLabel, kind, lang %}">
+								{% set firstTrack = false %}
+							{% endfor %}
+						{% endfor %}
+					{% endfor %}
+				{% endfor %}
+			{% endif %}
+		</audio>
+	</figure>
