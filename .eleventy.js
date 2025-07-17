@@ -1,202 +1,169 @@
 const fs = require('fs');
+const path = require('path');
+const { execSync } = require('node:child_process');
+const { inspect } = require('util');
+const glob = require('glob');
+require('dotenv').config();
+
+// Plugins
 const rssPlugin = require('@11ty/eleventy-plugin-rss');
 const { EleventyHtmlBasePlugin } = require("@11ty/eleventy");
-const linkedAgentHelper = require('./src/islandty/linkedAgentHelper');
 const miradorPlugin = require('eleventy-plugin-mirador');
-// Filters
+
+// Custom helpers and filters
+const linkedAgentHelper = require('./src/islandty/linkedAgentHelper');
 const dateFilter = require('./src/filters/date-filter.js');
 const w3DateFilter = require('./src/filters/w3-date-filter.js');
-require('dotenv').config();
-// Transforms
 const htmlMinTransform = require('./src/transforms/html-min-transform.js');
-
-const { itemsWithContentModel, searchIndex } = require('./src/_data/islandtyHelpers.js');
-const { getNested, strToSlug } = require('./src/_data/islandtyHelpers.js');
-
-const { execSync } = require('node:child_process');
-const { glob } = require('glob')
-const path = require('path');
 const fieldConfigHelper = require('./src/_data/fieldConfigHelper.js');
-const islandtyHelpers = require('./src/_data/islandtyHelpers.js');
-const inspect = require("util").inspect;
+const { searchIndex } = require('./src/_data/islandtyHelpers.js');
 
-// Create a helpful production flag
-const isProduction = process.env.NODE_ENV == 'production';
+// Configuration flags
+const isProduction = process.env.NODE_ENV === 'production';
 
-module.exports = async config => {
-
-  config.setServerOptions({
-    // Default values are shown:
-
-    // Whether the live reload snippet is used
+module.exports = async eleventyConfig => {
+  // ========================================
+  // Server Configuration
+  // ========================================
+  eleventyConfig.setServerOptions({
     liveReload: true,
-
-    // Whether DOM diffing updates are applied where possible instead of page reloads
     domDiff: true,
-
-    // The starting port number
-    // Will increment up to (configurable) 10 times if a port is already in use.
     port: 8080,
-
-    // Additional files to watch that will trigger server updates
-    // Accepts an Array of file paths or globs (passed to `chokidar.watch`).
-    // Works great with a separate bundler writing files to your output folder.
-    // e.g. `watch: ["_site/**/*.css"]`
     watch: [],
-
-    // Show local network IP addresses for device testing
     showAllHosts: false,
-
-    // Use a local key/certificate to opt-in to local HTTP/2 with https
-    https: {
-      // key: "./localhost.key",
-      // cert: "./localhost.cert",
-    },
-
-    // Change the default file encoding for reading/serving files
-    encoding: "utf-8",
+    https: {},
+    encoding: "utf-8"
   });
 
-  // Add filters
+  // ========================================
+  // Filters
+  // ========================================
+  eleventyConfig.addFilter("debug", content => `<pre>${inspect(content)}</pre>`);
+  eleventyConfig.addFilter('dateFilter', dateFilter);
+  eleventyConfig.addFilter('w3DateFilter', w3DateFilter);
+  eleventyConfig.addFilter('getGlobalData', data => require(`./src/_data/${data}.csv`));
+  eleventyConfig.addFilter('getLinkFromTitle', (collection, title) =>
+    collection.find(item => item.title === title)?.link || ''
+  );
 
-  config.addFilter("debug", (content) => `<pre>${inspect(content)}</pre>`);
-  config.addFilter('dateFilter', dateFilter);
-  config.addFilter('w3DateFilter', w3DateFilter);
-  config.addFilter('getGlobalData', (data) => {
-    // if your global data lives elsewhere, this file path will need to change a bit
-    return require(`./src/_data/${data}.csv`);
-  });
-  config.addFilter('getLinkFromTitle', (collection, title) => {
-    var link = '';
-    const filtered = collection.filter(item => item.title == title)
-    return filtered[0].link;
-
-  });
-
-  // only minify HTML if we are in productionbecause it slows builds _right_ down
+  // ========================================
+  // Transforms
+  // ========================================
+  // Minify HTML in production only
   if (isProduction) {
-    config.addTransform('htmlmin', htmlMinTransform);
+    eleventyConfig.addTransform('htmlmin', htmlMinTransform);
   }
 
+  // ========================================
   // Plugins
-  config.addPlugin(EleventyHtmlBasePlugin);
-
-  config.addPlugin(rssPlugin);
-
-  config.addPlugin(miradorPlugin, {
+  // ========================================
+  eleventyConfig.addPlugin(EleventyHtmlBasePlugin);
+  eleventyConfig.addPlugin(rssPlugin);
+  eleventyConfig.addPlugin(miradorPlugin, {
     miradorAppUrl: "/js/mirador.js",
     window: {
       textOverlay: {
         enabled: true,
         selectable: true,
         visible: false
-      },
+      }
     }
   });
 
-  // Short codes
-  config.addShortcode("mediaTrackLabel", async function (topLabel, kind, langCode) {
+  // ========================================
+  // Shortcodes
+  // ========================================
+  eleventyConfig.addShortcode("mediaTrackLabel", (topLabel, kind, langCode) => {
     const languageNames = new Intl.DisplayNames(['en'], { type: 'language' });
-    const langLabel = languageNames.of(langCode);
-    return `${topLabel} ${kind} ${langLabel}`;
+    return `${topLabel} ${kind} ${languageNames.of(langCode)}`;
   });
 
+  eleventyConfig.addShortcode('searchIndex', article => searchIndex(article));
+
+  // ========================================
+  // Collections
+  // ========================================
   const stagingDir = process.env.stagingDir || "src/islandty/staging";
   const objectStagingDir = path.join(stagingDir, process.env.objectStagingPath || "object");
 
+  eleventyConfig.addCollection('allIslandtyObjects', collection =>
+    [...collection.getFilteredByGlob(path.join(objectStagingDir, '*.md'))]
+  );
+
+  // Linked agent configuration
   const linkedAgentStagingPath = process.env.linkedAgentStagingPath || "linked-agent";
   const linkedAgentDir = path.join(stagingDir, linkedAgentStagingPath);
   const linkedAgentPath = process.env.linkedAgentPath;
-  linkedAgentHelper.configureLinkedAgentCollections(config, linkedAgentDir, linkedAgentPath);
+  linkedAgentHelper.configureLinkedAgentCollections(eleventyConfig, linkedAgentDir, linkedAgentPath);
 
-  // Add Islandty Objects collection
-  config.addCollection('allIslandtyObjects', collection => {
-    return [...collection.getFilteredByGlob(path.join(objectStagingDir, '*.md'))];
-  });
-
-
-  // ROSIE: Ignore sef files
-  config.watchIgnores.add('**/*.sef.json');
-
-  // ROSIE: Compile XSLT
-  config.on("eleventy.before", ({ dir, runMode, outputMode }) => {
-    const xsltfiles = glob.sync('**/*.xsl');
-    for (const myfile of xsltfiles) {
-      outputFile = myfile.replace('.xsl', '.sef.json')
+  // ========================================
+  // Event Hooks
+  // ========================================
+  // Pre-build: Compile XSLT files
+  eleventyConfig.on("eleventy.before", () => {
+    const xsltFiles = glob.sync('**/*.xsl');
+    for (const file of xsltFiles) {
+      const outputFile = file.replace('.xsl', '.sef.json');
       try {
-        execSync(`xslt3 -t -xsl:${myfile} -export:${outputFile} -nogo -relocate:on -ns:##html5`);
+        execSync(`xslt3 -t -xsl:${file} -export:${outputFile} -nogo -relocate:on -ns:##html5`);
       } catch (err) {
-        console.log(`Compilation failed with error [${err}].`)
+        console.error(`XSLT compilation failed for ${file}:`, err);
       }
-
     }
   });
 
-  // Rosie: Add Search index
-  config.addShortcode('searchIndex', article => searchIndex(article));
+  // Post-build: Create search index
+  eleventyConfig.on("eleventy.after", async ({ dir }) => {
+    console.log("Post-build process started");
+    const lunr = require('lunr');
+    const fsPromises = require('node:fs/promises');
 
-  config.on(
-    "eleventy.after",
-    async ({ dir, results, runMode, outputMode }) => {
-      require('dotenv').config();
-      const readCSV = require('./src/_data/readCSV.js');
-      const slugify = require('slugify');
+    const compiledIndexPath = path.join(dir.output, "index.json");
+    const rawIndexPath = path.join(dir.output, "index-raw.json");
 
-      var path = require('path');
+    try {
+      const indexContent = await fsPromises.readFile(rawIndexPath, 'utf8');
+      const documents = JSON.parse(indexContent);
 
-      // Run me after the build ends
-      console.log("eleventy after plugin run;.");
+      const idx = lunr(function () {
+        this.ref('id');
+        this.field('title');
+        this.field('content');
+        documents.forEach(doc => this.add(doc));
+      });
 
-      // Precompile the lunr index.
-      const compiledIndexFilename = path.join(dir.output, "index.json");
-      const rawIndexFilename = path.join(dir.output, "index-raw.json");
-      const fs = require('node:fs/promises');
-      var lunr = require('lunr');
-      try {
-        const index_content = await fs.readFile(rawIndexFilename, { encoding: 'utf8' });
-        const documents = JSON.parse(index_content)
-        var idx = lunr(function () {
-          this.ref('id')
-          this.field('title')
-          this.field('content')
+      await fsPromises.writeFile(compiledIndexPath, JSON.stringify(idx));
+    } catch (err) {
+      console.error("Search index creation failed:", err);
+    }
+  });
 
-          documents.forEach(function (doc) {
-            this.add(doc)
-          }, this)
-        })
-        fs.writeFile(compiledIndexFilename, JSON.stringify(idx));
-      } catch (err) {
-        console.error(err)
-      }
+  // ========================================
+  // Global Configuration
+  // ========================================
+  eleventyConfig.setUseGitIgnore(false);
+  eleventyConfig.watchIgnores.add('**/*.sef.json');  // Ignore SEF files
 
-    });
+  // Markdown configuration
+  eleventyConfig.amendLibrary("md", mdLib => mdLib.enable("code"));
 
-  // fs.writeFile(compiledIndexFilename, JSON.stringify(index));
+  // Global data
+  eleventyConfig.addGlobalData('contentPath', process.env.contentPath);
+  eleventyConfig.addGlobalData('linkedAgentPath', process.env.linkedAgentPath);
+  eleventyConfig.addGlobalData('pathPrefix', process.env.pathPrefix);
+  eleventyConfig.addGlobalData('islandtyFieldInfo', await fieldConfigHelper.getMergedFieldConfig());
 
-  // Tell 11ty to use the .eleventyignore and ignore our .gitignore file
-  config.setUseGitIgnore(false);
+  // Site configuration
+  const siteConfig = require('./config/site.json');
+  eleventyConfig.addGlobalData('site', siteConfig);
 
-  config.amendLibrary("md", mdLib => mdLib.enable("code"));
-  config.addGlobalData('contentPath', process.env.contentPath);
-  config.addGlobalData('linkedAgentPath', process.env.linkedAgentPath);
-  config.addGlobalData('pathPrefix', process.env.pathPrefix);
-  config.addGlobalData('islandtyFieldInfo', await fieldConfigHelper.getMergedFieldConfig());
+  // Field configuration (overrides previous islandtyFieldInfo)
+  const fieldConfig = require('./config/mergedIslandtyFieldInfo.json');
+  eleventyConfig.addGlobalData('islandtyFieldInfo', fieldConfig);
 
-  // Add configurations at the top-level into Eleventy.
-  siteConfig = require('./config/site.json');
-  config.addGlobalData('site', siteConfig);
-
-  // Add field config to Eleventy
-  fieldConfig = require('./config/mergedIslandtyFieldInfo.json');
-  config.addGlobalData('islandtyFieldInfo', fieldConfig);
-
-
-  // https://nodejs.org/api/util.html#util_util_inspect_object_options
-  const inspect = require("util").inspect;
-
-  module.exports = (eleventyConfig) => {
-  };
-
+  // ========================================
+  // Eleventy Configuration
+  // ========================================
   return {
     markdownTemplateEngine: 'njk',
     dataTemplateEngine: 'njk',
@@ -204,7 +171,7 @@ module.exports = async config => {
     pathPrefix: process.env.pathPrefix,
     dir: {
       input: 'src',
-      output: process.env.outputDir ? process.env.outputDir : 'web'
+      output: process.env.outputDir || 'web'
     }
   };
 };
