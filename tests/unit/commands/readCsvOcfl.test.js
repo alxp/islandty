@@ -1,7 +1,7 @@
 const { resetTestEnvironmentSync, loadEnvSync, fileExists } = require('../../helpers');
 
 // 1. Synchronously load environment FIRST
-loadEnvSync('fixtures/config/.env.test');
+loadEnvSync('fixtures/config/.env.test_ocfl');
 
 // 2. Synchronously reset environment
 resetTestEnvironmentSync();
@@ -22,7 +22,7 @@ describe('readCSV command', () => {
   });
 
   test('copies media files to output', async () => {
-    const mediaFile = `${process.env.outputDir}/${process.env.contentPath}/1/file1.txt`;
+    const mediaFile = `${process.env.outputDir}/ocfl-files/1/v1/content/file1.txt`;
     console.log('Checking media file at:', mediaFile);
     expect(await fileExists(mediaFile)).toBe(true);
   });

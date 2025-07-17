@@ -17,8 +17,8 @@ const resetTestEnvironmentSync = () => {
 };
 
 // Synchronous environment loading
-const loadEnvSync = () => {
-  const envPath = path.resolve(__dirname, 'fixtures/config/.env.test');
+function loadEnvSync (specificEnvPath) {
+  const envPath = path.resolve(__dirname, specificEnvPath);
   const envFile = fs.readFileSync(envPath, 'utf8');
   const envConfig = dotenv.parse(envFile);
 
