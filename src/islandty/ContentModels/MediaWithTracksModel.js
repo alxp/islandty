@@ -19,7 +19,6 @@ class MediaWithTracksModel extends DefaultContentModel {
         files[relPath] = destPath;
       });
     }
-Object.entries(files)
 
     return files;
   }
@@ -33,18 +32,30 @@ Object.entries(files)
 
     await this.storageHandler.cleanup();
 
-    if (item[this.trackField]
-      && item[this.trackField] !== ''
-    ) {
+    if (item[this.trackField] && item[this.trackField] !== '') {
       const trackStructure = mediaHelpers.parseFieldTrack(item[this.trackField]);
-      const trackFiles = mediaHelpers.flattenTrackStructure(trackStructure);
-      item[this.trackField] = [];
-      for (const trackFile of Object.entries(trackFiles)) {
-        item[this.trackField].push(resultMap[trackFile]);
+
+      // Update track paths using resultMap
+      for (const topLabel of Object.keys(trackStructure)) {
+        for (const kind of Object.keys(trackStructure[topLabel])) {
+          for (const lang of Object.keys(trackStructure[topLabel][kind])) {
+            const paths = trackStructure[topLabel][kind][lang];
+            trackStructure[topLabel][kind][lang] = paths.map(origPath => {
+              // Find matching entry in resultMap
+              const match = Object.entries(resultMap).find(
+                ([key, value]) => key === origPath
+              );
+
+              // Return webPath if found, otherwise original path
+              return match ? match[1].webPath : origPath;
+            });
+          }
+        }
       }
+
+      item[this.trackField] = trackStructure;
     }
   }
-
 }
 
 module.exports = MediaWithTracksModel;
