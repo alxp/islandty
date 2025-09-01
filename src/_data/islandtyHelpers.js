@@ -131,11 +131,11 @@ module.exports = {
      * Finds the children items from the current item
      *
      * @param {Array} items A list of islandty items
-     * @param {Object} item The current item we want the children of
+     * @param {String} item_id The current item we want the children of
      * @returns {Array} The resulting children items.
      */
   getChildContent(items, item_id) {
-  let filteredItems = items.filter(x => {
+    let filteredItems = items.filter(x => {
     // Check x.parent_id if it exists
     const parentId1 = x.parent_id;
     const parentId1Valid = parentId1 && typeof parentId1 === 'string' && parentId1.split('|').includes(item_id);
@@ -155,7 +155,7 @@ module.exports = {
   });
 
   return filteredItems;
-},
+  },
 
   /**
    * Finds the normalized content model associated with a string
@@ -224,9 +224,8 @@ module.exports = {
     }
   },
 
-
   searchIndex(article) {
-const fullTextFileFields = ['extracted', 'hocr'];
+    const fullTextFileFields = ['extracted', 'hocr'];
 
     let isString = value => typeof value === 'string' || value instanceof String;
     let getIndexValue = function (value, result = '') {
@@ -257,6 +256,7 @@ const fullTextFileFields = ['extracted', 'hocr'];
 
     return JSON.stringify(indexString);
   },
+
   /**
    * Transform the data XML file of each object by the Index XSLT.
    */
@@ -317,6 +317,7 @@ const fullTextFileFields = ['extracted', 'hocr'];
       return null;
     }
   },
+
   transformKeys(obj, csvFieldInfo = { labels: {}, cardinality: {} }) {
     const jsonFieldInfo = require('../../config/mergedIslandtyFieldInfo.json');
 
