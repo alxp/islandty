@@ -14,4 +14,19 @@ const vue = () => {
       .pipe(dest(js_dir))
 }
 
-module.exports = [lunr, vue];
+const galleria = () => {
+  return src('./node_modules/galleria/dist/galleria.min.js', {encoding: false})
+      .pipe(dest(js_dir))
+}
+
+const galleriaTheme = () => {
+  return src('./node_modules/galleria/dist/themes/classic/galleria.classic.min.js', {encoding: false})
+      .pipe(dest(js_dir))
+}
+
+const galleriaThemeCss = () => {
+  return src('./node_modules/galleria/dist/themes/classic/galleria.classic.css', {encoding: false})
+      .pipe(dest(js_dir))
+}
+
+module.exports = [lunr, vue, galleria, galleriaTheme, galleriaThemeCss];

@@ -443,4 +443,62 @@ module.exports = {
     return slugifyWithCounter(str, options);
   },
 
+  galleria(elementId, item, allItems) {
+    let data = this.getGalleryChildren(item, allItems);
+    return `
+    <style>
+      #${elementId}{ width: 700px; height: 400px; background: #000 }
+    </style>
+    <div id="${elementId}"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/galleria/dist/galleria.min.js"></script>
+    <script src="/js/galleria.classic.min.js"></script>
+    <script>
+    var data = ${JSON.stringify(data)};
+    (function() {
+        Galleria.run('#${elementId}', {dataSource: data});
+        Galleria.ready(function() {
+        this.bind('image', function(e) {
+          // add alt to big image
+          e.imageTarget.alt = e.galleriaData.alt;
+        });
+        this.bind('thumbnail', function(e) {
+          // add alt to thumbnails image
+          e.thumbTarget.alt = "Thumbnail: " + e.galleriaData.alt;
+        });
+      });
+    }());
+
+    </script>`;
+  },
+
+  getGalleryChildren(item, allItems) {
+    let data = [];
+    let children = this.getChildContent(allItems, item['id']);
+    if (children.length === 0) {
+      return '';
+    }
+    for (var child of children) {
+      if (!child) {
+        continue;
+      }
+      if (child.hasOwnProperty('data')){
+        child = child.data;
+      }
+
+      let hasServiceFile = child.hasOwnProperty('service');
+      let hasOriginalFile = child.hasOwnProperty('file');
+      let hasThumbnail = child.hasOwnProperty('thumbnail');
+      if (hasServiceFile || hasOriginalFile) {
+        let file = hasServiceFile ? child.service : child.file;
+        data.push({
+          "image": file,
+          "alt": child.image_alt_text,
+          "thumb": hasThumbnail ? child.thumbnail : file,
+          "big": hasOriginalFile ? child.file : file
+        });
+      };
+    };
+    return data;
+  }
 }

@@ -17,6 +17,8 @@ const w3DateFilter = require('./src/filters/w3-date-filter.js');
 const htmlMinTransform = require('./src/transforms/html-min-transform.js');
 const fieldConfigHelper = require('./src/_data/fieldConfigHelper.js');
 const { searchIndex } = require('./src/_data/islandtyHelpers.js');
+const islandtyHelpers = require('./src/_data/islandtyHelpers.js');
+
 
 // Configuration flags
 const isProduction = process.env.NODE_ENV === 'production';
@@ -80,6 +82,7 @@ module.exports = async eleventyConfig => {
 
   eleventyConfig.addShortcode('searchIndex', article => searchIndex(article));
 
+  eleventyConfig.addShortcode('galleria', (elementId, item, allItems) => islandtyHelpers.galleria(elementId, item, allItems))
   // ========================================
   // Collections
   // ========================================

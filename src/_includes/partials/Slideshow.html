@@ -1,0 +1,9 @@
+<h3>{{ title }}</h3>
+
+
+{% galleria 'gallery-' + item.id, item, collections.all %}
+
+
+{% include "partials/metadata.html" %}
+
+{% include "partials/file-downloads.html" %}
