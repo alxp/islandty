@@ -24,6 +24,7 @@
     "deepmerge": "^4.3.1",
     "dotenv": "^17.1.0",
     "eleventy-plugin-mirador": "github:alxp/eleventy-plugin-mirador#main",
+    "galleria": "^1.6.1",
     "gulp": "^5.0.0",
     "gulp-clean-css": "^4.3.0",
     "gulp-rename": "^2.0.0",
