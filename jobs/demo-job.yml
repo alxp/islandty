@@ -1,0 +1,8 @@
+# jobs/demo-job.yaml
+name: "Islandora Demo Job"
+description: "Configuration for Islandora Demo Objects"
+
+config:
+  dataFileName: "../islandora_demo_objects/create_islandora_objects.csv"
+  inputMediaPath: "../islandora_demo_objects"
+  contentPath: "islandora/object"

@@ -14,6 +14,8 @@ you can use the same input files to generate a static website.
 - Uses a [fork of biiif](https://github.com/alxp/biiif) to generate image files, embed hOCR, and support JP2 files.
 - [Lunr](https://lunrjs.com)-based search
 - Supports both local and remote locations for object files.
+- Job-based configuration using YAML files for different scenarios
+
 
 ![Screenshot of a book in Mirador with metadata and file downloads](/docs/images/demo-book-object.png)
 
@@ -89,10 +91,32 @@ Then install dependencies:
 npm install
 ```
 
+Option 1: Using .env file (traditional)
+
+Copy the file 'sample.env' to '.env':
+```shell
+cp sample.env .env
+```
+
+Create a job file for your configuration.
+
+Below is the sample job file that loads the Islandora Demo Objects:
+
+```yaml
+# jobs/demo-job.yaml
+name: "Islandora Demo Job"
+description: "Configuration for Islandora Demo Objects"
+
+config:
+  dataFileName: "../islandora_demo_objects/create_islandora_objects.csv"
+  inputMediaPath: "../islandora_demo_objects"
+  contentPath: "islandora/object"
+```
+
 And finally run Islandty with the build-in web server:
 
 ```shell
-npm start
+npm start -- --job jobs/demo-job.yaml
 ```
 
 This will take less than a minute and you should see the local web address that the server is running on, which will be:
