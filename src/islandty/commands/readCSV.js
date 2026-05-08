@@ -28,9 +28,17 @@ async function writePageTemplate(data, dir, fileName) {
   }
 }
 
+const REQUIRED_ENV_VARS = ['inputMediaPath', 'contentPath', 'outputDir', 'linkedAgentPath'];
+
 async function main() {
   console.log("Reading input CSV and generating template files for each repository object.");
 
+  const missing = REQUIRED_ENV_VARS.filter((name) => !process.env[name]);
+  if (missing.length > 0) {
+    console.error(`Missing required environment variable(s): ${missing.join(', ')}`);
+    console.error('Check your .env file and ensure these values are set.');
+    process.exit(1);
+  }
 
   try {
     // Generate and save merged field config

@@ -1,4 +1,5 @@
 const { build: buildIiif } = require('biiif');
+const { execSync } = require('child_process');
 const { promises: fs } = require('fs');
 const path = require('path');
 const DefaultContentModel = require('./default.js');
@@ -33,6 +34,7 @@ class PagedContentModel extends DefaultContentModel {
 
         if (needsIIIF) {
            await this.createIIIFStructure(item, pages, resultMap, inputMediaPath, iiifPath);
+          await this.convertJp2Files(iiifPath);
           await this.processIIIFDerivatives(item, iiifPath);
           await this.storeIIIFState(item, iiifPath);
         }
@@ -92,6 +94,22 @@ class PagedContentModel extends DefaultContentModel {
       const object = this.storageHandler.storage.object(item.id);
       const inventory = await object.getInventory();
       await fs.writeFile(path.join(iiifPath, '.ocfl-version'), inventory.head);
+    }
+  }
+
+  async convertJp2Files(iiifPath) {
+    const glob = require('glob');
+    const jp2Files = glob.sync('**/*.jp2', { cwd: iiifPath, absolute: true });
+
+    for (const jp2File of jp2Files) {
+      const pngFile = jp2File.replace(/\.jp2$/, '.png');
+      try {
+        execSync(`vips copy "${jp2File}" "${pngFile}"`, { stdio: 'pipe' });
+        await fs.unlink(jp2File);
+        console.log(`Converted ${path.basename(jp2File)} to PNG`);
+      } catch (err) {
+        console.error(`Failed to convert ${jp2File}: ${err.message}`);
+      }
     }
   }
 
