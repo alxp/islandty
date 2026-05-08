@@ -19,7 +19,7 @@ you can use the same input files to generate a static website.
 
 ## Requirements
 
-- Node.js (Tested on version 22.x and 23.x.
+- Node.js (Tested on version 22.x through 25.x).
 - VIPS (for JP2 support - see below)
 
 ### Installing VIPS for JP2 support
@@ -249,9 +249,7 @@ for filename in *.jp2 ; do
 
 ## Known Issues/Troubleshooting
 
-- `1 high severity vulnerability`: there is a bug in the npm html-minifier package, which minifies code during production runs.
 - `Deprecation Warning` related to `sass`: The current theme includes a sass library, `gorko`, that is no longer developed. We are working to remove `gorko`.
-- `Unable to call islandtyHelpers`:  Eleventy 3.0. is not yet compatible with Node v.23, which is installed by default on a mac when you update homebrew. Downgrade Node to version 22.
 
 
 ## Maintainers
