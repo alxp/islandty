@@ -8,7 +8,7 @@ const resetTestEnvironmentSync = () => {
   const outputDir = path.resolve(__dirname, '../output');
   try {
     if (fs.existsSync(outputDir)) {
-      fs.rmdirSync(outputDir, { recursive: true });
+      fs.rmSync(outputDir, { recursive: true, force: true });
     }
     fs.mkdirSync(outputDir, { recursive: true });
   } catch (err) {
