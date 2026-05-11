@@ -9,45 +9,23 @@ if (!USE_LOCAL_MIRADOR) {
   process.exit(0);
 }
 
-const MIRADOR_DIR = path.resolve(__dirname, '../../../mirador-integration-islandora');
-const MAIN_JS_SOURCE = path.join(MIRADOR_DIR, 'webpack/dist/main.js');
-const OUTPUT_DIR = path.join((process.env.outputDir || 'web'), 'js');
-const OUTPUT_PATH = path.resolve(__dirname, '../../..', OUTPUT_DIR, 'mirador.js');
+const OUTPUT_DIR = path.join(process.env.outputDir || 'web', 'js');
+fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-// Ensure output directory exists
-if (!fs.existsSync(OUTPUT_DIR)) {
-  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+// mirador-textoverlay is not yet published to npm with M4 support.
+// Clone the source into vendor/ temporarily so Vite can bundle it directly.
+const TEXTOVERLAY_VENDOR_DIR = path.resolve(__dirname, '../../../vendor/mirador-textoverlay');
+if (!fs.existsSync(TEXTOVERLAY_VENDOR_DIR)) {
+  console.log('Cloning mirador-textoverlay (M4 port) to vendor/...');
+  execSync(
+    'git clone --depth=1 --branch=main https://github.com/dbmdz/mirador-textoverlay.git ' +
+      JSON.stringify(TEXTOVERLAY_VENDOR_DIR),
+    { stdio: 'inherit' }
+  );
 }
 
-// Clone repository if missing
-if (!fs.existsSync(MIRADOR_DIR)) {
-  console.log('Cloning Mirador integration project...');
-  execSync(`git clone --branch=main https://github.com/alxp/mirador-integration-islandora.git "${MIRADOR_DIR}"`, { stdio: 'inherit' });
-}
-
-// Navigate and build
-process.chdir(MIRADOR_DIR);
-if (!fs.existsSync('node_modules')) {
-  console.log('Installing Mirador dependencies...');
-  execSync('npm install', { stdio: 'inherit' });
-}
-
-if (fs.existsSync(MAIN_JS_SOURCE)) {
-  fs.copyFileSync(MAIN_JS_SOURCE, OUTPUT_PATH);
-  console.log('Mirador main.js copied to:', OUTPUT_PATH);
-}
-else {
-
-  console.log('Building Mirador...');
-  execSync('npm run webpack', { stdio: 'inherit' });
-
-  // Copy main.js to output
-  if (fs.existsSync(MAIN_JS_SOURCE)) {
-    fs.copyFileSync(MAIN_JS_SOURCE, OUTPUT_PATH);
-    console.log('Mirador main.js copied to:', OUTPUT_PATH);
-  } else {
-    console.error('Error: main.js not found after build.');
-    process.exit(1);
-  }
-
-}
+console.log('Building Mirador bundle with Vite...');
+execSync('npx vite build --config vite.mirador.config.js', {
+  stdio: 'inherit',
+  env: { ...process.env, NODE_ENV: 'production' },
+});
