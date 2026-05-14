@@ -23,7 +23,7 @@
     "@mui/material": "^7.0.0",
     "@mui/system": "^7.0.0",
     "@ocfl/ocfl-fs": "^0.2.2",
-    "biiif": "github:alxp/biiif#master-dist",
+    "@alxp/biiif": "github:alxp/biiif#master-dist",
     "concurrently": "^9.1.2",
     "csv": "^6.3.8",
     "dotenv": "^17.1.0",

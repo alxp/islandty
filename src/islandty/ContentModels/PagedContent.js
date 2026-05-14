@@ -1,4 +1,3 @@
-const { build: buildIiif } = require('biiif');
 const { execSync } = require('child_process');
 const { promises: fs } = require('fs');
 const path = require('path');
@@ -203,6 +202,8 @@ class PagedContentModel extends DefaultContentModel {
 
   async processIIIFDerivatives(item, iiifPath) {
   try {
+    const { build: buildIiif } = await import('@alxp/biiif');
+
     // Generate IIIF metadata using helper function
     generateIiifMetadata(item, iiifPath);
 
