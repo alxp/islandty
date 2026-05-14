@@ -32,7 +32,7 @@ class PagedContentModel extends DefaultContentModel {
         const needsIIIF = await this.checkIIIFNeeds(item, pages, iiifPath);
 
         if (needsIIIF) {
-           await this.createIIIFStructure(item, pages, resultMap, inputMediaPath, iiifPath);
+          await this.createIIIFStructure(item, pages, resultMap, inputMediaPath, iiifPath);
           await this.convertJp2Files(iiifPath);
           await this.processIIIFDerivatives(item, iiifPath);
           await this.storeIIIFState(item, iiifPath);
@@ -114,8 +114,6 @@ class PagedContentModel extends DefaultContentModel {
       }
     }
   }
-
-
 
   async createIIIFStructure(item, pages, filesMap, inputMediaPath, iiifPath) {
     for (const [index, page] of pages.entries()) {
