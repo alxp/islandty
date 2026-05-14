@@ -27,8 +27,11 @@ src/linked-agent
 # Compiled XSLT transforms
 *.sef.json
 
-# Mirador build directory
-mirador-integration-islandora
+# Mirador build (temporary until textoverlay 0.4.0 publishes to npm)
+vendor/mirador-textoverlay
+
+# Mirador output bundle
+web/js/mirador.js
 
 # Test output
 tests/output

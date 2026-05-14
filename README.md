@@ -9,7 +9,7 @@ you can use the same input files to generate a static website.
 ## Features
 
 - OCFL - All objects are stored as single OCFL objects. Changing files automatically results in a new OCFL version being minted.
-- Mirador viewer with embedded hOCR
+- [Mirador 4](https://github.com/ProjectMirador/mirador) viewer with selectable text overlay via [mirador-textoverlay](https://github.com/dbmdz/mirador-textoverlay), image tools, and download support
 - Content-model based system that moves files into place and can be used to generate derivatives.
 - Uses a [fork of biiif](https://github.com/alxp/biiif) to generate image files, embed hOCR, and support JP2 files.
 - [Lunr](https://lunrjs.com)-based search
@@ -228,7 +228,9 @@ having to extract all of those fields
 to CSV columns if your source metadata is in MODS format.
 Islandty uses an XSLT to extract metadata for display.
 
-## hOCR support
+## hOCR / Text Overlay support
+
+Islandty uses the [mirador-textoverlay](https://github.com/dbmdz/mirador-textoverlay) plugin for Mirador 4 to display selectable OCR text overlaid on page images.
 
 If Islandty finds a file with extension .hocr
 in the same folder as a source image for an
