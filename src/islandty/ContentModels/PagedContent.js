@@ -107,7 +107,10 @@ class PagedContentModel extends DefaultContentModel {
         await fs.unlink(jp2File);
         console.log(`Converted ${path.basename(jp2File)} to PNG`);
       } catch (err) {
-        console.error(`Failed to convert ${jp2File}: ${err.message}`);
+        throw new Error(
+          `Failed to convert ${jp2File} from JPEG2000 to PNG: ${err.message}. ` +
+          `Ensure libvips-dev is installed (apt install libvips-dev).`
+        );
       }
     }
   }
