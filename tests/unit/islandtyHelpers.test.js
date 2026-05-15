@@ -47,13 +47,12 @@ describe('cleanInputData', () => {
     expect(result[0].field_model).toBe('page');
   });
 
-  test('converts "False" file fields: sets literal key fieldName', () => {
-    // src line 51: newRecord.fieldName = '' (literal key, not variable)
+  test('converts "False" file fields to empty string', () => {
     const result = islandtyHelpers.cleanInputData([
-      { id: '1', title: 'T', file: 'False' },
+      { id: '1', title: 'T', file: 'False', thumbnail: 'False' },
     ]);
-    // Literal key 'fieldName' gets set by the bug
-    expect(result[0].fieldName).toBe('');
+    expect(result[0].file).toBe('');
+    expect(result[0].thumbnail).toBe('');
   });
 
   test('processes multiple records independently', () => {
@@ -271,11 +270,7 @@ describe('getChildContent', () => {
 // getChildPosition — documents the = vs === bug
 // ============================================================
 describe('getChildPosition', () => {
-  test('returns 0 due to assignment bug', () => {
-    // src:107 uses = (assign) not === (compare). Every iteration sets
-    // childItem.data.id = object.data.id, which is always truthy, so
-    // the function returns the first index (0) instead of the correct one.
-    // Items must match parent_id so getChildContent returns results.
+  test('returns the correct index for a matching child', () => {
     const items = [
       { id: 'c1', data: { id: 'p1' }, parent_id: 'px' },
       { id: 'c2', data: { id: 'p2' }, parent_id: 'px' },
@@ -283,7 +278,16 @@ describe('getChildPosition', () => {
     ];
     const object = { data: { id: 'p2' } };
     const result = islandtyHelpers.getChildPosition(items, object, 'px');
-    expect(result).toBe(0);
+    expect(result).toBe(1);
+  });
+
+  test('returns false when no child matches', () => {
+    const items = [
+      { id: 'c1', data: { id: 'p1' }, parent_id: 'px' },
+    ];
+    const object = { data: { id: 'nonexistent' } };
+    const result = islandtyHelpers.getChildPosition(items, object, 'px');
+    expect(result).toBe(false);
   });
 });
 
