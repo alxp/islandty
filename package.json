@@ -9,25 +9,26 @@
     "compileLocalMirador": "node src/islandty/commands/compileMirador.js",
     "start": "npm run compileLocalMirador && node src/islandty/commands/readCSV.js && npx gulp && concurrently \"npx gulp watch\" \"npx eleventy --serve\"",
     "production": "npm run compileLocalMirador && node src/islandty/commands/readCSV.js && NODE_ENV=production npx gulp && NODE_ENV=production npx eleventy",
-    "test": "NODE_ENV=test jest --config=jest.config.js",
-    "test:mirador": "compile_mirador=true node src/islandty/commands/compileMirador.js && NODE_ENV=test jest --config=jest.config.js tests/unit/mirador.test.js",
-    "test:watch": "NODE_ENV=test jest --watch"
+    "test": "NODE_ENV=test vitest run",
+    "test:mirador": "compile_mirador=true node src/islandty/commands/compileMirador.js && NODE_ENV=test vitest run tests/unit/mirador.test.js",
+    "test:watch": "NODE_ENV=test vitest"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@11ty/eleventy-plugin-rss": "^2.0.3",
+    "@alxp/biiif": "github:alxp/biiif#master-dist",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/material": "^7.0.0",
     "@mui/system": "^7.0.0",
     "@ocfl/ocfl-fs": "^0.2.2",
-    "@alxp/biiif": "github:alxp/biiif#master-dist",
     "concurrently": "^9.1.2",
     "csv": "^6.3.8",
     "dotenv": "^17.1.0",
-    "eleventy-plugin-mirador": "^2",
+    "eleventy-plugin-mirador": "^2.0.1",
+    "glob": "^13.0.6",
     "gulp": "^5.0.0",
     "gulp-clean-css": "^4.3.0",
     "gulp-rename": "^2.0.0",
@@ -54,11 +55,8 @@
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.0.0",
-    "@babel/core": "^7.27.4",
-    "@babel/preset-env": "^7.27.2",
     "@vitejs/plugin-react": "^4.0.0",
-    "babel-jest": "^30.0.0-beta.3",
-    "jest": "^30.0.4",
-    "vite": "^6.0.0"
+    "vite": "^6.0.0",
+    "vitest": "^4.1.6"
   }
 }

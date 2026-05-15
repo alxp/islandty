@@ -1,0 +1,20 @@
+[
+  {
+    "name": "single file",
+    "input": { "video": { "en": ["media/video1.mp4"] } },
+    "expected": { "media/video1.mp4": "video/en/video1.mp4" }
+  },
+  {
+    "name": "multi-language",
+    "input": {
+      "video": { "en": ["media/video1.mp4"], "fr": ["media/video1-fr.mp4"] },
+      "subtitle": { "en": ["media/sub1.vtt"], "fr": ["media/sub1-fr.vtt"] }
+    },
+    "expected": {
+      "media/video1.mp4": "video/en/video1.mp4",
+      "media/video1-fr.mp4": "video/fr/video1-fr.mp4",
+      "media/sub1.vtt": "subtitle/en/sub1.vtt",
+      "media/sub1-fr.vtt": "subtitle/fr/sub1-fr.vtt"
+    }
+  }
+]

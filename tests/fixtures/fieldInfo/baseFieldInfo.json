@@ -1,0 +1,17 @@
+{
+  "id": { "label": "ID", "cardinality": "1" },
+  "title": { "label": "Title", "cardinality": "1" },
+  "field_model": { "label": "Model", "cardinality": "1", "type": "subject" },
+  "field_member_of": { "label": "Member Of", "cardinality": "-1", "metadata_display": false },
+  "parent_id": { "label": "Parent", "cardinality": "-1", "type": "reference" },
+  "field_weight": { "label": "Weight", "cardinality": "1" },
+  "field_linked_agent": { "label": "Linked Agent", "cardinality": "-1", "type": "typed_relation" },
+  "field_description": { "label": "Description", "cardinality": "1" },
+  "field_rights": { "label": "Rights", "cardinality": "1" },
+  "field_subject": { "label": "Subject", "cardinality": "-1", "type": "subject" },
+  "file": { "label": "Original File", "cardinality": "1", "metadata_display": false, "downloadable": true, "type": "file" },
+  "thumbnail": { "label": "Thumbnail", "cardinality": "1", "metadata_display": true, "downloadable": true, "type": "file" },
+  "hocr": { "label": "hOCR", "cardinality": "1", "metadata_display": false, "downloadable": true, "type": "file" },
+  "extracted": { "label": "Extracted Text", "cardinality": "1", "metadata_display": false, "downloadable": true, "type": "file" },
+  "service": { "label": "Service File", "cardinality": "1", "metadata_display": false, "downloadable": true, "type": "file" }
+}
