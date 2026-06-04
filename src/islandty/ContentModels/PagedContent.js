@@ -217,6 +217,8 @@ class PagedContentModel extends DefaultContentModel {
 
     await buildIiif(iiifPath, iiifOptions);
 
+    await this.enhanceThumbnails(iiifPath);
+
     // Store IIIF manifest path in frontmatter
     item.iiifManifest = path.join('iiif', 'manifest.json');
 
@@ -225,6 +227,52 @@ class PagedContentModel extends DefaultContentModel {
     throw err;
   }
 }
+
+  async enhanceThumbnails(iiifPath) {
+    const sharp = require('sharp');
+    const manifestPath = path.join(iiifPath, 'index.json');
+    const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
+
+    const THUMB_WIDTH = 200;
+
+    for (const canvas of manifest.items) {
+      if (!canvas.thumbnail || !canvas.thumbnail.length) continue;
+
+      const body = canvas.items?.[0]?.items?.[0]?.body;
+      if (!body || !body.id || body.type !== 'Image') continue;
+
+      try {
+        const sourceUrl = new URL(body.id);
+        const sourcePath = path.join(process.env.outputDir, sourceUrl.pathname);
+
+        const thumbUrl = new URL(canvas.thumbnail[0].id);
+        const thumbPath = path.join(process.env.outputDir, thumbUrl.pathname);
+
+        if (!(await fs.stat(sourcePath).catch(() => false))) {
+          console.warn(`Source image not found: ${sourcePath}`);
+          continue;
+        }
+
+        await sharp(sourcePath, { limitInputPixels: true })
+          .resize({ width: THUMB_WIDTH, withoutEnlargement: true })
+          .toFormat('jpeg')
+          .toFile(thumbPath);
+
+        const { width, height } = await sharp(thumbPath).metadata();
+
+        canvas.thumbnail[0].width = width;
+        canvas.thumbnail[0].height = height;
+        canvas.thumbnail[0].format = 'image/jpeg';
+
+        console.log(`Enhanced thumbnail: ${path.basename(thumbPath)} (${width}x${height})`);
+      } catch (err) {
+        console.warn(`Failed to enhance thumbnail for canvas ${canvas.id}: ${err.message}`);
+      }
+    }
+
+    await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2));
+    console.log('Updated manifest with thumbnail dimensions');
+  }
 
   async updateFilePaths(item, filesMap) {
 

@@ -56,9 +56,9 @@ module.exports = {
 
   generateIiifMetadata(book, bookPath) {
     const writeYamlFile = require('write-yaml-file');
-    info = {
+    const info = {
       label: book.title,
-      behavior: 'paged',
+      behavior: 'individuals',
       description: book.field_description,
       metadata: {
         license: book.field_rights
