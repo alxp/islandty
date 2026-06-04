@@ -47,7 +47,7 @@ module.exports = {
       const fileFields = this.getFileFields();
       for (const fieldName of fileFields) {
         if (record[fieldName] == 'False') {
-          newRecord.fieldName = '';
+          newRecord[fieldName] = '';
         }
       }
       return newRecord;
@@ -104,9 +104,10 @@ module.exports = {
     let childItems = this.getChildContent(items, parent_id);
     let index = 0;
     for (const childItem of childItems) {
-      if (childItem.data.id = object.data.id) {
+      if (childItem.data.id === object.data.id) {
         return index;
       }
+      index++;
     }
     return false;
   },

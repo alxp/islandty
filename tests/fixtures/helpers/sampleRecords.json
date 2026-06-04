@@ -1,0 +1,31 @@
+[
+  {
+    "node_id": "101",
+    "field_member_of": "",
+    "field_model": "islandora:image",
+    "title": "Test Image",
+    "file": "False",
+    "field_description": "A test image record",
+    "field_rights": "CC0",
+    "field_weight": "1"
+  },
+  {
+    "id": "102",
+    "parent_id": "101",
+    "field_member_of": "101",
+    "field_model": "islandora:page",
+    "title": "Test Page",
+    "file": "page1.txt",
+    "field_description": "",
+    "field_rights": "In Copyright",
+    "field_weight": "2"
+  },
+  {
+    "node_id": "103",
+    "field_member_of": "101|102",
+    "field_model": "islandora:audio",
+    "title": "Test Audio",
+    "file": "False",
+    "field_linked_agent": "relators:cre:person:John Doe"
+  }
+]
