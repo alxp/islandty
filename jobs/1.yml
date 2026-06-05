@@ -1,0 +1,14 @@
+name: "Sample Job"
+description: "A sample job configuration"
+
+config:
+  dataFileName: "https://docs.google.com/spreadsheets/d/1RcpY0UFkGmm4lyNK37A5t5lE4MwPb6Kn6gTArGp_9Ug/edit?gid=0#gid=0"
+  inputMediaPath: "../roving"
+  contentPath: "islandora/object"
+  CSVOverrideFieldInfo: true
+  # Optional: you can include other .env settings if needed
+  outputDir: "web"
+  serverHost: "http://localhost:8080"
+  linkedAgentPath: "linked-agent"
+  compile_mirador: true
+  ocfl: false
