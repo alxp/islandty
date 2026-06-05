@@ -1,10 +1,15 @@
-const fs = require('fs');
-const fsp = require('fs').promises;
-const path = require('path');
-const dotenv = require('dotenv');
+import fs from 'fs';
+import fsp from 'fs/promises';
+import path from 'path';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Synchronous environment reset
-const resetTestEnvironmentSync = () => {
+export function resetTestEnvironmentSync() {
   const outputDir = path.resolve(__dirname, '../output');
   try {
     if (fs.existsSync(outputDir)) {
@@ -14,10 +19,10 @@ const resetTestEnvironmentSync = () => {
   } catch (err) {
     console.error('Test cleanup failed:', err);
   }
-};
+}
 
 // Synchronous environment loading
-function loadEnvSync (specificEnvPath) {
+export function loadEnvSync(specificEnvPath) {
   const envPath = path.resolve(__dirname, specificEnvPath);
   const envFile = fs.readFileSync(envPath, 'utf8');
   const envConfig = dotenv.parse(envFile);
@@ -30,20 +35,14 @@ function loadEnvSync (specificEnvPath) {
   console.log('dataFileName:', process.env.dataFileName);
   console.log('inputMediaPath:', process.env.inputMediaPath);
   console.log('outputDir:', process.env.outputDir);
-};
+}
 
 // Asynchronous file check
-const fileExists = async (filePath) => {
+export async function fileExists(filePath) {
   try {
     await fsp.access(filePath);
     return true;
   } catch {
     return false;
   }
-};
-
-module.exports = {
-  resetTestEnvironmentSync,
-  loadEnvSync,
-  fileExists
-};
+}

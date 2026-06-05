@@ -7,7 +7,7 @@ spreadsheet and media files into a static web site file structure.
 The order of steps is:
 
 1. Read the environment variables and configuration data.
-2. Clone the Mirador Integration repository and compile the Mirador app with WebPack.
+2. Clone the Mirador Textoverlay plugin and compile the Mirador app with Vite.
 3. Read the input spreadsheet.
 4. Move files from the media source folder tree into
    the destination folder according to each object's content model.

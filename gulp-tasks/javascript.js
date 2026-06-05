@@ -1,7 +1,7 @@
-const {dest, src} = require('gulp');
-const path = require('path');
+import { dest, src } from 'gulp';
+import path from 'path';
 
-const js_dir = path.join('.', process.env.outputDir ? process.env.outputDir : 'web', 'js')
+const js_dir = path.join('.', process.env.outputDir ? process.env.outputDir : 'web', 'js');
 // Grabs the useful javascript,
 // and plops them in the dist folder
 const lunr = () => {
@@ -11,7 +11,7 @@ const lunr = () => {
 
 const vue = () => {
   return src('./node_modules/vue/dist/vue.global.prod.js', {encoding: false})
-      .pipe(dest(js_dir))
-}
+      .pipe(dest(js_dir));
+};
 
-module.exports = [lunr, vue];
+export default [lunr, vue];

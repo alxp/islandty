@@ -1,6 +1,6 @@
-const path = require('path');
-const DefaultContentModel = require('./default.js');
-const mediaHelpers = require('../lib/MediaHelpers.js');
+import path from 'path';
+import DefaultContentModel from './default.js';
+import * as mediaHelpers from '../lib/MediaHelpers.js';
 
 class MediaWithTracksModel extends DefaultContentModel {
   constructor(trackField) {
@@ -35,18 +35,15 @@ class MediaWithTracksModel extends DefaultContentModel {
     if (item[this.trackField] && item[this.trackField] !== '') {
       const trackStructure = mediaHelpers.parseFieldTrack(item[this.trackField]);
 
-      // Update track paths using resultMap
       for (const topLabel of Object.keys(trackStructure)) {
         for (const kind of Object.keys(trackStructure[topLabel])) {
           for (const lang of Object.keys(trackStructure[topLabel][kind])) {
             const paths = trackStructure[topLabel][kind][lang];
             trackStructure[topLabel][kind][lang] = paths.map(origPath => {
-              // Find matching entry in resultMap
               const match = Object.entries(resultMap).find(
                 ([key, value]) => key === origPath
               );
 
-              // Return webPath if found, otherwise original path
               return match ? match[1].webPath : origPath;
             });
           }
@@ -58,4 +55,4 @@ class MediaWithTracksModel extends DefaultContentModel {
   }
 }
 
-module.exports = MediaWithTracksModel;
+export default MediaWithTracksModel;

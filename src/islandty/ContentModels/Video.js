@@ -1,4 +1,4 @@
-const MediaWithTracksModel = require('./MediaWithTracksModel.js');
+import MediaWithTracksModel from './MediaWithTracksModel.js';
 
 class VideoContentModel extends MediaWithTracksModel {
   constructor() {
@@ -6,4 +6,4 @@ class VideoContentModel extends MediaWithTracksModel {
   }
 }
 
-module.exports = VideoContentModel;
+export default VideoContentModel;

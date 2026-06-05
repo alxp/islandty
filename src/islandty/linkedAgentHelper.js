@@ -1,15 +1,17 @@
-const fs = require('fs').promises;
-const path = require('path');
-const { strToSlug, strToSlugWithCounter } = require('../_data/islandtyHelpers');
-const yaml = require('js-yaml');
+import fs from 'fs/promises';
+import path from 'path';
+import { strToSlug, strToSlugWithCounter, getNested } from '../_data/islandtyHelpers.js';
+import yaml from 'js-yaml';
+import { globSync } from 'glob';
+import fsSync from 'fs';
 
 // Initialize linked agent data structure
-function initLinkedAgentsData() {
+export function initLinkedAgentsData() {
   return {};
 }
 
 // Process a single item for linked agents
-function processItemForLinkedAgents(item, linkedAgentsData) {
+export function processItemForLinkedAgents(item, linkedAgentsData) {
   if (item.field_linked_agent) {
     for (const [linkedAgentType, linkedAgents] of Object.entries(item.field_linked_agent)) {
       if (!linkedAgentsData[linkedAgentType]) {
@@ -38,7 +40,7 @@ function processItemForLinkedAgents(item, linkedAgentsData) {
 }
 
 // Write linked agent files to staging directory
-async function writeLinkedAgentFiles(linkedAgentsData, linkedAgentDir, linkedAgentPath) {
+export async function writeLinkedAgentFiles(linkedAgentsData, linkedAgentDir, linkedAgentPath) {
   // Create main linked agent directory
   await fs.mkdir(linkedAgentDir, { recursive: true });
 
@@ -117,20 +119,15 @@ async function writePageTemplate(data, dir, fileName) {
 }
 
 // Configure Eleventy collections for linked agents
-function configureLinkedAgentCollections(eleventyConfig, linkedAgentDir, linkedAgentPath) {
-  const glob = require('glob');
-  const path = require('path');
-  const fs = require('fs');
-  const { strToSlug, getNested } = require('../_data/islandtyHelpers');
-
-  const linkedAgentDatabases = glob.sync(path.join(linkedAgentDir, "*.json"));
+export function configureLinkedAgentCollections(eleventyConfig, linkedAgentDir, linkedAgentPath) {
+  const linkedAgentDatabases = globSync(path.join(linkedAgentDir, "*.json"));
   let linkedAgentNamespaces = [];
 
   for (const linkedAgentDatabasePath of linkedAgentDatabases) {
     const linkedAgentDatabaseName = path.parse(linkedAgentDatabasePath).name;
     linkedAgentNamespaces.push(linkedAgentDatabaseName);
 
-    const rawData = fs.readFileSync(linkedAgentDatabasePath, 'utf8');
+    const rawData = fsSync.readFileSync(linkedAgentDatabasePath, 'utf8');
     const linkedAgentDatabase = JSON.parse(rawData);
     const linkedAgentTypeNames = Object.keys(linkedAgentDatabase);
 
@@ -197,10 +194,3 @@ function configureLinkedAgentCollections(eleventyConfig, linkedAgentDir, linkedA
     }));
   });
 }
-
-module.exports = {
-  initLinkedAgentsData,
-  processItemForLinkedAgents,
-  writeLinkedAgentFiles,
-  configureLinkedAgentCollections
-};

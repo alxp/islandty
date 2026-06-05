@@ -1,17 +1,17 @@
 // No vi.mock() calls — they do not reliably intercept CJS require() in
 // Vitest. All tests use real dependencies.
 
-const path = require('path');
+import path from 'path';
 
 let islandtyHelpers;
 
-beforeAll(() => {
+beforeAll(async () => {
   process.env.contentPath = 'test-content';
   process.env.linkedAgentPath = 'test-agents';
   process.env.outputDir = 'tests/output';
   process.env.pathPrefix = '';
 
-  islandtyHelpers = require('../../src/_data/islandtyHelpers');
+  islandtyHelpers = await import('../../src/_data/islandtyHelpers.js');
 });
 
 // ============================================================
@@ -145,8 +145,6 @@ describe('parseLinkedAgent', () => {
   });
 
   test('parses multiple values with same relator type and role', () => {
-    // parseLinkedAgent expects pre-split arrays (as produced by transformKeys).
-    // Pipe-separated strings are NOT valid input unless already split.
     const result = islandtyHelpers.parseLinkedAgent([
       'relators:aut:person:Jane Austen',
       'relators:aut:person:Charles Dickens',
@@ -185,8 +183,6 @@ describe('parseLinkedAgent', () => {
   });
 
   test('silently skips entries with more than 4 parts (names with colons)', () => {
-    // The parser splits on ':' and requires exactly 4 parts.
-    // Names containing colons produce 5+ parts and are skipped.
     const result = islandtyHelpers.parseLinkedAgent(
       'relators:aut:person:Jane:Austen'
     );
@@ -305,8 +301,6 @@ describe('getLayoutForContentModel', () => {
   });
 
   test('returns layout for a known model', () => {
-    // getLayoutForContentModel uses slugify without lower:true,
-    // so 'Image' stays as 'Image'. Image.html exists in partials/.
     const result = islandtyHelpers.getLayoutForContentModel('Image');
     expect(result).toBe('partials/Image.html');
   });

@@ -1,5 +1,5 @@
-const path = require('path');
-const DefaultContentModel = require('./default.js');
+import path from 'path';
+import DefaultContentModel from './default.js';
 
 class ImageContentModel extends DefaultContentModel {
   async ingest(item, inputMediaPath, outputDir) {
@@ -16,4 +16,4 @@ class ImageContentModel extends DefaultContentModel {
 
 }
 
-module.exports = ImageContentModel;
+export default ImageContentModel;

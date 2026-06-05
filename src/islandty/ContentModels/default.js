@@ -1,15 +1,16 @@
-const { promises: fs } = require('fs');
-const path = require('path');
-const os = require('os');
-const { v4: uuidv4 } = require('uuid');
-const islandtyHelpers = require('../../_data/islandtyHelpers');
-const { createStorageHandler } = require('../storageHandler');
-require('dotenv');
+import { promises as fs } from 'fs';
+import path from 'path';
+import os from 'os';
+import { v4 as uuidv4 } from 'uuid';
+import * as islandtyHelpers from '../../_data/islandtyHelpers.js';
+import { createStorageHandler } from '../storageHandler.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 class DefaultContentModel {
   async init() {
     this.storageHandler = await createStorageHandler(
-      process.env.ocfl.toLocaleLowerCase() == 'true'
+      process.env.ocfl?.toLocaleLowerCase() == 'true'
     );
     return this;
   }
@@ -121,4 +122,4 @@ ${content}
 
 }
 
-module.exports = DefaultContentModel;
+export default DefaultContentModel;

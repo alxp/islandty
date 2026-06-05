@@ -1,5 +1,10 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe('Mirador integration', () => {
   const miradorJsPath = path.resolve(__dirname, '../../web/js/mirador.js');
@@ -36,9 +41,9 @@ describe('Mirador integration', () => {
   describe('embed HTML generation', () => {
     let embed, defaults;
 
-    beforeAll(() => {
-      embed = require('../../node_modules/eleventy-plugin-mirador/src/libs/embed');
-      defaults = require('../../node_modules/eleventy-plugin-mirador/src/libs/defaultconfig');
+    beforeAll(async () => {
+      embed = (await import('../../node_modules/eleventy-plugin-mirador/src/libs/embed')).default;
+      defaults = (await import('../../node_modules/eleventy-plugin-mirador/src/libs/defaultconfig')).default;
     });
 
     test('generates M4 config keys (not M3)', async () => {
@@ -113,8 +118,8 @@ describe('Mirador integration', () => {
   describe('plugin config merge', () => {
     let plugin;
 
-    beforeAll(() => {
-      plugin = require('../../node_modules/eleventy-plugin-mirador/src/index');
+    beforeAll(async () => {
+      plugin = (await import('../../node_modules/eleventy-plugin-mirador/src/index')).default;
     });
 
     test('plugin exports a function', () => {

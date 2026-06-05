@@ -1,7 +1,13 @@
-require('dotenv').config();
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import dotenv from 'dotenv';
+dotenv.config();
+import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const USE_LOCAL_MIRADOR = process.env.compile_mirador === 'true';
 if (!USE_LOCAL_MIRADOR) {

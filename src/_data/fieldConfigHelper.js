@@ -1,12 +1,13 @@
-const readCSVModule = require('./readCSV.js');
-const path = require('path');
-require('dotenv').config();
+import readCSVModule from './readCSV.js';
+import path from 'path';
+import dotenv from 'dotenv';
+dotenv.config();
 
 async function getMergedFieldConfig() {
-  // Load JSON config
+  // Load JSON config via dynamic import to preserve error handling
   let jsonConfig;
   try {
-    jsonConfig = require('../../config/islandtyFieldInfo.json');
+    jsonConfig = (await import('../../config/islandtyFieldInfo.json', { with: { type: 'json' } })).default;
   } catch (error) {
     console.error('Error loading JSON field config:', error.message);
     jsonConfig = {};
@@ -69,6 +70,4 @@ function validateFieldConfig(config) {
   return config;
 }
 
-module.exports = {
-  getMergedFieldConfig
-};
+export { getMergedFieldConfig };

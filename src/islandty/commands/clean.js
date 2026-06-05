@@ -1,9 +1,13 @@
-const { isTest } = require('../../testUtils');
+import { isTest } from '../../testUtils.js';
+import dotenv from 'dotenv';
 if (process.env.NODE_ENV !== 'test') {
-  require('dotenv').config();
+  dotenv.config();
 }
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
 
 async function main() {
   console.log("Removing staging and web contents.");
@@ -39,13 +43,11 @@ async function main() {
   }
 }
 
-// Export the main function for calling by tests.
-module.exports = {
-  main
-};
+export { main };
 
 // When the command is run directly.
-if (require.main === module) {
+const runDirectly = process.argv[1] === __filename;
+if (runDirectly) {
   main().catch(error => {
     console.error('Unhandled error:', error);
     process.exit(1);

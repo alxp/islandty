@@ -1,7 +1,4 @@
-// The real config/islandtyFieldInfo.json is used (vi.mock for JSON files
-// does not intercept CJS require() in Vitest). Tests verify behaviour
-// against the real configuration.
-const { getMergedFieldConfig } = require('../../src/_data/fieldConfigHelper');
+import { getMergedFieldConfig } from '../../src/_data/fieldConfigHelper.js';
 
 describe('fieldConfigHelper', () => {
   describe('getMergedFieldConfig', () => {
@@ -27,8 +24,6 @@ describe('fieldConfigHelper', () => {
     });
 
     test('returns file-type fields with correct metadata', () => {
-      // We can't test getMergedFieldConfig in isolation since it requires
-      // the real config. But we can verify the config loaded correctly.
       process.env.CSVOverrideFieldInfo = 'false';
       return getMergedFieldConfig().then((result) => {
         // File fields from the real config

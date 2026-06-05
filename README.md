@@ -19,7 +19,7 @@ you can use the same input files to generate a static website.
 
 ## Requirements
 
-- Node.js (Tested on version 22.x through 25.x).
+- Node.js 22.x or later (ESM). Tested on 22.x through 25.x.
 - VIPS (for JP2 support - see below)
 
 ### Installing VIPS for JP2 support

@@ -1,6 +1,6 @@
-const htmlmin = require('html-minifier-terser');
+import htmlmin from 'html-minifier-terser';
 
-module.exports = (value, outputPath) => {
+export default (value, outputPath) => {
   if (outputPath && outputPath.indexOf('.html') > -1) {
     return htmlmin.minify(value, {
       useShortDoctype: true,

@@ -1,8 +1,8 @@
 let linkedAgentHelper;
 
-beforeAll(() => {
+beforeAll(async () => {
   process.env.linkedAgentPath = 'test-agents';
-  linkedAgentHelper = require('../../src/islandty/linkedAgentHelper');
+  linkedAgentHelper = await import('../../src/islandty/linkedAgentHelper.js');
 });
 
 describe('linkedAgentHelper', () => {
