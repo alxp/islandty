@@ -49,9 +49,10 @@ describe('Mirador integration', () => {
     test('generates M4 config keys (not M3)', async () => {
       const html = await embed('test-viewer', '/manifests/test.json', defaults);
 
-      // M4 keys should be present
+      // M4 keys should be present (canvasIndex is the M4 approach for
+      // resolving a canvas by position in the manifest)
       expect(html).toContain('manifestId');
-      expect(html).toContain('canvasId');
+      expect(html).toContain('canvasIndex');
 
       // M3 keys should NOT be present as Mirador config keys
       // loadedManifest was the M3 window key
@@ -90,14 +91,16 @@ describe('Mirador integration', () => {
       expect(html).toContain('window.miradorPlugins || {}');
     });
 
-    test('canvasId pattern is embedded for runtime resolution', async () => {
+    test('canvas index is resolved at runtime from page query param', async () => {
       const html = await embed('test-viewer', '/manifests/test.json', defaults);
 
-      // The canvasIdPattern should appear in the generated JS (it's resolved at runtime)
-      expect(html).toContain('canvas/');
-      expect(html).toContain('{manifestUrl}');
-      expect(html).toContain('{canvasIndex}');
-      expect(html).toContain('.replace(');
+      // The generated JS reads the 'page' query parameter at runtime
+      expect(html).toContain("urlParams.get('page')");
+      // It parses it as an integer for use as canvasIndex
+      expect(html).toContain('parseInt(page, 10)');
+      // canvasIndex is then set in the window config
+      expect(html).toContain('canvasIndex = canvasIndex');
+      expect(html).toContain('windowsConfig[0].canvasIndex');
     });
 
     test('constructs correct manifestId in window config', async () => {
