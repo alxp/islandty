@@ -1,27 +1,34 @@
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('node:child_process');
-const { inspect } = require('util');
-const glob = require('glob');
-require('dotenv').config();
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'node:child_process';
+import { inspect } from 'util';
+import { globSync } from 'glob';
+import 'dotenv/config';
 
 // Plugins
-const rssPlugin = require('@11ty/eleventy-plugin-rss');
-const { EleventyHtmlBasePlugin } = require("@11ty/eleventy");
-const miradorPlugin = require('eleventy-plugin-mirador');
+import rssPlugin from '@11ty/eleventy-plugin-rss';
+import { EleventyHtmlBasePlugin } from "@11ty/eleventy";
+import miradorPlugin from 'eleventy-plugin-mirador';
 
 // Custom helpers and filters
-const linkedAgentHelper = require('./src/islandty/linkedAgentHelper');
-const dateFilter = require('./src/filters/date-filter.js');
-const w3DateFilter = require('./src/filters/w3-date-filter.js');
-const htmlMinTransform = require('./src/transforms/html-min-transform.js');
-const fieldConfigHelper = require('./src/_data/fieldConfigHelper.js');
-const { searchIndex } = require('./src/_data/islandtyHelpers.js');
+import * as linkedAgentHelper from './src/islandty/linkedAgentHelper.js';
+import dateFilter from './src/filters/date-filter.js';
+import w3DateFilter from './src/filters/w3-date-filter.js';
+import htmlMinTransform from './src/transforms/html-min-transform.js';
+import { getMergedFieldConfig } from './src/_data/fieldConfigHelper.js';
+import { searchIndex } from './src/_data/islandtyHelpers.js';
+
+// JSON configs
+import siteConfig from './config/site.json' with { type: 'json' };
+import fieldConfig from './config/mergedIslandtyFieldInfo.json' with { type: 'json' };
+
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
 
 // Configuration flags
 const isProduction = process.env.NODE_ENV === 'production';
 
-module.exports = async eleventyConfig => {
+export default async eleventyConfig => {
   // ========================================
   // Server Configuration
   // ========================================
@@ -101,7 +108,7 @@ module.exports = async eleventyConfig => {
   // ========================================
   // Pre-build: Compile XSLT files
   eleventyConfig.on("eleventy.before", () => {
-    const xsltFiles = glob.sync('**/*.xsl');
+    const xsltFiles = globSync('**/*.xsl');
     for (const file of xsltFiles) {
       const outputFile = file.replace('.xsl', '.sef.json');
       try {
@@ -151,14 +158,12 @@ module.exports = async eleventyConfig => {
   eleventyConfig.addGlobalData('contentPath', process.env.contentPath);
   eleventyConfig.addGlobalData('linkedAgentPath', process.env.linkedAgentPath);
   eleventyConfig.addGlobalData('pathPrefix', process.env.pathPrefix);
-  eleventyConfig.addGlobalData('islandtyFieldInfo', await fieldConfigHelper.getMergedFieldConfig());
+  eleventyConfig.addGlobalData('islandtyFieldInfo', await getMergedFieldConfig());
 
   // Site configuration
-  const siteConfig = require('./config/site.json');
   eleventyConfig.addGlobalData('site', siteConfig);
 
   // Field configuration (overrides previous islandtyFieldInfo)
-  const fieldConfig = require('./config/mergedIslandtyFieldInfo.json');
   eleventyConfig.addGlobalData('islandtyFieldInfo', fieldConfig);
 
   // ========================================

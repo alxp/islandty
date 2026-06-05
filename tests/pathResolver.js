@@ -1,6 +1,6 @@
-const path = require('path');
-const appRoot = require('app-root-path');
+import path from 'path';
+import appRoot from 'app-root-path';
 
-module.exports = function resolvePath(relativePath) {
+export default function resolvePath(relativePath) {
   return path.resolve(appRoot.path, relativePath);
-};
+}

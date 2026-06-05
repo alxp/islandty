@@ -1,16 +1,20 @@
-const { isTest } = require('../../testUtils');
+import { isTest } from '../../testUtils.js';
+import dotenv from 'dotenv';
 if (process.env.NODE_ENV !== 'test') {
-  require('dotenv').config();
+  dotenv.config();
 }
-const linkedAgentHelper = require('../linkedAgentHelper');
-const {writeFileSync } = require('fs');
-const { promises: fs } = require("fs");
-const path = require('path');
-const { getMergedFieldConfig } = require('../../_data/fieldConfigHelper.js');
-const islandtyHelpers = require('../../_data/islandtyHelpers.js');
-const readCSV = require('../../_data/readCSV.js');
-const slugify = require('slugify');
-const yaml = require('js-yaml');
+import * as linkedAgentHelper from '../linkedAgentHelper.js';
+import { writeFileSync } from 'fs';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { getMergedFieldConfig } from '../../_data/fieldConfigHelper.js';
+import * as islandtyHelpers from '../../_data/islandtyHelpers.js';
+import readCSV from '../../_data/readCSV.js';
+import slugify from 'slugify';
+import yaml from 'js-yaml';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
 
 async function writePageTemplate(data, dir, fileName) {
   const yamlString = yaml.dump(data);
@@ -76,19 +80,12 @@ async function main() {
       }
 
       try {
-        // Use different path resolution in test environment
-        //if (isTest()) {
-//          ContentModelClass = require(`../../src/islandty/ContentModels/${contentModelName}`);
-        //} else {
-          ContentModelClass = require(`../../islandty/ContentModels/${contentModelName}`);
-        //}
+        const mod = await import(`../../islandty/ContentModels/${contentModelName}.js`);
+        ContentModelClass = mod.default;
       } catch (e) {
-        if (e.code !== 'MODULE_NOT_FOUND') throw e;
-        //if (isTest()) {
-//          ContentModelClass = require(`../../src/islandty/ContentModels/default`);
-        //} else {
-          ContentModelClass = require(`../../islandty/ContentModels/default`);
-        //}
+        if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e;
+        const mod = await import(`../../islandty/ContentModels/default.js`);
+        ContentModelClass = mod.default;
       }
 
       const contentModel = new ContentModelClass();
@@ -130,13 +127,11 @@ async function main() {
   }
 }
 
-// Export the main function for calling by tests.
-module.exports = {
-  main
-};
+export { main };
 
 // When the command is run directly.
-if (require.main === module) {
+const runDirectly = process.argv[1] === __filename;
+if (runDirectly) {
   main().catch(error => {
     console.error('Unhandled error:', error);
     process.exit(1);

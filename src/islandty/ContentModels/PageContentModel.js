@@ -1,4 +1,4 @@
-const DefaultContentModel = require('./default.js');
+import DefaultContentModel from './default.js';
 
 class PageContentModel extends DefaultContentModel {
   buildFilesList(item, inputMediaPath, outputDir) {
@@ -11,4 +11,4 @@ class PageContentModel extends DefaultContentModel {
   }
 }
 
-module.exports = PageContentModel;
+export default PageContentModel;

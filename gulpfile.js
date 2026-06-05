@@ -1,8 +1,7 @@
-const {parallel, series, watch} = require('gulp');
+import { parallel, series, watch } from 'gulp';
 
-const images = require('./gulp-tasks/images.js');
-
-const javascript = require('./gulp-tasks/javascript.js');
+import images from './gulp-tasks/images.js';
+import javascript from './gulp-tasks/javascript.js';
 
 // Set each directory and contents that we want to watch and
 // assign the relevant task. `ignoreInitial` set to true will
@@ -13,8 +12,8 @@ const watcher = () => {
 };
 
 // The default (if someone just runs `gulp`) is to run each task in parallel
-exports.default = parallel(images, javascript);
+export default parallel(images, javascript);
 
 // This is our watcher task that instructs gulp to watch directories and
 // act accordingly
-exports.watch = watcher;
+export { watcher as watch };

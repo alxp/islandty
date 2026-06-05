@@ -1,9 +1,9 @@
-const csv = require('csv');
-const fs = require('fs');
-const axios = require('axios');
-const { PassThrough } = require('stream');
-const islandtyHelpers = require('./islandtyHelpers.js');
-const process = require('process');
+import { parse } from 'csv';
+import fs from 'fs';
+import axios from 'axios';
+import { PassThrough } from 'stream';
+import * as islandtyHelpers from './islandtyHelpers.js';
+import process from 'process';
 
 function readCSV() {
   return new Promise((resolve, reject) => {
@@ -15,7 +15,7 @@ function readCSV() {
     let fieldLabels = {};
     let fieldCardinality = {};
 
-    const parser = csv.parse({
+    const parser = parse({
       skip_empty_lines: true,
       on_record: (record, context) => {
 
@@ -213,7 +213,7 @@ function transformGoogleSheetsUrl(url, sheetName) {
   return csvUrl;
 }
 
-module.exports = async function () {
+export default async function () {
   try {
     let { items, fieldInfo } = await readCSV();
 

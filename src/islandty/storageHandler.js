@@ -1,13 +1,13 @@
-const axios = require('axios');
-const fs = require('fs').promises;
-const { createWriteStream } = require('fs');
-const https = require('https');
-const os = require('os');
-const path = require('path');
-const crypto = require('crypto');
-const islandtyHelpers = require('../_data/islandtyHelpers.js');
-const { src } = require('gulp');
-require('dotenv').config();
+import axios from 'axios';
+import fsp from 'fs/promises';
+import { createWriteStream } from 'fs';
+import https from 'https';
+import os from 'os';
+import path from 'path';
+import crypto from 'crypto';
+import * as islandtyHelpers from '../_data/islandtyHelpers.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 class StorageBase {
 
@@ -17,7 +17,7 @@ class StorageBase {
   }
 
   async calculateFileHash(filePath) {
-    const fileBuffer = await fs.readFile(filePath);
+    const fileBuffer = await fsp.readFile(filePath);
     return crypto.createHash('sha512').update(fileBuffer).digest('hex');
   }
 
@@ -28,7 +28,7 @@ class StorageBase {
   async downloadFileFromUrl(url, destDir) {
     try {
       const tempDir = path.join(os.tmpdir(), 'islandty-downloads', destDir);
-      await fs.mkdir(tempDir, { recursive: true });
+      await fsp.mkdir(tempDir, { recursive: true });
       this.tempDirs.push(tempDir); // Track for cleanup
 
       const fileName = path.basename(new URL(url).pathname);
@@ -61,7 +61,7 @@ class StorageBase {
   async cleanup() {
     for (const dir of this.tempDirs) {
       try {
-        await fs.rm(dir, { recursive: true, force: true });
+        await fsp.rm(dir, { recursive: true, force: true });
         console.log(`Cleaned up temporary directory: ${dir}`);
       } catch (e) {
         console.error(`Error cleaning up temporary directory ${dir}:`, e);
@@ -101,7 +101,7 @@ class FileSystemStorage extends StorageBase {
   }
 
   async copyFiles(item, filesMap, inputMediaPath, outputDir) {
-    await fs.mkdir(outputDir, { recursive: true });
+    await fsp.mkdir(outputDir, { recursive: true });
 
     // Create result map to store web paths
     const resultMap = {};
@@ -121,14 +121,14 @@ class FileSystemStorage extends StorageBase {
 
       try {
         // Create directory structure if needed
-        await fs.mkdir(destDir, { recursive: true });
+        await fsp.mkdir(destDir, { recursive: true });
         let canSkip = false;
 
         if (srcPath.startsWith('http')) {
           fullSrcPath = srcPath;
           // Check file size and modified date to determine if we need to re-download
           try {
-            const destStats = await fs.stat(fullDestPath);
+            const destStats = await fsp.stat(fullDestPath);
             const srcStats = await this.fetchHeaders(fullSrcPath);
             canSkip = srcStats['content-length'] == destStats.size &&
               Date.parse(srcStats['last-modified']) <= Date.parse(destStats.mtime);
@@ -146,7 +146,7 @@ class FileSystemStorage extends StorageBase {
         }
 
         if (!canSkip) {
-          await fs.copyFile(fullSrcPath, fullDestPath);
+          await fsp.copyFile(fullSrcPath, fullDestPath);
           console.log(`Copied ${srcPath} to ${fullDestPath}`);
         } else {
           console.log(`Skipping ${srcPath} as it is unmodified.`);
@@ -186,13 +186,15 @@ class FileSystemStorage extends StorageBase {
 class OCFLStorage extends StorageBase {
   constructor(config = {}) {
     super(config);
-    this.ocfl = require('@ocfl/ocfl-fs');
+    this.ocfl = null;
     this.storage = null;
     this.ocflWebRoot = process.env.ocflRoot ||
       path.join(process.env.outputDir, 'ocfl-files');
   }
 
   async initialize() {
+    const ocflModule = await import('@ocfl/ocfl-fs');
+    this.ocfl = ocflModule.default?.createStorage ? ocflModule.default : ocflModule;
     try {
       this.storage = await this.ocfl.createStorage({
         root: this.ocflWebRoot,
@@ -348,17 +350,15 @@ await object.update(async (transaction) => {
   }
 }
 
-module.exports = {
-  FileSystemStorage,
-  OCFLStorage,
-  createStorageHandler: async (useOcfl) => {
-    if (useOcfl) {
-      const handler = new OCFLStorage({
-        "ocfl": true,
-        "layout": "FlatDirectStorageLayout"
-      });
-      return handler.initialize();
-    }
-    return new FileSystemStorage({ "ocfl": false });
+export { FileSystemStorage, OCFLStorage };
+
+export async function createStorageHandler(useOcfl) {
+  if (useOcfl) {
+    const handler = new OCFLStorage({
+      "ocfl": true,
+      "layout": "FlatDirectStorageLayout"
+    });
+    return handler.initialize();
   }
-};
+  return new FileSystemStorage({ "ocfl": false });
+}

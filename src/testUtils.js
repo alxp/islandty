@@ -1,3 +1,3 @@
-module.exports = {
-  isTest: () => process.env.NODE_ENV === 'test'
-};
+export function isTest() {
+  return process.env.NODE_ENV === 'test';
+}

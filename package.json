@@ -1,8 +1,9 @@
 {
   "name": "islandty",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A static site generator for Islandora Workbench data.",
-  "main": ".eleventy.js",
+  "type": "module",
+  "main": "eleventy.config.js",
   "scripts": {
     "clean": "node src/islandty/commands/clean.js",
     "readcsv": "node src/islandty/commands/readCSV.js",
@@ -27,7 +28,7 @@
     "concurrently": "^9.1.2",
     "csv": "^6.3.8",
     "dotenv": "^17.1.0",
-    "eleventy-plugin-mirador": "^2.0.1",
+    "eleventy-plugin-mirador": "file:../eleventy-plugin-mirador",
     "glob": "^13.0.6",
     "gulp": "^5.0.0",
     "gulp-clean-css": "^4.3.0",

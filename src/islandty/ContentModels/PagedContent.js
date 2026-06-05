@@ -1,10 +1,13 @@
-const { execSync } = require('child_process');
-const { promises: fs } = require('fs');
-const path = require('path');
-const DefaultContentModel = require('./default.js');
-const { getChildContent, generateIiifMetadata } = require('../../_data/islandtyHelpers.js');
-const readCSV = require('../../_data/readCSV.js');
-require('dotenv').config();
+import { execSync } from 'child_process';
+import { promises as fs } from 'fs';
+import path from 'path';
+import DefaultContentModel from './default.js';
+import { getChildContent, generateIiifMetadata } from '../../_data/islandtyHelpers.js';
+import readCSV from '../../_data/readCSV.js';
+import dotenv from 'dotenv';
+dotenv.config();
+
+import { globSync } from 'glob';
 
 
 class PagedContentModel extends DefaultContentModel {
@@ -97,8 +100,7 @@ class PagedContentModel extends DefaultContentModel {
   }
 
   async convertJp2Files(iiifPath) {
-    const glob = require('glob');
-    const jp2Files = glob.sync('**/*.jp2', { cwd: iiifPath, absolute: true });
+    const jp2Files = globSync('**/*.jp2', { cwd: iiifPath, absolute: true });
 
     for (const jp2File of jp2Files) {
       const pngFile = jp2File.replace(/\.jp2$/, '.png');
@@ -290,4 +292,4 @@ class PagedContentModel extends DefaultContentModel {
   item.extracted}
 }
 
-module.exports = PagedContentModel;
+export default PagedContentModel;

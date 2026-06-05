@@ -1,4 +1,4 @@
-const MediaHelpers = require('../../src/islandty/lib/MediaHelpers');
+import * as MediaHelpers from '../../src/islandty/lib/MediaHelpers.js';
 
 describe('MediaHelpers', () => {
   describe('parseFieldTrack', () => {
@@ -110,10 +110,6 @@ describe('MediaHelpers', () => {
     });
 
     test('returns true when all values are objects (arrays are typeof object)', () => {
-      // isDirectoryNode checks !Array.isArray(value) on the top-level value,
-      // then checks that Object.values are all typeof 'object'.
-      // { a: ['file.txt'] } — the value itself is not an array, its values are.
-      // typeof ['file.txt'] === 'object', so it passes the check.
       expect(MediaHelpers.isDirectoryNode({ a: ['file.txt'] })).toBe(true);
     });
 

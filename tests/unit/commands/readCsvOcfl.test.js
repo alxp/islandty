@@ -1,17 +1,15 @@
-const { resetTestEnvironmentSync, loadEnvSync, fileExists } = require('../../helpers');
+import { resetTestEnvironmentSync, loadEnvSync, fileExists } from '../../helpers.js';
 
-// 1. Synchronously load environment FIRST
-loadEnvSync('fixtures/config/.env.test_ocfl');
-
-// 2. Synchronously reset environment
-resetTestEnvironmentSync();
-
-// 3. NOW require the application modules AFTER environment is set
-const { main } = require('../../../src/islandty/commands/readCSV');
-
-// 4. Define tests synchronously
 describe('readCSV command', () => {
+  let main;
+
   beforeAll(async () => {
+    // Staged loading: env must be set BEFORE importing application modules
+    loadEnvSync('fixtures/config/.env.test_ocfl');
+    resetTestEnvironmentSync();
+
+    const mod = await import('../../../src/islandty/commands/readCSV.js');
+    main = mod.main;
     await main();
   });
 
