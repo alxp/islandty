@@ -7,7 +7,7 @@ import slugify from 'slugify';
 import { slugifyWithCounter as createSlugifyCounter } from '@sindresorhus/slugify';
 const slugifyWithCounter = createSlugifyCounter();
 import { stripHtml } from 'string-strip-html';
-import writeYamlFile from 'write-yaml-file';
+import { writeYamlFileSync } from 'write-yaml-file';
 
 import mergedIslandtyFieldInfo from '../../config/mergedIslandtyFieldInfo.json' with { type: 'json' };
 import relatorNames from './TypedRelators/relators.json' with { type: 'json' };
@@ -67,7 +67,7 @@ export function generateIiifMetadata(book, bookPath) {
       license: book.field_rights
     }
   };
-  writeYamlFile.sync(path.join(bookPath, 'info.yml'), info);
+  writeYamlFileSync(path.join(bookPath, 'info.yml'), info);
 }
 
 export function getFileFields() {
