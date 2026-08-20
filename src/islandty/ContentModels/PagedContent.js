@@ -1,4 +1,3 @@
-import { execSync } from 'child_process';
 import { promises as fs } from 'fs';
 import path from 'path';
 import DefaultContentModel from './default.js';
@@ -6,8 +5,7 @@ import { getChildContent, generateIiifMetadata } from '../../_data/islandtyHelpe
 import readCSV from '../../_data/readCSV.js';
 import dotenv from 'dotenv';
 dotenv.config();
-
-import { globSync } from 'glob';
+import sharp from 'sharp';
 
 
 class PagedContentModel extends DefaultContentModel {
@@ -36,7 +34,6 @@ class PagedContentModel extends DefaultContentModel {
 
         if (needsIIIF) {
           await this.createIIIFStructure(item, pages, resultMap, inputMediaPath, iiifPath);
-          await this.convertJp2Files(iiifPath);
           await this.processIIIFDerivatives(item, iiifPath);
           await this.storeIIIFState(item, iiifPath);
         }
@@ -96,24 +93,6 @@ class PagedContentModel extends DefaultContentModel {
       const object = this.storageHandler.storage.object(item.id);
       const inventory = await object.getInventory();
       await fs.writeFile(path.join(iiifPath, '.ocfl-version'), inventory.head);
-    }
-  }
-
-  async convertJp2Files(iiifPath) {
-    const jp2Files = globSync('**/*.jp2', { cwd: iiifPath, absolute: true });
-
-    for (const jp2File of jp2Files) {
-      const pngFile = jp2File.replace(/\.jp2$/, '.png');
-      try {
-        execSync(`vips copy "${jp2File}" "${pngFile}"`, { stdio: 'pipe' });
-        await fs.unlink(jp2File);
-        console.log(`Converted ${path.basename(jp2File)} to PNG`);
-      } catch (err) {
-        throw new Error(
-          `Failed to convert ${jp2File} from JPEG2000 to PNG: ${err.message}. ` +
-          `Ensure libvips-dev is installed (apt install libvips-dev).`
-        );
-      }
     }
   }
 
@@ -231,7 +210,6 @@ class PagedContentModel extends DefaultContentModel {
 }
 
   async enhanceThumbnails(iiifPath) {
-    const sharp = require('sharp');
     const manifestPath = path.join(iiifPath, 'index.json');
     const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
 

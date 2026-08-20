@@ -43,7 +43,7 @@
     "react-dom": "^19.0.0",
     "react-i18next": "^15.0.0",
     "saxon-js": "^2.6.0",
-    "sharp": "^0.33.5",
+    "sharp": "^0.34.5",
     "string-strip-html": "^8.3.0",
     "uuid": "^11.1.0",
     "vue": "^3.5.13",
@@ -57,7 +57,13 @@
   "devDependencies": {
     "@11ty/eleventy": "^3.0.0",
     "@vitejs/plugin-react": "^4.0.0",
+    "node-addon-api": "^8.0.0",
+    "node-gyp": "^12.3.0",
     "vite": "^6.0.0",
     "vitest": "^4.1.6"
+  },
+  "allowScripts": {
+    "sharp@0.33.5": true,
+    "sharp@0.34.5": true
   }
 }
