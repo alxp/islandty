@@ -63,7 +63,12 @@ class PagedContentModel extends DefaultContentModel {
         if (hocrFile) {
           const hocrBaseName = path.basename(hocrFile);
           const hocrFileName = `pages/${index.toString().padStart(4, '0')}_${hocrBaseName}`;
-          filesMap[hocrFile] = hocrFileName;
+          // findHocrFile returns a resolvable path, but copyFiles re-joins
+          // inputMediaPath onto every relative key. Store it relative, the way
+          // page.file above is, or the prefix is applied twice. That doubling
+          // is invisible when inputMediaPath starts with '../' (path.join
+          // normalises the duplicate away) and breaks when it starts with './'.
+          filesMap[path.relative(inputMediaPath, hocrFile)] = hocrFileName;
         }
       }
     }

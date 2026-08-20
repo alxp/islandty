@@ -20,6 +20,8 @@ you can use the same input files to generate a static website.
 ## Requirements
 
 - Node.js 22.x or later (ESM). Tested on 22.x through 25.x.
+- npm 11 or later. One dependency (`mirador-textoverlay`, installed from git)
+  declares `engines.npm >=11.0.0` and its prepare step fails on older npm.
 - VIPS (for JP2 support - see below)
 
 ### Installing VIPS for JP2 support
@@ -31,6 +33,20 @@ you will need to install VIPS.
 You can use Mirador with TIFF files
 without VIPS.
 
+Sharp's bundled libvips will **not** work for JP2: the prebuilt binaries are
+compiled with `-Dopenjpeg=disabled`, so no released version of Sharp can decode
+JP2 on any platform. Sharp only picks up a system libvips if it is **8.17.3 or
+newer** — that floor is a hard compile-time check, not a warning — and that
+libvips must itself have been built with OpenJPEG.
+
+To check what you have:
+
+```shell
+node -e "const s=require('sharp');console.log(s.versions.vips, s.format.jp2k.input.file)"
+```
+
+You want a version >= 8.17.3 and `true`.
+
 #### macOS via homebrew
 
 ```shell
@@ -41,11 +57,35 @@ See the Sharp [installation instructions](https://sharp.pixelplumbing.com/instal
 
 #### Linux
 
-Most popular distributions include a VIPS devel package.
+Most distributions ship a VIPS devel package built with OpenJPEG, but most are
+older than Sharp's 8.17.3 floor and so will be silently ignored (versions as of
+August 2026):
+
+| Distribution | libvips | New enough? |
+| --- | --- | --- |
+| Alpine 3.20 / 3.21 / 3.22 | 8.15.2 / 8.15.3 / 8.16.1 | no |
+| Debian bookworm / trixie | 8.14.1 / 8.16.1 | no |
+| Debian sid | 8.18.5 | yes |
+| Ubuntu 26.04 | 8.18.0 | yes |
+
+On a distribution new enough, the devel package is all you need:
 
 ```shell
-apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community --repository http://dl-3.alpinelinux.org/alpine/edge/main build-base vips-dev
+apt-get install -y libvips-dev
 ```
+
+Otherwise, build libvips from source with `-Dopenjpeg=enabled`. Two things are
+easy to miss:
+
+- The `-Dcplusplus=true` flag — Sharp detects a system libvips by running
+  `pkg-config --modversion vips-cpp`. Without it Sharp silently falls back to
+  its own JP2-less binary.
+- The libarchive development headers — without them, tile generation fails at
+  runtime with `VipsOperation: class "dzsave" not found` even though JP2
+  decoding works.
+
+The [Dockerfile](Dockerfile) contains a complete, working source build you can
+copy from.
 
 ## Installation
 

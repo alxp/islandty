@@ -1,6 +1,9 @@
 services:
   islandty:
     image: islandty:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: sh -c "npm start"
     stdin_open: true # docker run -i
     tty: true        # docker run -t
@@ -11,8 +14,10 @@ services:
       - ../islandora_demo_objects:/islandty/islandora_demo_objects
       - ./config:/islandty/config
       - ./src:/islandty/src
-      - ./scripts:/islandty/scripts
       - ./web:/islandty/web
+      # Reuses the host's mirador-textoverlay clone; without it,
+      # compileMirador.js re-clones from GitHub on every fresh container.
+      - ./vendor:/islandty/vendor
     environment:
       inputMediaPath: ./islandora_demo_objects
       dataFileName: ./islandora_demo_objects/create_islandora_objects.csv

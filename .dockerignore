@@ -1,0 +1,17 @@
+# Installed in the image by docker/linux/*.sh, never copied in.
+node_modules
+
+# Generated output, not build inputs.
+web
+output
+.cache
+tests/output
+src/islandty/staging
+*.sef.json
+
+.git
+*.log
+Screenshot*.png
+
+# NOTE: .env is deliberately NOT listed here -- the Dockerfile COPYs it.
+# Adding it would make the file uncopyable and break the build.
