@@ -19,7 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@11ty/eleventy-plugin-rss": "^2.0.3",
-    "@alxp/biiif": "github:alxp/biiif#master-dist",
+    "@alxp/biiif": "^2.2.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/material": "^9.0.0",
@@ -43,7 +43,7 @@
     "react-dom": "^19.0.0",
     "react-i18next": "^15.0.0",
     "saxon-js": "^2.6.0",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.5",
     "string-strip-html": "^8.3.0",
     "uuid": "^11.1.0",
     "vue": "^3.5.13",
