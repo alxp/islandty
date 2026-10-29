@@ -80,7 +80,7 @@ image:
 The image compiles libvips from source, which adds a couple of minutes to a
 cold build. This is unavoidable if you need JP2 support: Sharp's prebuilt
 libvips is compiled with `-Dopenjpeg=disabled`, and every distribution package
-new enough to satisfy Sharp's 8.17.3 floor is either unavailable on Alpine or
+new enough to satisfy Sharp's 8.18.7 floor is either unavailable on Alpine or
 comes from a rolling release. See the comments in the Dockerfile for the full
 reasoning. Rebuilds reuse the cached layer, so you only pay this once unless
 you change the libvips version.
@@ -88,7 +88,7 @@ you change the libvips version.
 The libvips version is a build argument, should you need to move it:
 
 ```shell
-docker compose build --build-arg VIPS_VERSION=8.18.5
+docker compose build --build-arg VIPS_VERSION=8.18.7
 ```
 
 A `.dockerignore` keeps the generated `web/` output, `node_modules`, and
@@ -114,10 +114,10 @@ To confirm the image can decode JP2 and write tile pyramids:
 
 ```shell
 docker compose run --rm islandty node -e \
-  "const s=require('sharp');console.log(s.versions.vips, s.format.jp2k.input.file)"
+  "const s=require('sharp');console.log(s.versions.vips, s.format.jp2.input.file)"
 ```
 
-This should print a libvips version of 8.18.5 and `true`.
+This should print a libvips version of 8.18.7 and `true`.
 
 Note that ingest **skips** objects that already have up-to-date OCFL state in
 the bind-mounted `web/` directory. If you are testing whether image processing

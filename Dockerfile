@@ -1,6 +1,6 @@
 FROM node:22-alpine3.20 AS build
 ARG TARGETPLATFORM
-ARG VIPS_VERSION=8.18.5
+ARG VIPS_VERSION=8.18.7
 WORKDIR /islandty
 COPY ./package.json ./
 RUN apk add --no-cache git
@@ -8,17 +8,17 @@ RUN apk add --no-cache git
 # project needs to tile its archival page images:
 #   * sharp's own prebuilt libvips is compiled with -Dopenjpeg=disabled, so no
 #     released sharp/platform combination can decode JP2.
-#   * Alpine's vips package DOES have JP2 but is far below sharp's >=8.17.3
+#   * Alpine's vips package DOES have JP2 but is far below sharp's >=8.18.7
 #     floor (3.20 ships 8.15.2), and that floor is a hard #error in
 #     sharp's src/common.h, not an advisory check.
 #   * Pulling a newer vips from Alpine edge is not an option: mixing edge into
 #     this 3.20 base fails on openssl (edge needs libssl3=3.5.x, the base pins
 #     3.3.x via apk-tools/python3/libcurl).
-# 8.18.5 matches the Homebrew libvips used on the macOS dev host.
+# 8.18.7 matches the Homebrew libvips used on the macOS dev host.
 # -Dcplusplus=true is REQUIRED: sharp detects a global libvips by running
 # `pkg-config --modversion vips-cpp`, and silently falls back to its
 # JP2-less prebuilt binary if that lookup fails.
-ARG VIPS_VERSION=8.18.5
+ARG VIPS_VERSION=8.18.7
 # libarchive-dev is required for dzsave (the DeepZoom tile-pyramid writer that
 # biiif drives); libvips moved dzsave from libgsf to libarchive, and without it
 # tiling fails at runtime with: VipsOperation: class "dzsave" not found.
@@ -37,7 +37,9 @@ RUN apk add --no-cache build-base python3 curl meson ninja pkgconf \
  && rm -rf /tmp/vips-${VIPS_VERSION}
 
 # Compile sharp against the libvips installed above instead of downloading the
-# JP2-less prebuilt. sharp needs node-addon-api/node-gyp to do this; both are
+# JP2-less prebuilt. sharp 0.35+ no longer rebuilds itself at npm install
+# time, so the installer script below runs `npm explore sharp -- npm run
+# build` explicitly. sharp needs node-addon-api/node-gyp to do this; both are
 # already devDependencies in package.json.
 ENV SHARP_FORCE_GLOBAL_LIBVIPS=1
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig

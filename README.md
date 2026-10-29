@@ -35,22 +35,34 @@ without VIPS.
 
 Sharp's bundled libvips will **not** work for JP2: the prebuilt binaries are
 compiled with `-Dopenjpeg=disabled`, so no released version of Sharp can decode
-JP2 on any platform. Sharp only picks up a system libvips if it is **8.17.3 or
-newer** — that floor is a hard compile-time check, not a warning — and that
-libvips must itself have been built with OpenJPEG.
+JP2 on any platform. Sharp can instead be compiled against a system libvips,
+which must be **8.18.7 or newer** — that floor is a hard compile-time `#error`,
+not a warning — and that libvips must itself have been built with OpenJPEG.
+
+Since sharp 0.35, `npm install` no longer performs this compilation, so after
+installing a suitable libvips, build sharp against it explicitly:
+
+```shell
+npm explore sharp -- npm run build
+```
+
+Sharp locates the system libvips via `pkg-config --modversion vips-cpp`, and
+the resulting binary takes precedence over sharp's own JP2-less prebuilt. Set
+`SHARP_FORCE_GLOBAL_LIBVIPS=1` to skip the version check.
 
 To check what you have:
 
 ```shell
-node -e "const s=require('sharp');console.log(s.versions.vips, s.format.jp2k.input.file)"
+node -e "const s=require('sharp');console.log(s.versions.vips, s.format.jp2.input.file)"
 ```
 
-You want a version >= 8.17.3 and `true`.
+You want a version >= 8.18.7 and `true`.
 
 #### macOS via homebrew
 
 ```shell
 brew install vips
+npm explore sharp -- npm run build
 ```
 
 See the Sharp [installation instructions](https://sharp.pixelplumbing.com/install) for more info.
@@ -58,20 +70,22 @@ See the Sharp [installation instructions](https://sharp.pixelplumbing.com/instal
 #### Linux
 
 Most distributions ship a VIPS devel package built with OpenJPEG, but most are
-older than Sharp's 8.17.3 floor and so will be silently ignored (versions as of
-August 2026):
+older than Sharp's 8.18.7 floor and so will fail the version check (versions as
+of October 2026):
 
 | Distribution | libvips | New enough? |
 | --- | --- | --- |
 | Alpine 3.20 / 3.21 / 3.22 | 8.15.2 / 8.15.3 / 8.16.1 | no |
 | Debian bookworm / trixie | 8.14.1 / 8.16.1 | no |
-| Debian sid | 8.18.5 | yes |
-| Ubuntu 26.04 | 8.18.0 | yes |
+| Debian sid | 8.18.7 | yes |
+| Ubuntu 26.04 | 8.18.0 | no |
 
-On a distribution new enough, the devel package is all you need:
+On a distribution new enough, the devel package is all you need, followed by
+the sharp build step above:
 
 ```shell
 apt-get install -y libvips-dev
+npm explore sharp -- npm run build
 ```
 
 Otherwise, build libvips from source with `-Dopenjpeg=enabled`. Two things are
